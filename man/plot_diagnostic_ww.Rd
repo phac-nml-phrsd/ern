@@ -17,9 +17,6 @@ A ggplot object.
 \description{
 Diagnostic plot for R estimation from wastewater
 }
-\examples{
-1+1
-}
 \seealso{
 \code{\link[=estimate_R_ww]{estimate_R_ww()}}
 }

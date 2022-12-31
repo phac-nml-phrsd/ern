@@ -29,13 +29,15 @@ This value may be assumed or independently calibrated to data.}
 \item{prm.smooth}{List. Parameters for the smoothing algorithm of the wastewater signal.}
 }
 \value{
-An object.
+List. Elements include:
+\itemize{
+\item \code{ww.conc} original wastewater signal
+\item \code{ww.smooth} smoothed wastewater signal
+\item \code{inc} inferred incidence
+\item \code{R} the effective R estimate
+\item \code{date.start} the start date for the signal.
+}
 }
 \description{
 Estimate the effective reproduction from wastewater concentration data.
-}
-\examples{
-1+1
-
-
 }

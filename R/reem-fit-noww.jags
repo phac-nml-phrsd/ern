@@ -1,0 +1,43 @@
+model{
+  # === Initial period ===
+
+  I[1] ~ dpois(N/1000)
+  S[1] <- N - I[1] #ifelse(I[1] < N, N - I[1], 1)
+  
+  for(t in 2:ng){
+    tmp[t] <- sum(g[1:(t-1)] * I[t-1:(t-1)])
+    Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+    I[t] ~ dpois(Im[t])
+    S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+  }
+
+  # === Main time loop ===
+
+   # -- Renewal equation
+
+  for(t in (ng+1):n.days){
+    tmp[t] <- sum(g[1:ng] * I[t-(1:ng)])
+    S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+    Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+    I[t] ~ dpois(Im[t])
+  }
+
+  # -- Aggregation
+
+  A[obs.times[1]] <- sum(I[1:obs.times[1]])
+
+  for(i in 2:nobs){
+    A[obs.times[i]] <- sum( I[(obs.times[i-1]+1):obs.times[i]] )
+  }
+
+  # === observation times only ===
+
+  for(i in 1:nobs){
+    Y[i] ~ dpois(A[obs.times[i]])
+  }
+
+  # === priors ===
+
+  R0 ~ dgamma(2,1)
+  alpha ~ dgamma(1,1)
+}

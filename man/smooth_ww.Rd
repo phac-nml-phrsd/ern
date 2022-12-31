@@ -9,9 +9,9 @@ smooth_ww(df, date.start, prm.smooth)
 \arguments{
 \item{df}{ww dataframe}
 
-\item{prm.smooth}{list of smoothing parameters}
+\item{date.start}{desired start date}
 
-\item{start.date}{desired start date}
+\item{prm.smooth}{list of smoothing parameters}
 }
 \value{
 dataframe with smoothed ww data

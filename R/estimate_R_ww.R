@@ -11,10 +11,14 @@
 #' This value may be assumed or independently calibrated to data.
 #' @param prm.smooth List. Parameters for the smoothing algorithm of the wastewater signal.
 #'
-#' @return An object.
-#' @export
+#' @return List. Elements include:
+#' - `ww.conc` original wastewater signal
+#' - `ww.smooth` smoothed wastewater signal
+#' - `inc` inferred incidence
+#' - `R` the effective R estimate
+#' - `date.start` the start date for the signal.
 #'
-#' @examples 1+1
+#' @export
 #'
 #'
 estimate_R_ww <- function(ww.conc,

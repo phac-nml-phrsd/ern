@@ -28,6 +28,8 @@ get_gi <- function(pathogen, subtype) {
     )
   }
 
+  if(is.null(res)) stop(paste0("generation interval not defined for '",
+                               pathogen, "'"))
   return(res)
 
 }

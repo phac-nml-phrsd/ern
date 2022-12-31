@@ -1,33 +1,39 @@
 Package: ern
 Title: Effective Reproduction Number Estimation
 Version: 0.1.1
-Authors@R: 
-    c(
-    person(given  = "David", 
-           family = "Champredon",
-           email  = "david.champredon@canada.ca", 
-           role   = c("aut", "cre"),
+Authors@R: c(
+    person("David", "Champredon", , "david.champredon@canada.ca", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person(given  = "Warsame", 
-           family = "Yusuf",
-           email  = "warsame.yusuf@canada.ca", 
-           role   = c("aut"),
+    person("Warsame", "Yusuf", , "warsame.yusuf@canada.ca", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID")),
-    person(given  = "Irena", 
-           family = "Papst",
-           email  = "irena.papst@canada.ca", 
-           role   = c("aut"),
+    person("Irena", "Papst", , "irena.papst@canada.ca", role = "aut",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-      )
-Description: Estimate the effective reproduction number from wastewater and clinical data sources.
+  )
+Description: Estimate the effective reproduction number from wastewater
+    and clinical data sources.
 License: MIT + file LICENSE
+Imports: 
+    data.table,
+    dplyr,
+    EpiEstim,
+    ggplot2,
+    janitor,
+    lubridate,
+    magrittr,
+    patchwork,
+    rjags,
+    stats,
+    tibble,
+    tidyr,
+    TruncatedNormal,
+    zoo
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
-Depends: EpiEstim, tidyr, dplyr, ggplot2, lubridate, patchwork
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
-VignetteBuilder: knitr
+RoxygenNote: 7.2.3
