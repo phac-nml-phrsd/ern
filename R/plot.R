@@ -61,7 +61,8 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #' @return A ggplot object.
 #' @export
 #'
-#' @import patchwork
+#' @importFrom patchwork plot_layout
+# need this to get the S3 method "/"
 #'
 #' @seealso [estimate_R_cl()]
 plot_diagnostic_cl <- function(

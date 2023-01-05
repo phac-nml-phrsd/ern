@@ -4,6 +4,8 @@
 #' @inheritParams smooth_cl
 #' @inheritParams estimate_R_cl_rep
 #'
+#' @importFrom magrittr %>%
+#'
 #' @return List. Elements include:
 #' - `cl.weekly` original weekly reports signal
 #' - `cl.input` reports as input for Rt calculation (inferred daily counts, smoothed)
