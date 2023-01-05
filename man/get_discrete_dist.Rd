@@ -16,5 +16,5 @@ vector with discretized density
 Get a discretized, truncated version of a distribution
 }
 \examples{
-`prm <- def_dist_incubation_period(); get_discrete_dist(prm)`
+prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 }

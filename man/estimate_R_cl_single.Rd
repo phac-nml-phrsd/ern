@@ -4,10 +4,16 @@
 \alias{estimate_R_cl_single}
 \title{A single realization of the Rt estimate}
 \usage{
-estimate_R_cl_single(df, dist.repfrac, dist.repdelay, dist.incub, dist.gi)
+estimate_R_cl_single(
+  cl.input,
+  dist.repfrac,
+  dist.repdelay,
+  dist.incub,
+  dist.gi
+)
 }
 \arguments{
-\item{df}{daily report counts}
+\item{cl.input}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
 
 \item{dist.repfrac}{parameters for the reporting fraction distribution}
 

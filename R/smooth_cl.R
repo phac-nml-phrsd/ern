@@ -3,12 +3,14 @@
 #' @param cl.daily Dataframe resulting from [`weekly_to_daily()`]
 #' @param prm.smooth smoothing parameters
 #'
+#' @importFrom rlang .data
+#'
 #' @return Dataframe
 #' @export
 smooth_cl <- function(cl.daily, prm.smooth){
 
   (cl.daily
-   %>% dplyr::group_by(id)
+   %>% dplyr::group_by(.data$id)
    %>% dplyr::mutate(
      window = dplyr::case_when(
        t < prm.smooth$window ~ t,
@@ -17,10 +19,10 @@ smooth_cl <- function(cl.daily, prm.smooth){
    )
    %>% dplyr::mutate(
      value = data.table::frollmean(
-       value, n = window,
+       .data$value, n = .data$window,
        align = "right", adaptive = TRUE)
    )
-   %>% dplyr::select(-window)
+   %>% dplyr::select(-.data$window)
    %>% dplyr::ungroup()
   )
 

@@ -6,6 +6,11 @@
 \usage{
 correct_underreporting(reports.daily, reporting.fraction)
 }
+\arguments{
+\item{reports.daily}{dataframe of daily reported cases. must at least include \code{value} column with counts.}
+
+\item{reporting.fraction}{numeric. proportion of incidence that is reported.}
+}
 \description{
 Correct underreporting by scaling up
 }

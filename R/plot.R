@@ -4,6 +4,9 @@
 #' @param caption String. Optional caption.
 #'
 #' @return A ggplot object.
+#'
+#' @importFrom rlang .data
+#'
 #' @export
 #'
 #' @seealso [estimate_R_ww()]
@@ -12,15 +15,17 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   ggplot2::theme_set(ggplot2::theme_bw())
   date.start = r.estim$date.start
 
-  xsc = ggplot2::scale_x_date(limits = c(lubridate::ymd(date.start),today()))
+  xsc = ggplot2::scale_x_date(
+    limits = c(lubridate::ymd(date.start), lubridate::today())
+  )
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = .data$val)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
-      ggplot2::aes(y = obs),
+      ggplot2::aes(y = .data$obs),
       color = 'steelblue4',
       size = 1,
       alpha = 0.5
@@ -32,7 +37,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     )
 
   g.inc = r.estim$inc %>%
-    ggplot2::ggplot(ggplot2::aes(x=date, y = inc.deconvol)) +
+    ggplot2::ggplot(ggplot2::aes(x=date, y = .data$inc.deconvol)) +
     ggplot2::geom_line()+
     ggplot2::labs(title='Deconvoluted incidence', x = 'infection date', y='cases')+
     xsc
@@ -40,7 +45,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   g.r = r.estim$R %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
-    ggplot2::geom_ribbon(ggplot2::aes(ymin=qvlo, ymax = qvhi), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$qvlo, ymax = .data$qvhi), alpha=0.2)+
     ggplot2::geom_line() +
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
@@ -63,6 +68,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #'
 #' @importFrom patchwork plot_layout
 # need this to get the S3 method "/"
+#' @importFrom rlang .data
 #'
 #' @seealso [estimate_R_cl()]
 plot_diagnostic_cl <- function(
@@ -91,24 +97,24 @@ plot_diagnostic_cl <- function(
   # -------------------------
 
   ylim <- (r.estim$R
-   %>% dplyr::filter(use)
-   %>% tidyr::pivot_longer(c(lwr, upr))
-   %>% dplyr::pull(value)
+   %>% dplyr::filter(.data$use)
+   %>% tidyr::pivot_longer(c(.data$lwr, .data$upr))
+   %>% dplyr::pull(.data$value)
    %>% range()
   )
 
   p1 <- (ggplot2::ggplot(r.estim$R, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
-   + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
-                          alpha = use),
+   + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr,
+                          alpha = .data$use),
                           na.rm = TRUE)
-   + ggplot2::geom_line(ggplot2::aes(y = med, linetype = use),
+   + ggplot2::geom_line(ggplot2::aes(y = .data$med, linetype = .data$use),
                         linewidth = 1, na.rm = TRUE)
    + ggplot2::scale_alpha_manual(values = alpha_scale)
    + ggplot2::scale_linetype_manual(values = linetype_scale)
    + ggplot2::coord_cartesian(ylim = ylim)
    + ggplot2::guides(alpha = "none", linetype = "none")
-   + ggplot2::labs(title = paste0("Effective reproduction number for ", toupper(pt)))
+   + ggplot2::labs(title = paste0("Effective reproduction number for ", toupper(.data$pt)))
    + th
   )
 
@@ -117,7 +123,7 @@ plot_diagnostic_cl <- function(
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.weekly
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
-     ggplot2::aes(x = date, y = count))
+     ggplot2::aes(x = date, y = .data$count))
      + ggplot2::geom_col(na.rm = TRUE)
      + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
      + ggplot2::labs(subtitle = "Original signal: weekly case reports")
@@ -131,8 +137,8 @@ plot_diagnostic_cl <- function(
      %>% summarise_by_date()
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
          ggplot2::aes(x = date))
-     + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha = alpha_scale[2])
-     + ggplot2::geom_line(ggplot2::aes(y = med), linewidth = 1)
+     + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha = alpha_scale[2])
+     + ggplot2::geom_line(ggplot2::aes(y = .data$med), linewidth = 1)
      + ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)")
      + th
   )

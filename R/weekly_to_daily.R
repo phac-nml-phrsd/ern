@@ -33,6 +33,17 @@ weekly_to_daily <- function(
 # helpers -----------------------------------------------------------------
 
 #' Fit JAGS model to aggregated data
+#'
+#' @param obs.times numeric. vector of observation times
+#' @param Y numeric. vector of aggregated counts
+#' @param g numeric. vector of discretized generation interval density.
+#' @param N numeric. scalar population size.
+#' @param n.days numeric. total number of days. if `NULL`, use `max(obs.times)`
+#' @param mcmc.params list. MCMC parameters:
+#' * `burn`: burn-in period (days)
+#' * `iter`: iterations after burn-in (days)
+#' * `chains`: number of chains
+#' @param path.jags character. directory containing `.jags` file where model is defined
 fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
@@ -88,18 +99,37 @@ fit_jags_aggreg <- function(
   return(mod_sim)
 }
 
+#' Reshape JAGS fit object
+#'
+#' @param x dataframe. JAGS output from [`fit_jags_aggreg()`].
+#'
+#' @importFrom rlang .data
+#'
+#' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    %>% dplyr::bind_rows()
-   %>% dplyr::mutate(iteration = 1:nrow(.))
-   %>% tidyr::pivot_longer(-iteration)
-   %>% tidyr::separate(name, into = c("var", "t", "trash"),
-                sep = "\\[|\\]",
-                fill = "right")
-   %>% dplyr::select(-trash)
-   %>% dplyr::mutate(t = as.integer(t)))
+   %>% dplyr::mutate(iteration = 1:nrow(.data))
+   %>% tidyr::pivot_longer(-.data$iteration)
+   %>% tidyr::separate(
+     .data$name,
+     into = c("var", "t", "trash"),
+     sep = "\\[|\\]",
+     fill = "right"
+   )
+   %>% dplyr::select(-.data$trash)
+   %>% dplyr::mutate(t = as.integer(t))
+  )
 }
 
+#' Retrieve realizations for weekly -> daily inference
+#'
+#' @param fit.reports.daily dataframe. realizations from daily report inference. must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
+#' @param reports dataframe. original weekly reports. must at least have `date` column
+#'
+#' @seealso [weekly_to_daily()]
+#'
+#' @importFrom rlang .data
 get_realizations <- function(
     fit.reports.daily, reports
 ){
@@ -108,22 +138,22 @@ get_realizations <- function(
     %>% attach_startdate_agg()
     %>% dplyr::select(date)
     %>% tidyr::complete(date = seq(min(date), max(date), by = "days"))
-    %>% dplyr::mutate(t = 1:nrow(.))
+    %>% dplyr::mutate(t = 1:nrow(.data))
   )
 
   # extract fitted daily reports
   # and mark each iteration (across iter #, batch #, rep #)
   # with unique id variable
   (fit.reports.daily
-    %>% dplyr::filter(var == "I")
+    %>% dplyr::filter(.data$var == "I")
     %>% dplyr::left_join(date_lookup, by = "t")
-    %>% dplyr::group_by(iteration)
+    %>% dplyr::group_by(.data$iteration)
     %>% dplyr::mutate(
       id = dplyr::cur_group_id(),
     )
     %>% dplyr::ungroup()
     %>% dplyr::select(
-      id, date, t, value
+      .data$id, .data$date, .data$t, .data$value
     )
   )
 }
@@ -131,7 +161,7 @@ get_realizations <- function(
 #' Attach start date from first observation for aggregated data
 #' from time (day number)
 #'
-#' counterpart function to `attach_t_agg()`
+#' @param x dataframe. only has columns `date`, `count`, and `t`
 attach_startdate_agg <- function(x){
   start_date <- (x
    %>% dplyr::arrange(date)

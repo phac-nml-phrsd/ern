@@ -14,6 +14,8 @@ estimate_R_cl_rep(
 )
 }
 \arguments{
+\item{cl.input}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+
 \item{dist.repfrac}{parameters for the reporting fraction distribution}
 
 \item{dist.repdelay}{parameters for the reporting delay distribution}

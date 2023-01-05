@@ -7,10 +7,15 @@
 deconv(counts, dist, max.iter = 10)
 }
 \arguments{
-\item{dist}{a truncated daily discrete distribution (vector) with which we're deconvoluting the counts}
+\item{counts}{numeric. a vector of daily counts}
 
-\item{y}{a vector of daily counts}
+\item{dist}{numeric. a vector of truncated daily discrete distribution (vector) with which we're deconvoluting the counts, \emph{e.g.}, produced by \code{\link[=get_discrete_dist]{get_discrete_dist()}}}
+
+\item{max.iter}{numeric. maximum number of Richardson-Lucy iterations}
 }
 \description{
 Wrapper for deconvolution with a given distribution
+}
+\seealso{
+\code{\link[=get_discrete_dist]{get_discrete_dist()}}
 }

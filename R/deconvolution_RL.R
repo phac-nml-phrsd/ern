@@ -57,7 +57,7 @@ deconvolution_RL <- function(
   # From the delay multinomial, extract the mean and max delay
   # from infection to observation
   mean_delay <- sum(p_delay * 0:(length(p_delay)-1))
-  max_delay <- tail((0:length(p_delay))[p_delay>0], 1)
+  max_delay <- utils::tail((0:length(p_delay))[p_delay>0], 1)
   orig_min_t <- min(times)
   orig_ceiling <- observed[1]*10
 
@@ -87,7 +87,7 @@ deconvolution_RL <- function(
   ## shifted back by the mean dealy to observation
   lambda <- c(
     observed[ceiling(mean_delay):length(observed)],  # Observed vector, with first mean_delay days removed
-    rep(tail(observed, 1), floor(mean_delay)) # Replace discarded values with 1s at the end of the vector
+    rep(utils::tail(observed, 1), floor(mean_delay)) # Replace discarded values with 1s at the end of the vector
   )
 
   # Write a function to get the expected deaths per day, as a function of lambda:
@@ -147,7 +147,7 @@ deconvolution_RL <- function(
 
   return(
     data.frame(time = times, imputed = lambda) %>%
-      setNames(c('time', out_col_name))
+      stats::setNames(c('time', out_col_name))
   )
 }
 
