@@ -89,7 +89,7 @@ sample_a_dist <- function(dist){
 #' @return vector with discretized density
 #' @export
 #'
-#' @examples `prm <- def_dist_incubation_period(); get_discrete_dist(prm)`
+#' @examples prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 get_discrete_dist <- function(params){
   if(!(params$dist %in% c("lnorm", "gamma"))) stop("distribution recipe has not been defined")
 
