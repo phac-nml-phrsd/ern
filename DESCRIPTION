@@ -22,6 +22,7 @@ Imports:
     magrittr,
     patchwork,
     rjags,
+    rlang,
     stats,
     tibble,
     tidyr,

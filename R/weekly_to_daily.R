@@ -88,18 +88,30 @@ fit_jags_aggreg <- function(
   return(mod_sim)
 }
 
+#' Reshape JAGS fit object
+#'
+#' @importFrom rlang .data
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    %>% dplyr::bind_rows()
-   %>% dplyr::mutate(iteration = 1:nrow(.))
-   %>% tidyr::pivot_longer(-iteration)
-   %>% tidyr::separate(name, into = c("var", "t", "trash"),
-                sep = "\\[|\\]",
-                fill = "right")
-   %>% dplyr::select(-trash)
-   %>% dplyr::mutate(t = as.integer(t)))
+   %>% dplyr::mutate(iteration = 1:nrow(.data))
+   %>% tidyr::pivot_longer(-.data$iteration)
+   %>% tidyr::separate(
+     .data$name,
+     into = c("var", "t", "trash"),
+     sep = "\\[|\\]",
+     fill = "right"
+   )
+   %>% dplyr::select(-.data$trash)
+   %>% dplyr::mutate(t = as.integer(t))
+  )
 }
 
+#' Retrieve realizations for weekly -> daily inference
+#'
+#' @seealso [weekly_to_daily()]
+#'
+#' @importFrom rlang .data
 get_realizations <- function(
     fit.reports.daily, reports
 ){
@@ -108,22 +120,22 @@ get_realizations <- function(
     %>% attach_startdate_agg()
     %>% dplyr::select(date)
     %>% tidyr::complete(date = seq(min(date), max(date), by = "days"))
-    %>% dplyr::mutate(t = 1:nrow(.))
+    %>% dplyr::mutate(t = 1:nrow(.data))
   )
 
   # extract fitted daily reports
   # and mark each iteration (across iter #, batch #, rep #)
   # with unique id variable
   (fit.reports.daily
-    %>% dplyr::filter(var == "I")
+    %>% dplyr::filter(.data$var == "I")
     %>% dplyr::left_join(date_lookup, by = "t")
-    %>% dplyr::group_by(iteration)
+    %>% dplyr::group_by(.data$iteration)
     %>% dplyr::mutate(
       id = dplyr::cur_group_id(),
     )
     %>% dplyr::ungroup()
     %>% dplyr::select(
-      id, date, t, value
+      .data$id, .data$date, .data$t, .data$value
     )
   )
 }

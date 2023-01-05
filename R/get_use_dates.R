@@ -1,3 +1,6 @@
+#' Get dates for which to use (trust) inferred daily reports
+#'
+#' @importFrom rlang .data
 get_use_dates <- function(
     reports.daily, reports
 ){
@@ -16,16 +19,16 @@ get_use_dates <- function(
     )
     # fill report date up to make grouping variable to aggregate
     # inferred daily reports
-    %>% tidyr::fill(date.report, .direction = "up")
+    %>% tidyr::fill(.data$date.report, .direction = "up")
     # rename count as obs to make col clearer in unified data below
-    %>% dplyr::rename(obs = count)
+    %>% dplyr::rename(obs = .data$count)
   )
 
   # unified data with aggregates and relative differences
   (reports.daily
     %>% dplyr::full_join(reports, by = "date")
     %>% summarise_report_counts()
-    %>% dplyr::filter(use)
+    %>% dplyr::filter(.data$use)
     %>% dplyr::pull(date)
   )
 }
@@ -33,24 +36,31 @@ get_use_dates <- function(
 
 # helpers -----------------------------------------------------------------
 
+#' Summarise observations by date
+#'
+#' @importFrom rlang .data
 summarise_by_date <- function(df){
   (df
    %>% dplyr::group_by(date)
    %>% dplyr::summarise(
-     med = stats::median(value),
-     lwr = stats::quantile(value, probs = 0.05),
-     upr = stats::quantile(value, probs = 0.95),
+     med = stats::median(.data$value),
+     lwr = stats::quantile(.data$value, probs = 0.05),
+     upr = stats::quantile(.data$value, probs = 0.95),
      .groups = "drop"
    )
   )
 }
 
+#' Summarise daily inferred reports
+#' based on original reporting schedule and calculate error
+#'
+#' @importFrom rlang .data
 summarise_report_counts <- function(df){
   df <- (df
    # aggregated fitted reports
-   %>% dplyr::group_by(date.report)
+   %>% dplyr::group_by(.data$date.report)
    %>% dplyr::mutate(
-     dplyr::across(c(med, lwr, upr), sum,
+     dplyr::across(c(.data$med, .data$lwr,.data$ upr), sum,
                    .names = "{.col}.agg"))
    %>% dplyr::ungroup()
    %>% dplyr::mutate(
@@ -64,22 +74,22 @@ summarise_report_counts <- function(df){
   # we want to filter out start of inferred daily reports until
   # estimates have converged to below a specified tolerance
   use.dates <- (df
-    %>% dplyr::select(date.report, med.agg.reldiff)
+    %>% dplyr::select(.data$date.report, .data$med.agg.reldiff)
     %>% tidyr::drop_na()
     %>% dplyr::mutate(
       # set "use" flag for fitted aggregated reports within a
       # 10% tolerance
-      use = abs(med.agg.reldiff) < 10
+      use = abs(.data$med.agg.reldiff) < 10
     )
     # figure out first date where fitted aggregated reports fall
     # within above threshold for relative error
     # drop values before that point in time
-    %>% dplyr::mutate(use.cumm = cumsum(use))
+    %>% dplyr::mutate(use.cumm = cumsum(.data$use))
     # %>% select(date, med.agg.reldiff, use, use.cumm)
-    %>% dplyr::filter(use.cumm > 0)
-    %>% dplyr::pull(date.report)
+    %>% dplyr::filter(.data$use.cumm > 0)
+    %>% dplyr::pull(.data$date.report)
   )
 
   # attach use flag to output data
-  (df %>% dplyr::mutate(use = date.report %in% use.dates))
+  (df %>% dplyr::mutate(use = .data$date.report %in% use.dates))
 }

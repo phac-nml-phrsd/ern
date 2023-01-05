@@ -94,15 +94,19 @@ get_discrete_dist <- function(params){
   if(!(params$dist %in% c("lnorm", "gamma"))) stop("distribution recipe has not been defined")
 
   if(params$dist == "lnorm"){
-    x <- dlnorm(1:params$max,
-                meanlog = params$mean,
-                sdlog = params$sd)
+    x <- stats::dlnorm(
+      1:params$max,
+      meanlog = params$mean,
+      sdlog = params$sd
+    )
   }
 
   if(params$dist == "gamma"){
-    x <- dgamma(1:params$max,
-                shape = params$mean^2/params$sd^2,
-                scale = params$sd^2/params$mean)
+    x <- stats::dgamma(
+      1:params$max,
+      shape = params$mean^2/params$sd^2,
+      scale = params$sd^2/params$mean
+    )
   }
 
   # normalize to 1
@@ -134,6 +138,6 @@ sample_from_dist <- function(n, params){
   if(!(params$dist %in% c("unif"))) stop("distribution recipe has not been defined")
 
   if(params$dist == "unif"){
-    return(runif(n = n, min = params$min, max = params$max))
+    return(stats::runif(n = n, min = params$min, max = params$max))
   }
 }
