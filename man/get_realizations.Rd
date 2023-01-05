@@ -6,6 +6,11 @@
 \usage{
 get_realizations(fit.reports.daily, reports)
 }
+\arguments{
+\item{fit.reports.daily}{dataframe. realizations from daily report inference. must at least have \code{t} (time index), \code{var} (variable name), \code{iteration} (realization number), and \code{value} (inferred count) columns.}
+
+\item{reports}{dataframe. original weekly reports. must at least have \code{date} column}
+}
 \description{
 Retrieve realizations for weekly -> daily inference
 }

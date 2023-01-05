@@ -6,6 +6,12 @@
 \usage{
 reshape_fit_jags(x)
 }
+\arguments{
+\item{x}{dataframe. JAGS output from \code{\link[=fit_jags_aggreg]{fit_jags_aggreg()}}.}
+}
 \description{
 Reshape JAGS fit object
+}
+\seealso{
+\code{\link[=fit_jags_aggreg]{fit_jags_aggreg()}}
 }

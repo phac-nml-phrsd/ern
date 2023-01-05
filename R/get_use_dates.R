@@ -1,5 +1,8 @@
 #' Get dates for which to use (trust) inferred daily reports
 #'
+#' @inheritParams correct_underreporting
+#' @inheritParams get_realizations
+#'
 #' @importFrom rlang .data
 get_use_dates <- function(
     reports.daily, reports
@@ -38,6 +41,8 @@ get_use_dates <- function(
 
 #' Summarise observations by date
 #'
+#' @param df dataframe. has at least `date` and `value` columns.
+#'
 #' @importFrom rlang .data
 summarise_by_date <- function(df){
   (df
@@ -53,6 +58,8 @@ summarise_by_date <- function(df){
 
 #' Summarise daily inferred reports
 #' based on original reporting schedule and calculate error
+#'
+#' @param df dataframe. as prepared in [`get_use_dates()`].
 #'
 #' @importFrom rlang .data
 summarise_report_counts <- function(df){

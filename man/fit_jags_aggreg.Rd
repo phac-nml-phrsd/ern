@@ -14,6 +14,26 @@ fit_jags_aggreg(
   path.jags = "R/"
 )
 }
+\arguments{
+\item{obs.times}{numeric. vector of observation times}
+
+\item{Y}{numeric. vector of aggregated counts}
+
+\item{g}{numeric. vector of discretized generation interval density.}
+
+\item{N}{numeric. scalar population size.}
+
+\item{n.days}{numeric. total number of days. if \code{NULL}, use \code{max(obs.times)}}
+
+\item{mcmc.params}{list. MCMC parameters:
+\itemize{
+\item \code{burn}: burn-in period (days)
+\item \code{iter}: iterations after burn-in (days)
+\item \code{chains}: number of chains
+}}
+
+\item{path.jags}{character. directory containing \code{.jags} file where model is defined}
+}
 \description{
 Fit JAGS model to aggregated data
 }

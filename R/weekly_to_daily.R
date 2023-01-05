@@ -33,6 +33,17 @@ weekly_to_daily <- function(
 # helpers -----------------------------------------------------------------
 
 #' Fit JAGS model to aggregated data
+#'
+#' @param obs.times numeric. vector of observation times
+#' @param Y numeric. vector of aggregated counts
+#' @param g numeric. vector of discretized generation interval density.
+#' @param N numeric. scalar population size.
+#' @param n.days numeric. total number of days. if `NULL`, use `max(obs.times)`
+#' @param mcmc.params list. MCMC parameters:
+#' * `burn`: burn-in period (days)
+#' * `iter`: iterations after burn-in (days)
+#' * `chains`: number of chains
+#' @param path.jags character. directory containing `.jags` file where model is defined
 fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
@@ -90,7 +101,11 @@ fit_jags_aggreg <- function(
 
 #' Reshape JAGS fit object
 #'
+#' @param x dataframe. JAGS output from [`fit_jags_aggreg()`].
+#'
 #' @importFrom rlang .data
+#'
+#' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    %>% dplyr::bind_rows()
@@ -108,6 +123,9 @@ reshape_fit_jags <- function(x){
 }
 
 #' Retrieve realizations for weekly -> daily inference
+#'
+#' @param fit.reports.daily dataframe. realizations from daily report inference. must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
+#' @param reports dataframe. original weekly reports. must at least have `date` column
 #'
 #' @seealso [weekly_to_daily()]
 #'
@@ -143,7 +161,7 @@ get_realizations <- function(
 #' Attach start date from first observation for aggregated data
 #' from time (day number)
 #'
-#' counterpart function to `attach_t_agg()`
+#' @param x dataframe. only has columns `date`, `count`, and `t`
 attach_startdate_agg <- function(x){
   start_date <- (x
    %>% dplyr::arrange(date)

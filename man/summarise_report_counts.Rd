@@ -7,6 +7,9 @@ based on original reporting schedule and calculate error}
 \usage{
 summarise_report_counts(df)
 }
+\arguments{
+\item{df}{dataframe. as prepared in \code{\link[=get_use_dates]{get_use_dates()}}.}
+}
 \description{
 Summarise daily inferred reports
 based on original reporting schedule and calculate error

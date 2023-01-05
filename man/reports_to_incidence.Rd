@@ -11,6 +11,18 @@ reports_to_incidence(
   max.iter = 50
 )
 }
+\arguments{
+\item{reports.daily}{dataframe. daily report counts. includes at least \code{date} and \code{value} columns.}
+
+\item{reporting.delay}{list. parameters for reporting delay distribution (following same format as other \verb{def_dist_*()} function.}
+
+\item{incubation.period}{list. parameters for incubation period from \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
+
+\item{max.iter}{numeric. maximum number of Richardson-Lucy iterations}
+}
 \description{
 Infer incidence from reports via deconvolutions
+}
+\seealso{
+\code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}
 }

@@ -1,6 +1,6 @@
 #' A single realization of the Rt estimate
 #'
-#' @param df daily report counts
+#' @param cl.input dataframe. realizations of daily report counts. must include at least `date` and `value` columns.
 #' @param dist.repfrac parameters for the reporting fraction distribution
 #' @param dist.repdelay parameters for the reporting delay distribution
 #' @param dist.incub parameters for the incubation period distribution
@@ -10,7 +10,7 @@
 #'
 #' @export
 estimate_R_cl_single <- function(
-    df,
+    cl.input,
     dist.repfrac,
     dist.repdelay,
     dist.incub,
@@ -18,9 +18,9 @@ estimate_R_cl_single <- function(
 ){
 
   # sample one realization of reports.daily (smoothed)
-  id.list <- unique(df$id)
+  id.list <- unique(cl.input$id)
   the_id <- sample(id.list, size = 1)
-  df.draw <- (df
+  df.draw <- (cl.input
      %>% dplyr::filter(.data$id == the_id)
   )
 
@@ -65,6 +65,10 @@ estimate_R_cl_single <- function(
 # helpers -----------------------------------------------------------------
 
 #' Correct underreporting by scaling up
+#'
+#' @param reports.daily dataframe of daily reported cases. must at least include `value` column with counts.
+#' @param reporting.fraction numeric. proportion of incidence that is reported.
+#'
 #' @importFrom rlang .data
 # to avoid "no visible binding" notes
 correct_underreporting <- function(
@@ -78,7 +82,14 @@ correct_underreporting <- function(
 
 #' Infer incidence from reports via deconvolutions
 #'
+#' @param reports.daily dataframe. daily report counts. includes at least `date` and `value` columns.
+#' @param reporting.delay list. parameters for reporting delay distribution (following same format as other `def_dist_*()` function.
+#' @param incubation.period list. parameters for incubation period from [`def_dist_incubation_period()`].
+#' @inheritParams deconv
+#'
 #' @importFrom rlang .data
+#'
+#' @seealso [`def_dist_incubation_period()`]
 reports_to_incidence <- function(
     reports.daily,
     reporting.delay,
@@ -130,10 +141,13 @@ reports_to_incidence <- function(
 
 #' Wrapper for deconvolution with a given distribution
 #'
-#' @param y a vector of daily counts
-#' @param dist a truncated daily discrete distribution (vector) with which we're deconvoluting the counts
+#' @param counts numeric. a vector of daily counts
+#' @param dist numeric. a vector of truncated daily discrete distribution (vector) with which we're deconvoluting the counts, _e.g._, produced by [`get_discrete_dist()`]
+#' @param max.iter numeric. maximum number of Richardson-Lucy iterations
 #'
 #' @importFrom rlang .data
+#'
+#' @seealso [`get_discrete_dist()`]
 deconv <- function(
     counts,
     dist,
@@ -155,7 +169,12 @@ deconv <- function(
 
 #' Estimate Rt using EpiEstim
 #'
+#' @param incidence dataframe. estimated incidence. includes at least `date` and `value` columns.
+#' @param generation.interval list. parameters for generation interval from [`def_dist_generation_interval()`].
+#'
 #' @importFrom rlang .data
+#'
+#' @seealso [`def_dist_generation_interval()`]
 incidence_to_R <- function(
     incidence,
     generation.interval

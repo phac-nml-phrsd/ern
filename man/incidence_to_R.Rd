@@ -6,6 +6,14 @@
 \usage{
 incidence_to_R(incidence, generation.interval)
 }
+\arguments{
+\item{incidence}{dataframe. estimated incidence. includes at least \code{date} and \code{value} columns.}
+
+\item{generation.interval}{list. parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+}
 \description{
 Estimate Rt using EpiEstim
+}
+\seealso{
+\code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}
 }

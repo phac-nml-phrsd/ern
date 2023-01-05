@@ -6,6 +6,9 @@
 \usage{
 summarise_by_date(df)
 }
+\arguments{
+\item{df}{dataframe. has at least \code{date} and \code{value} columns.}
+}
 \description{
 Summarise observations by date
 }
