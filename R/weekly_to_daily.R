@@ -1,10 +1,9 @@
 #' Infer daily counts from weekly aggregates
 #'
-#' @param cl.weekly Dataframe. Must have variables \code{date} for the calendar
-#' date of the observation, \code{count} for the count of reported cases,
-#' and \code{t} for the number of days from the first count#' @param dist.gi parameters for the generation interval distribution
-#' @param popsize population size
-#' @param prm.daily parameters for daily report inference (via MCMC)
+#' @param cl.weekly dataframe. must have variables \code{date} for the calendar
+#' date of the observation, \code{count} for the count of reported cases.
+#' @param popsize population size.
+#' @param prm.daily parameters for daily report inference (via MCMC).
 #' @inheritParams estimate_R_cl_single
 #'
 #' @return Dataframe with individual realizations of daily reported cases
@@ -15,6 +14,8 @@ weekly_to_daily <- function(
   popsize,
   prm.daily
 ) {
+
+  cl.weekly <- attach_t_agg(cl.weekly)
 
   gi = get_discrete_dist(sample_a_dist(dist.gi))
 
@@ -31,6 +32,24 @@ weekly_to_daily <- function(
 }
 
 # helpers -----------------------------------------------------------------
+
+#' Attach time index (number of days) column
+#' Exclude first day since we don't necessarily know over which period
+#' of time that data was aggregated
+#'
+#' @param x dataframe. must at least have a `date` column
+#'
+#' @return dataframe.
+attach_t_agg <- function(x){
+  (x
+   %>% dplyr::mutate(
+     t = as.numeric(date - min(date))
+   )
+   %>% dplyr::arrange(t)
+   %>% dplyr::slice(-1) # cut off first date since
+   # we don't know the period over which that data was aggregated
+  )
+}
 
 #' Fit JAGS model to aggregated data
 #'
