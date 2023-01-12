@@ -23,8 +23,7 @@ weekly_to_daily <- function(
     g = gi, N = popsize,
     obs.times = cl.weekly$t,
     Y = cl.weekly$count,
-    mcmc.params = prm.daily,
-    path.jags = 'R/'
+    mcmc.params = prm.daily
   )
     %>% reshape_fit_jags()
     %>% get_realizations(cl.weekly)
@@ -62,13 +61,11 @@ attach_t_agg <- function(x){
 #' * `burn`: burn-in period (days)
 #' * `iter`: iterations after burn-in (days)
 #' * `chains`: number of chains
-#' @param path.jags character. directory containing `.jags` file where model is defined
 fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
     n.days = NULL,
-    mcmc.params = list(burn = 1e3, iter = 3e3, chains = 3),
-    path.jags = 'R/'
+    mcmc.params = list(burn = 1e3, iter = 3e3, chains = 3)
 ){
 
   if(is.null(n.days)) n.days = max(obs.times)
@@ -96,10 +93,54 @@ fit_jags_aggreg <- function(
 
   # --- JAGS model definition
 
-  fname = paste0(path.jags,'reem-fit-noww.jags')
+  model.text <- "model{
+    # === Initial period ===
+
+    I[1] ~ dpois(N/1000)
+    S[1] <- N - I[1] #ifelse(I[1] < N, N - I[1], 1)
+
+    for(t in 2:ng){
+      tmp[t] <- sum(g[1:(t-1)] * I[t-1:(t-1)])
+      Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      I[t] ~ dpois(Im[t])
+      S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+    }
+
+    # === Main time loop ===
+
+     # -- Renewal equation
+
+    for(t in (ng+1):n.days){
+      tmp[t] <- sum(g[1:ng] * I[t-(1:ng)])
+      S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+      Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      I[t] ~ dpois(Im[t])
+    }
+
+    # -- Aggregation
+
+    A[obs.times[1]] <- sum(I[1:obs.times[1]])
+
+    for(i in 2:nobs){
+      A[obs.times[i]] <- sum( I[(obs.times[i-1]+1):obs.times[i]] )
+    }
+
+    # === observation times only ===
+
+    for(i in 1:nobs){
+      Y[i] ~ dpois(A[obs.times[i]])
+    }
+
+    # === priors ===
+
+    R0 ~ dgamma(2,1)
+    alpha ~ dgamma(1,1)
+  }"
+
+  # fname = paste0(path.jags,'reem-fit-noww.jags')
 
   mod <- rjags::jags.model(
-    file = fname,
+    file = textConnection(model.text),
     data = data_jags,
     inits = inits,
     n.chains = mcmc.params$chains
