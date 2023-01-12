@@ -15,7 +15,6 @@
 #' - `ww.smooth` smoothed wastewater signal
 #' - `inc` inferred incidence
 #' - `R` the effective R estimate
-#' - `date.start` the start date for the signal.
 #'
 #' @export
 #'
