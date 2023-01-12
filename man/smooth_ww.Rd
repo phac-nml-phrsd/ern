@@ -4,12 +4,10 @@
 \alias{smooth_ww}
 \title{Smoothing ww data}
 \usage{
-smooth_ww(df, date.start, prm.smooth)
+smooth_ww(df, prm.smooth)
 }
 \arguments{
 \item{df}{ww dataframe}
-
-\item{date.start}{desired start date}
 
 \item{prm.smooth}{list of smoothing parameters}
 }
