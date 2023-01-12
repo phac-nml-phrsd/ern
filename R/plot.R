@@ -13,7 +13,7 @@
 plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   ggplot2::theme_set(ggplot2::theme_bw())
-  date.start = r.estim$date.start
+  date.start = min(r.estim$R$date)
 
   xsc = ggplot2::scale_x_date(
     limits = c(lubridate::ymd(date.start), lubridate::today())

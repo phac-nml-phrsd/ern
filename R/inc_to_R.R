@@ -2,18 +2,16 @@
 #' @description Function estimates Rt from incidence data
 #'
 #' @param df dataframe
-#' @param start.date start date of data
 #' @param gi generation interval
 #'
 #' @importFrom rlang .data
 #'
 #' @return dataframe with Rt estimates
-inc_to_R <- function(df, start.date, gi){
+inc_to_R <- function(df, gi){
 
   dat = df %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
     dplyr::select(date, I) %>%
-    dplyr::filter(date >= start.date) %>%
     tidyr::drop_na()
 
   config = EpiEstim::make_config(list(
