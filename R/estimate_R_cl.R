@@ -31,6 +31,9 @@ estimate_R_cl <- function(
   )
 ) {
 
+  # attach time-index column to observed weekly reports
+  cl.weekly <- attach_t_agg(cl.weekly)
+
   # estimate daily reports using JAGS model
   cl.daily = weekly_to_daily(
     cl.weekly = cl.weekly,

@@ -15,8 +15,6 @@ weekly_to_daily <- function(
   prm.daily
 ) {
 
-  cl.weekly <- attach_t_agg(cl.weekly)
-
   gi = get_discrete_dist(sample_a_dist(dist.gi))
 
   (fit_jags_aggreg(
