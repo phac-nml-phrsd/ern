@@ -10,8 +10,7 @@ fit_jags_aggreg(
   g,
   N,
   n.days = NULL,
-  mcmc.params = list(burn = 1000, iter = 3000, chains = 3),
-  path.jags = "R/"
+  mcmc.params = list(burn = 1000, iter = 3000, chains = 3)
 )
 }
 \arguments{
@@ -31,8 +30,6 @@ fit_jags_aggreg(
 \item \code{iter}: iterations after burn-in (days)
 \item \code{chains}: number of chains
 }}
-
-\item{path.jags}{character. directory containing \code{.jags} file where model is defined}
 }
 \description{
 Fit JAGS model to aggregated data
