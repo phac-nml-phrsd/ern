@@ -35,7 +35,7 @@ cl.weekly <- (
      .data$date,
      count_cumm = .data$totalcases
    )
-   %>% dplyr::left_join(ern::pt.lookup, by = "province_en")
+   %>% dplyr::left_join(pt.lookup, by = "province_en")
    %>% dplyr::filter(pt %in% pt.list)
    %>% dplyr::group_by(pt)
    %>% dplyr::mutate(count = dplyr::case_when(
