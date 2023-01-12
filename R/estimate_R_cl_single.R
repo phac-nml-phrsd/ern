@@ -183,7 +183,7 @@ incidence_to_R <- function(
   date.lookup <- (incidence
   %>% dplyr::transmute(
     date,
-    t = 1:nrow(.data))
+    t = 1:nrow(.))
   )
 
   # calculate Rt based on _one_ generation interval

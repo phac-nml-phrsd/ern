@@ -7,15 +7,14 @@
 weekly_to_daily(cl.weekly, dist.gi, popsize, prm.daily)
 }
 \arguments{
-\item{cl.weekly}{Dataframe. Must have variables \code{date} for the calendar
-date of the observation, \code{count} for the count of reported cases,
-and \code{t} for the number of days from the first count#' @param dist.gi parameters for the generation interval distribution}
+\item{cl.weekly}{dataframe. must have variables \code{date} for the calendar
+date of the observation, \code{count} for the count of reported cases.}
 
 \item{dist.gi}{parameters for the generation interval distribution}
 
-\item{popsize}{population size}
+\item{popsize}{population size.}
 
-\item{prm.daily}{parameters for daily report inference (via MCMC)}
+\item{prm.daily}{parameters for daily report inference (via MCMC).}
 }
 \value{
 Dataframe with individual realizations of daily reported cases
