@@ -128,7 +128,7 @@ fit_jags_aggreg <- function(
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    %>% dplyr::bind_rows()
-   %>% dplyr::mutate(iteration = 1:nrow(.data))
+   %>% dplyr::mutate(iteration = 1:nrow(.))
    %>% tidyr::pivot_longer(-.data$iteration)
    %>% tidyr::separate(
      .data$name,
@@ -157,7 +157,7 @@ get_realizations <- function(
     %>% attach_startdate_agg()
     %>% dplyr::select(date)
     %>% tidyr::complete(date = seq(min(date), max(date), by = "days"))
-    %>% dplyr::mutate(t = 1:nrow(.data))
+    %>% dplyr::mutate(t = 1:nrow(.))
   )
 
   # extract fitted daily reports

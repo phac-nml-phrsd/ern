@@ -114,7 +114,7 @@ plot_diagnostic_cl <- function(
    + ggplot2::scale_linetype_manual(values = linetype_scale)
    + ggplot2::coord_cartesian(ylim = ylim)
    + ggplot2::guides(alpha = "none", linetype = "none")
-   + ggplot2::labs(title = paste0("Effective reproduction number for ", toupper(.data$pt)))
+   + ggplot2::labs(title = paste0("Effective reproduction number"))
    + th
   )
 
