@@ -6,7 +6,6 @@
 \usage{
 estimate_R_ww(
   ww.conc,
-  date.start,
   dist.fec,
   dist.gi,
   scaling.factor = 1,
@@ -16,8 +15,6 @@ estimate_R_ww(
 \arguments{
 \item{ww.conc}{Dataframe. Must have variables named \code{date} for the wastewater
 collection date and \code{value} for the pathogen concentration.}
-
-\item{date.start}{Date. First date of observation used to estimate Rt.}
 
 \item{dist.fec}{Numerical vector. Distribution of fecal shedding (time unit=day).}
 
@@ -35,7 +32,6 @@ List. Elements include:
 \item \code{ww.smooth} smoothed wastewater signal
 \item \code{inc} inferred incidence
 \item \code{R} the effective R estimate
-\item \code{date.start} the start date for the signal.
 }
 }
 \description{

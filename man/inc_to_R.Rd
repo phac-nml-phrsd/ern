@@ -4,12 +4,10 @@
 \alias{inc_to_R}
 \title{Estimating Rt from incidence}
 \usage{
-inc_to_R(df, start.date, gi)
+inc_to_R(df, gi)
 }
 \arguments{
 \item{df}{dataframe}
-
-\item{start.date}{start date of data}
 
 \item{gi}{generation interval}
 }

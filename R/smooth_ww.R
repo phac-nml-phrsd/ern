@@ -2,7 +2,6 @@
 #' @description Function takes cleaned ww data and smooths data
 #'
 #' @param df ww dataframe
-#' @param date.start desired start date
 #' @param prm.smooth list of smoothing parameters
 #'
 #' @importFrom rlang .data
@@ -10,22 +9,10 @@
 #' @return dataframe with smoothed ww data
 #'
 #' @export
-smooth_ww <- function(df, date.start, prm.smooth){
-
-  # Selection of the time period requested:
-  date.start = lubridate::ymd(date.start)
-  date.min = min(df$date)
-
-  if(date.min > date.start) {
-    warning('Start date before first data.')
-    date.start = date.min
-  }
-
-  tmp = df %>%
-    dplyr::filter(date >= date.start)
+smooth_ww <- function(df, prm.smooth){
 
   if(prm.smooth$method == 'rollmean'){
-    d = tmp %>%
+    d = df %>%
       tidyr::complete(date = seq.Date(dplyr::first(date),
                                       dplyr::last(date), by = "day")) %>%
       dplyr::mutate(val_smooth =
@@ -40,7 +27,7 @@ smooth_ww <- function(df, date.start, prm.smooth){
   }
 
   if(prm.smooth$method == 'loess'){
-    t = tmp %>%
+    t = df %>%
       dplyr::mutate(x = as.numeric(date - min(date, na.rm = TRUE)+1))
 
     z = stats::loess(formula = 'val ~ x', data = t, span = prm.smooth$span)
