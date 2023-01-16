@@ -3,6 +3,8 @@
 #' @inheritParams weekly_to_daily
 #' @inheritParams smooth_cl
 #' @inheritParams estimate_R_cl_rep
+#' @param prm.daily.check list. parameters for checking weekly to daily report inference. set this parameter to `NULL` to use inferred daily reports as is. list elements include:
+#' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original weekly reports. observations outside of this tolerance are dropped.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -22,6 +24,9 @@ estimate_R_cl <- function(
     burn = 500,
     iter = 2e3,
     chains = 20
+  ),
+  prm.daily.check = list(
+    agg.reldiff.tol = 10
   ),
   prm.smooth = list(
     window = 7
@@ -49,13 +54,19 @@ estimate_R_cl <- function(
   )
 
   # trim smoothed reports based on relative error criterion
-  cl.use.dates = get_use_dates(
-    cl.smooth,
-    cl.weekly
-  )
-  cl.input = (cl.smooth
-    %>% dplyr::filter(date %in% cl.use.dates)
-  )
+  if(!is.null(prm.daily.check)){
+    if(is.null(prm.daily.check)) stop("please specify agg.reldiff.tol in prm.daily.check")
+    cl.use.dates = get_use_dates(
+      cl.smooth,
+      cl.weekly,
+      prm.daily.check$agg.reldiff.tol
+    )
+    cl.input = (cl.smooth
+                %>% dplyr::filter(date %in% cl.use.dates)
+    )
+  } else {
+    cl.input = cl.smooth
+  }
 
   # estimate Rt many times and return summary
   R = estimate_R_cl_rep(

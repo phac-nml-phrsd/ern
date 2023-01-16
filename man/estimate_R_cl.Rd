@@ -12,6 +12,7 @@ estimate_R_cl(
   dist.gi,
   popsize,
   prm.daily = list(burn = 500, iter = 2000, chains = 20),
+  prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
   prm.R = list(iter = 10)
 )
@@ -31,6 +32,11 @@ date of the observation, \code{count} for the count of reported cases.}
 \item{popsize}{population size.}
 
 \item{prm.daily}{parameters for daily report inference (via MCMC).}
+
+\item{prm.daily.check}{list. parameters for checking weekly to daily report inference. set this parameter to \code{NULL} to use inferred daily reports as is. list elements include:
+\itemize{
+\item \code{agg.reldiff.tol}: numerical tolerance (\%) for relative error between aggregated inferred daily reports and original weekly reports. observations outside of this tolerance are dropped.
+}}
 
 \item{prm.smooth}{smoothing parameters}
 

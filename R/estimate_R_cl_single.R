@@ -191,13 +191,15 @@ incidence_to_R <- function(
   # -------------------------
   (EpiEstim::estimate_R(
     incidence$value,
-    method = "parametric_si",
-    config = EpiEstim::make_config(list(
-      # mean distribution parameters
-      mean_si = generation.interval$mean,
-      # sd distribution parameters
-      std_si = generation.interval$sd
-    ))
+    method = "si_from_sample",
+    si_sample = matrix(c(0, get_discrete_dist(generation.interval)))
+    # method = "parametric_si",
+    # config = EpiEstim::make_config(list(
+    #   # mean distribution parameters
+    #   mean_si = generation.interval$mean,
+    #   # sd distribution parameters
+    #   std_si = generation.interval$sd
+    # ))
   )$R
   # just take mean estimate of R
   # TODO: where does the rest of the uncertainty come from??

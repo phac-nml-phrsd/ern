@@ -5,7 +5,7 @@
 \title{Summarise daily inferred reports
 based on original reporting schedule and calculate error}
 \usage{
-summarise_report_counts(df)
+summarise_report_counts(df, agg.reldiff.tol = 10)
 }
 \arguments{
 \item{df}{dataframe. as prepared in \code{\link[=get_use_dates]{get_use_dates()}}.}
