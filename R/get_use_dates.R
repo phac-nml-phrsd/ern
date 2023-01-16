@@ -5,7 +5,7 @@
 #'
 #' @importFrom rlang .data
 get_use_dates <- function(
-    reports.daily, reports
+    reports.daily, reports, agg.reldiff.tol
 ){
   reports.daily <- summarise_by_date(reports.daily)
 
@@ -30,7 +30,7 @@ get_use_dates <- function(
   # unified data with aggregates and relative differences
   (reports.daily
     %>% dplyr::full_join(reports, by = "date")
-    %>% summarise_report_counts()
+    %>% summarise_report_counts(agg.reldiff.tol = agg.reldiff.tol)
     %>% dplyr::filter(.data$use)
     %>% dplyr::pull(date)
   )
@@ -62,7 +62,7 @@ summarise_by_date <- function(df){
 #' @param df dataframe. as prepared in [`get_use_dates()`].
 #'
 #' @importFrom rlang .data
-summarise_report_counts <- function(df){
+summarise_report_counts <- function(df, agg.reldiff.tol = 10){
   df <- (df
    # aggregated fitted reports
    %>% dplyr::group_by(.data$date.report)
@@ -86,7 +86,7 @@ summarise_report_counts <- function(df){
     %>% dplyr::mutate(
       # set "use" flag for fitted aggregated reports within a
       # 10% tolerance
-      use = abs(.data$med.agg.reldiff) < 10
+      use = abs(.data$med.agg.reldiff) < agg.reldiff.tol
     )
     # figure out first date where fitted aggregated reports fall
     # within above threshold for relative error
@@ -96,6 +96,8 @@ summarise_report_counts <- function(df){
     %>% dplyr::filter(.data$use.cumm > 0)
     %>% dplyr::pull(.data$date.report)
   )
+
+  # TODO: show use.dates here
 
   # attach use flag to output data
   (df %>% dplyr::mutate(use = .data$date.report %in% use.dates))
