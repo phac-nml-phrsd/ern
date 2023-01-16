@@ -189,7 +189,6 @@ incidence_to_R <- function(
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function)
   # -------------------------
-
   (EpiEstim::estimate_R(
     incidence$value,
     method = "parametric_si",
