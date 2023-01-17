@@ -12,6 +12,11 @@
 #'
 get_fecal_shedding <- function(pathogen, subtype = '') {
 
+  # Check if correct pathogen specified
+  if(!isTRUE(pathogen %in% c('sarscov2', 'influenza', 'rsv'))){
+    stop("Pathogen not found. Aborting!")
+  }
+
   fec = NULL
 
   if(tolower(pathogen) == 'sarscov2'){

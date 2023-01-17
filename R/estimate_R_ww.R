@@ -3,7 +3,7 @@
 #' @title Estimate the effective reproduction from wastewater concentration data.
 #'
 #' @param ww.conc Dataframe. Must have variables named \code{date} for the wastewater
-#' collection date and \code{value} for the pathogen concentration.
+#' collection date and \code{val} for the pathogen concentration.
 #' @param dist.fec Numerical vector. Distribution of fecal shedding (time unit=day).
 #' @param dist.gi Numerical vector. Distribution of the generation interval (time unit=day).
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to prevalence.
@@ -30,6 +30,14 @@ estimate_R_ww <- function(ww.conc,
                             span   = 0.20
                           )
 ) {
+
+  # Checking if ww.conc df contains required variables
+  if(!isTRUE("date" %in% names(ww.conc)) |
+     !isTRUE("val" %in% names(ww.conc))
+     ){
+    stop("date and value columns are required. Please check ww.conc.
+         Aborting!")
+  }
 
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc

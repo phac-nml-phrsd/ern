@@ -14,7 +14,7 @@ estimate_R_ww(
 }
 \arguments{
 \item{ww.conc}{Dataframe. Must have variables named \code{date} for the wastewater
-collection date and \code{value} for the pathogen concentration.}
+collection date and \code{val} for the pathogen concentration.}
 
 \item{dist.fec}{Numerical vector. Distribution of fecal shedding (time unit=day).}
 
