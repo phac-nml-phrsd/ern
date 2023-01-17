@@ -37,15 +37,28 @@ weekly_to_daily <- function(
 #' @param x dataframe. must at least have a `date` column
 #'
 #' @return dataframe.
-attach_t_agg <- function(x){
-  (x
-   %>% dplyr::mutate(
-     t = as.numeric(date - min(date))
-   )
+attach_t_agg <- function(x, first.aggregation = NULL){
+
+  # Handling the first aggregation
+  if(is.null(first.aggregation)){
+    fa = as.integer(x$date[2]-x$date[1])
+    warning(paste('Assuming the first observed incidence data
+                  is aggregated over',fa,'days.
+                  This can be changed in [[optional argument]].'))
+  }
+  if(!is.null(first.aggregation)){
+    fa = first.aggregation
+    message(paste('
+    Aggregation of first observed incidence
+    is set at',fa,'days.'))
+  }
+
+  res = (x
+   %>% dplyr::mutate(t = as.numeric(date - min(date)) + fa)
    %>% dplyr::arrange(t)
-   %>% dplyr::slice(-1) # cut off first date since
-   # we don't know the period over which that data was aggregated
   )
+
+  return(res)
 }
 
 #' Fit JAGS model to aggregated data
