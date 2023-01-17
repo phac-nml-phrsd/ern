@@ -76,12 +76,19 @@ fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
     n.days = NULL,
-    mcmc.params = list(burn = 1e3, iter = 3e3, chains = 3)
+    mcmc.params = list(burn = 1e3,
+                       iter = 3e3,
+                       chains = 3)
 ){
 
   if(is.null(n.days)) n.days = max(obs.times)
 
   # --- JAGS setup
+
+  # initial guess for the *daily* incidence
+  # (assumes same aggregation period for the first
+  # data point (Y[1]) as the second one. `+1` prevents Iinit=0)
+  Iinit = Y[1] / (obs.times[2] - obs.times[1]) + 1
 
   data_jags = list(
     obs.times = obs.times,
@@ -90,8 +97,11 @@ fit_jags_aggreg <- function(
     g = g,
     N = N,
     nobs = length(obs.times),
-    ng = length(g)
+    ng = length(g),
+    Iinit = Iinit
   )
+
+  message(print(paste('Iinit =', data_jags$Iinit)))
 
   params = c("R0", "alpha", "I")
 
@@ -107,14 +117,14 @@ fit_jags_aggreg <- function(
   model.text <- "model{
     # === Initial period ===
 
-    I[1] ~ dpois(N/1000)
+    I[1] ~ dpois(Iinit)
     S[1] <- N - I[1] #ifelse(I[1] < N, N - I[1], 1)
 
     for(t in 2:ng){
       tmp[t] <- sum(g[1:(t-1)] * I[t-1:(t-1)])
-      Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
-      I[t] ~ dpois(Im[t])
-      S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      I[t]   ~ dpois(Im[t])
+      S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
     }
 
     # === Main time loop ===
@@ -123,9 +133,9 @@ fit_jags_aggreg <- function(
 
     for(t in (ng+1):n.days){
       tmp[t] <- sum(g[1:ng] * I[t-(1:ng)])
-      S[t] <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
-      Im[t] <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
-      I[t] ~ dpois(Im[t])
+      S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      I[t]   ~ dpois(Im[t])
     }
 
     # -- Aggregation
@@ -147,8 +157,6 @@ fit_jags_aggreg <- function(
     R0 ~ dgamma(2,1)
     alpha ~ dgamma(1,1)
   }"
-
-  # fname = paste0(path.jags,'reem-fit-noww.jags')
 
   mod <- rjags::jags.model(
     file = textConnection(model.text),
