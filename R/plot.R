@@ -143,7 +143,22 @@ plot_diagnostic_cl <- function(
      + th
   )
 
+  # inferred input (smoothed daily cases)
+  # -------------------------
+  p4 <- r.estim$inferred.aggreg %>%
+    ggplot2::ggplot(ggplot2::aes(x=date)) +
+    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
+    ggplot2::geom_line(ggplot2::aes(y=obs)) +
+    ggplot2::geom_pointrange(
+      ggplot2::aes(y=med.agg, ymin=lwr.agg, ymax=upr.agg),
+      color= 'red2', alpha=0.6)+
+    ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
+    th
+
+
   # composite plot
   # -------------------------
-  p1 / p2 / p3
+
+  g = patchwork::wrap_plots(p1,p2,p3,p4, ncol=1)
+  return(g)
 }
