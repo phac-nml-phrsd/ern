@@ -5,7 +5,8 @@
 #'
 #' @importFrom rlang .data
 get_use_dates <- function(
-    reports.daily, reports, agg.reldiff.tol
+    reports.daily, reports, agg.reldiff.tol,
+    dates.only = TRUE
 ){
   reports.daily <- summarise_by_date(reports.daily)
 
@@ -28,12 +29,18 @@ get_use_dates <- function(
   )
 
   # unified data with aggregates and relative differences
-  (reports.daily
+  res = (reports.daily
     %>% dplyr::full_join(reports, by = "date")
     %>% summarise_report_counts(agg.reldiff.tol = agg.reldiff.tol)
-    %>% dplyr::filter(.data$use)
-    %>% dplyr::pull(date)
   )
+
+  if(dates.only) {
+    res = res  %>%
+      dplyr::filter(.data$use) %>%
+      dplyr::pull(date)
+  }
+
+  return(res)
 }
 
 

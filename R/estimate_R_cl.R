@@ -78,10 +78,22 @@ estimate_R_cl <- function(
     prm.R         = prm.R
   )
 
-  # return
-  list(
+  # Calculate the aggregated incidence
+  # from the inferred daily incidence:
+  inferred.aggreg = get_use_dates(
+    reports.daily   = cl.input,
+    reports         = cl.weekly,
+    agg.reldiff.tol = Inf,
+    dates.only      = FALSE ) %>%
+    dplyr::filter(!is.na(obs)) %>%
+    dplyr::select(date, obs, matches('agg$'))
+
+  res = list(
     cl.weekly  = cl.weekly,
     cl.input = cl.input,
+    inferred.aggreg = inferred.aggreg,
     R = R
   )
+
+  return(res)
 }
