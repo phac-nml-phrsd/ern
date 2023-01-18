@@ -35,22 +35,26 @@ weekly_to_daily <- function(
 #' of time that data was aggregated
 #'
 #' @param x dataframe. must at least have a `date` column
+#' @param first.agg.period numeric. number of days over which reports were summed for the first observed report. if NULL, assumes same aggregation period as for second observation.
 #'
 #' @return dataframe.
-attach_t_agg <- function(x, first.aggregation = NULL){
+attach_t_agg <- function(x, first.agg.period = NULL){
 
   # Handling the first aggregation
-  if(is.null(first.aggregation)){
+  if(is.null(first.agg.period)){
     fa = as.integer(x$date[2]-x$date[1])
-    warning(paste('Assuming the first observed incidence data
-                  is aggregated over',fa,'days.
-                  This can be changed in [[optional argument]].'))
+    warning(paste0("Assuming the first observed report (from ", x$date[1], ")
+                    is aggregated over ", fa , " previous days
+                    (second observation's aggregation period).
+                    This can be changed in `estimate_R_cl()`, using the
+                    `prm.daily` argument (set a value for `first.agg.period`
+                    in this parameter list)."))
   }
-  if(!is.null(first.aggregation)){
-    fa = first.aggregation
+  if(!is.null(first.agg.period)){
+    fa = first.agg.period
     message(paste('
-    Aggregation of first observed incidence
-    is set at',fa,'days.'))
+    Aggregation period for first observed report
+    is set to', fa, 'days.'))
   }
 
   res = (x
