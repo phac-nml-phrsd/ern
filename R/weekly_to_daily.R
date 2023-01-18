@@ -44,11 +44,11 @@ attach_t_agg <- function(x, first.agg.period = NULL){
   if(is.null(first.agg.period)){
     fa = as.integer(x$date[2]-x$date[1])
     warning(paste0("Assuming the first observed report (from ", x$date[1], ")
-                    is aggregated over ", fa , " previous days
-                    (second observation's aggregation period).
-                    This can be changed in `estimate_R_cl()`, using the
-                    `prm.daily` argument (set a value for `first.agg.period`
-                    in this parameter list)."))
+    is aggregated over ", fa , " previous days
+    (second observation's aggregation period).
+    This can be changed in `estimate_R_cl()`, using the
+    `prm.daily` argument (set a value for `first.agg.period`
+    in this parameter list)."))
   }
   if(!is.null(first.agg.period)){
     fa = first.agg.period
