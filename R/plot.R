@@ -118,22 +118,22 @@ plot_diagnostic_cl <- function(
    + th
   )
 
-  # original input (weekly cases)
+  # original input (aggregated cases)
   # -------------------------
   p2 <- (ggplot2::ggplot(
-    (r.estim$cl.weekly
+    (r.estim$cl.agg
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
      ggplot2::aes(x = date, y = .data$count))
      + ggplot2::geom_col(na.rm = TRUE)
      + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
-     + ggplot2::labs(subtitle = "Original signal: weekly case reports")
+     + ggplot2::labs(subtitle = "Original signal: aggregated case reports")
      + th
   )
 
   # inferred input (smoothed daily cases)
   # -------------------------
   p3 <- (ggplot2::ggplot(
-    (r.estim$cl.input
+    (r.estim$cl.daily
      %>% summarise_by_date()
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
          ggplot2::aes(x = date))

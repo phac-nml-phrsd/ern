@@ -5,7 +5,7 @@
 \title{Ensemble estimate of Rt}
 \usage{
 estimate_R_cl_rep(
-  cl.input,
+  cl.daily,
   dist.repfrac,
   dist.repdelay,
   dist.incub,
@@ -14,7 +14,7 @@ estimate_R_cl_rep(
 )
 }
 \arguments{
-\item{cl.input}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+\item{cl.daily}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
 
 \item{dist.repfrac}{parameters for the reporting fraction distribution}
 

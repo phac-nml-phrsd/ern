@@ -4,12 +4,12 @@
 \alias{get_use_dates}
 \title{Get dates for which to use (trust) inferred daily reports}
 \usage{
-get_use_dates(reports.daily, reports, agg.reldiff.tol)
+get_use_dates(reports.daily, reports, agg.reldiff.tol, dates.only = TRUE)
 }
 \arguments{
 \item{reports.daily}{dataframe of daily reported cases. must at least include \code{value} column with counts.}
 
-\item{reports}{dataframe. original weekly reports. must at least have \code{date} column}
+\item{reports}{dataframe. original aggregated reports. must at least have \code{date} column}
 }
 \description{
 Get dates for which to use (trust) inferred daily reports

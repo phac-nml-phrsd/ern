@@ -1,6 +1,6 @@
-#' Infer daily counts from weekly aggregates
+#' Infer daily counts from aggregates
 #'
-#' @param cl.weekly dataframe. must have variables \code{date} for the calendar
+#' @param cl.agg dataframe. must have variables \code{date} for the calendar
 #' date of the observation, \code{count} for the count of reported cases.
 #' @param popsize population size.
 #' @param prm.daily parameters for daily report inference (via MCMC).
@@ -8,8 +8,8 @@
 #'
 #' @return Dataframe with individual realizations of daily reported cases
 #' @export
-weekly_to_daily <- function(
-  cl.weekly,
+agg_to_daily <- function(
+  cl.agg,
   dist.gi,
   popsize,
   prm.daily
@@ -19,12 +19,12 @@ weekly_to_daily <- function(
 
   (fit_jags_aggreg(
     g = gi, N = popsize,
-    obs.times = cl.weekly$t,
-    Y = cl.weekly$count,
+    obs.times = cl.agg$t,
+    Y = cl.agg$count,
     mcmc.params = prm.daily
   )
     %>% reshape_fit_jags()
-    %>% get_realizations(cl.weekly)
+    %>% get_realizations(cl.agg)
   )
 }
 
@@ -205,12 +205,12 @@ reshape_fit_jags <- function(x){
   )
 }
 
-#' Retrieve realizations for weekly -> daily inference
+#' Retrieve realizations for aggregated -> daily inference
 #'
 #' @param fit.reports.daily dataframe. realizations from daily report inference. must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
-#' @param reports dataframe. original weekly reports. must at least have `date` column
+#' @param reports dataframe. original aggregated reports. must at least have `date` column
 #'
-#' @seealso [weekly_to_daily()]
+#' @seealso [agg_to_daily()]
 #'
 #' @importFrom rlang .data
 get_realizations <- function(
