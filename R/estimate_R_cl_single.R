@@ -129,7 +129,7 @@ reports_to_incidence <- function(
     # filter out first x days, where x is the sum of
     # the max reporting delay and the max incubation period
     # (i.e. disregard reports before a full observation period is complete)
-    %>% dplyr::filter(t >= incubation.period$max + reporting.delay$max)
+    # %>% dplyr::filter(t >= incubation.period$max + reporting.delay$max)
     %>% dplyr::left_join(date.lookup, by = "t")
     %>% dplyr::transmute(
       date,
