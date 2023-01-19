@@ -118,7 +118,7 @@ plot_diagnostic_cl <- function(
    + th
   )
 
-  # original input (weekly cases)
+  # original input (aggregated cases)
   # -------------------------
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.agg

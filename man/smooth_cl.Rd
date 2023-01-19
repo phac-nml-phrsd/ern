@@ -7,7 +7,7 @@
 smooth_cl(cl.daily, prm.smooth)
 }
 \arguments{
-\item{cl.daily}{Dataframe resulting from \code{\link[=weekly_to_daily]{weekly_to_daily()}}}
+\item{cl.daily}{Dataframe resulting from \code{\link[=agg_to_daily]{agg_to_daily()}}}
 
 \item{prm.smooth}{smoothing parameters}
 }

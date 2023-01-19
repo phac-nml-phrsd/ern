@@ -1,10 +1,10 @@
 #' @title Estimate the effective reproduction from clinical report data
 #'
-#' @inheritParams weekly_to_daily
+#' @inheritParams agg_to_daily
 #' @inheritParams smooth_cl
 #' @inheritParams estimate_R_cl_rep
-#' @param prm.daily.check list. parameters for checking weekly to daily report inference. set this parameter to `NULL` to use inferred daily reports as is. list elements include:
-#' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original weekly reports. observations outside of this tolerance are dropped.
+#' @param prm.daily.check list. parameters for checking aggregated to daily report inference. set this parameter to `NULL` to use inferred daily reports as is. list elements include:
+#' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -37,12 +37,14 @@ estimate_R_cl <- function(
   )
 ) {
 
-  # attach time-index column to observed weekly reports
-  cl.agg <- attach_t_agg(cl.agg,
-                            first.agg.period = prm.daily$first.agg.period)
+  # attach time-index column to observed aggregated reports
+  cl.agg <- attach_t_agg(
+    cl.agg,
+    first.agg.period = prm.daily$first.agg.period
+  )
 
   # estimate daily reports using JAGS model
-  cl.daily.raw = weekly_to_daily(
+  cl.daily.raw = agg_to_daily(
     cl.agg = cl.agg,
     dist.gi   = dist.gi,
     popsize   = popsize,

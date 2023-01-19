@@ -33,9 +33,9 @@ date of the observation, \code{count} for the count of reported cases.}
 
 \item{prm.daily}{parameters for daily report inference (via MCMC).}
 
-\item{prm.daily.check}{list. parameters for checking weekly to daily report inference. set this parameter to \code{NULL} to use inferred daily reports as is. list elements include:
+\item{prm.daily.check}{list. parameters for checking aggregated to daily report inference. set this parameter to \code{NULL} to use inferred daily reports as is. list elements include:
 \itemize{
-\item \code{agg.reldiff.tol}: numerical tolerance (\%) for relative error between aggregated inferred daily reports and original weekly reports. observations outside of this tolerance are dropped.
+\item \code{agg.reldiff.tol}: numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
 }}
 
 \item{prm.smooth}{smoothing parameters}
