@@ -4,10 +4,10 @@
 \alias{weekly_to_daily}
 \title{Infer daily counts from weekly aggregates}
 \usage{
-weekly_to_daily(cl.weekly, dist.gi, popsize, prm.daily)
+weekly_to_daily(cl.agg, dist.gi, popsize, prm.daily)
 }
 \arguments{
-\item{cl.weekly}{dataframe. must have variables \code{date} for the calendar
+\item{cl.agg}{dataframe. must have variables \code{date} for the calendar
 date of the observation, \code{count} for the count of reported cases.}
 
 \item{dist.gi}{parameters for the generation interval distribution}

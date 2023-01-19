@@ -5,20 +5,20 @@
 \title{Estimate the effective reproduction from clinical report data}
 \usage{
 estimate_R_cl(
-  cl.weekly,
+  cl.agg,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
   dist.gi,
   popsize,
-  prm.daily = list(burn = 500, iter = 2000, chains = 20),
+  prm.daily = list(burn = 500, iter = 2000, chains = 20, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
   prm.R = list(iter = 10)
 )
 }
 \arguments{
-\item{cl.weekly}{dataframe. must have variables \code{date} for the calendar
+\item{cl.agg}{dataframe. must have variables \code{date} for the calendar
 date of the observation, \code{count} for the count of reported cases.}
 
 \item{dist.repdelay}{parameters for the reporting delay distribution}
@@ -45,7 +45,7 @@ date of the observation, \code{count} for the count of reported cases.}
 \value{
 List. Elements include:
 \itemize{
-\item \code{cl.weekly} original weekly reports signal
+\item \code{cl.agg} original aggregated reports signal
 \item \code{cl.input} reports as input for Rt calculation (inferred daily counts, smoothed)
 \item \code{R} the effective R estimate (summary from ensemble)
 }
