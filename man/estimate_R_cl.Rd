@@ -46,7 +46,7 @@ date of the observation, \code{count} for the count of reported cases.}
 List. Elements include:
 \itemize{
 \item \code{cl.agg} original aggregated reports signal
-\item \code{cl.input} reports as input for Rt calculation (inferred daily counts, smoothed)
+\item \code{cl.daily} reports as input for Rt calculation (inferred daily counts, smoothed)
 \item \code{R} the effective R estimate (summary from ensemble)
 }
 }

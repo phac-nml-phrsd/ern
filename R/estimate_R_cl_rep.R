@@ -7,7 +7,7 @@
 #' @export
 #'
 estimate_R_cl_rep <- function(
-    cl.input,
+    cl.daily,
     dist.repfrac,
     dist.repdelay,
     dist.incub,
@@ -22,7 +22,7 @@ estimate_R_cl_rep <- function(
     R = dplyr::bind_rows(
       R,
       estimate_R_cl_single(
-        cl.input,
+        cl.daily,
         dist.repfrac,
         dist.repdelay,
         dist.incub,

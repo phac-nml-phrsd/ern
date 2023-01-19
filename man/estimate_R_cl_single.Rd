@@ -5,7 +5,7 @@
 \title{A single realization of the Rt estimate}
 \usage{
 estimate_R_cl_single(
-  cl.input,
+  cl.daily,
   dist.repfrac,
   dist.repdelay,
   dist.incub,
@@ -13,7 +13,7 @@ estimate_R_cl_single(
 )
 }
 \arguments{
-\item{cl.input}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+\item{cl.daily}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
 
 \item{dist.repfrac}{parameters for the reporting fraction distribution}
 

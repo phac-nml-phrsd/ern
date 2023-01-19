@@ -1,6 +1,6 @@
 #' A single realization of the Rt estimate
 #'
-#' @param cl.input dataframe. realizations of daily report counts. must include at least `date` and `value` columns.
+#' @param cl.daily dataframe. realizations of daily report counts. must include at least `date` and `value` columns.
 #' @param dist.repfrac parameters for the reporting fraction distribution
 #' @param dist.repdelay parameters for the reporting delay distribution
 #' @param dist.incub parameters for the incubation period distribution
@@ -10,7 +10,7 @@
 #'
 #' @export
 estimate_R_cl_single <- function(
-    cl.input,
+    cl.daily,
     dist.repfrac,
     dist.repdelay,
     dist.incub,
@@ -18,9 +18,9 @@ estimate_R_cl_single <- function(
 ){
 
   # sample one realization of reports.daily (smoothed)
-  id.list <- unique(cl.input$id)
+  id.list <- unique(cl.daily$id)
   the_id <- sample(id.list, size = 1)
-  df.draw <- (cl.input
+  df.draw <- (cl.daily
      %>% dplyr::filter(.data$id == the_id)
   )
 

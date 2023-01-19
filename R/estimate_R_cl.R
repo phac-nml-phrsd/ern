@@ -10,7 +10,7 @@
 #'
 #' @return List. Elements include:
 #' - `cl.agg` original aggregated reports signal
-#' - `cl.input` reports as input for Rt calculation (inferred daily counts, smoothed)
+#' - `cl.daily` reports as input for Rt calculation (inferred daily counts, smoothed)
 #' - `R` the effective R estimate (summary from ensemble)
 #' @export
 estimate_R_cl <- function(
@@ -42,7 +42,7 @@ estimate_R_cl <- function(
                             first.agg.period = prm.daily$first.agg.period)
 
   # estimate daily reports using JAGS model
-  cl.daily = weekly_to_daily(
+  cl.daily.raw = weekly_to_daily(
     cl.agg = cl.agg,
     dist.gi   = dist.gi,
     popsize   = popsize,
@@ -50,8 +50,8 @@ estimate_R_cl <- function(
   )
 
   # smooth daily reports before deconvolutions
-  cl.smooth = smooth_cl(
-    cl.daily   = cl.daily,
+  cl.daily = smooth_cl(
+    cl.daily   = cl.daily.raw,
     prm.smooth = prm.smooth
   )
 
@@ -59,20 +59,18 @@ estimate_R_cl <- function(
   if(!is.null(prm.daily.check)){
     if(is.null(prm.daily.check)) stop("please specify agg.reldiff.tol in prm.daily.check")
     cl.use.dates = get_use_dates(
-      cl.smooth,
+      cl.daily,
       cl.agg,
       prm.daily.check$agg.reldiff.tol
     )
-    cl.input = (cl.smooth
-                %>% dplyr::filter(date %in% cl.use.dates)
+    cl.daily = (cl.daily
+       %>% dplyr::filter(date %in% cl.use.dates)
     )
-  } else {
-    cl.input = cl.smooth
   }
 
   # estimate Rt many times and return summary
   R = estimate_R_cl_rep(
-    cl.input      = cl.input,
+    cl.daily      = cl.daily,
     dist.repfrac  = dist.repfrac,
     dist.repdelay = dist.repdelay,
     dist.incub    = dist.incub,
@@ -82,8 +80,8 @@ estimate_R_cl <- function(
 
   # Calculate the aggregated incidence
   # from the inferred daily incidence:
-  inferred.aggreg = get_use_dates(
-    reports.daily   = cl.input,
+  inferred.agg = get_use_dates(
+    reports.daily   = cl.daily,
     reports         = cl.agg,
     agg.reldiff.tol = Inf,
     dates.only      = FALSE ) %>%
@@ -92,8 +90,8 @@ estimate_R_cl <- function(
 
   res = list(
     cl.agg  = cl.agg,
-    cl.input = cl.input,
-    inferred.aggreg = inferred.aggreg,
+    cl.daily = cl.daily,
+    inferred.agg = inferred.agg,
     R = R
   )
 
