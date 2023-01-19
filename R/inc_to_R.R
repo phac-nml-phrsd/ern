@@ -34,7 +34,7 @@ inc_to_R <- function(df, gi){
   start_date = min(dat$date)
 
   est_df = tmp$R %>%
-    dplyr::mutate(date = as.Date(start_date) + .data$t_end) %>%
+    dplyr::mutate(date = as.Date(start_date) + .data$t_start) %>%
     dplyr::rename(
       mean   = .data$`Mean(R)`,
       median = .data$`Median(R)`,
