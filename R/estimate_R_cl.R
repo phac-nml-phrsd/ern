@@ -23,7 +23,8 @@ estimate_R_cl <- function(
   prm.daily = list(
     burn = 500,
     iter = 2e3,
-    chains = 20
+    chains = 20,
+    first.agg.period = NULL
   ),
   prm.daily.check = list(
     agg.reldiff.tol = 10
@@ -37,7 +38,8 @@ estimate_R_cl <- function(
 ) {
 
   # attach time-index column to observed weekly reports
-  cl.weekly <- attach_t_agg(cl.weekly)
+  cl.weekly <- attach_t_agg(cl.weekly,
+                            first.agg.period = prm.daily$first.agg.period)
 
   # estimate daily reports using JAGS model
   cl.daily = weekly_to_daily(
@@ -78,10 +80,22 @@ estimate_R_cl <- function(
     prm.R         = prm.R
   )
 
-  # return
-  list(
+  # Calculate the aggregated incidence
+  # from the inferred daily incidence:
+  inferred.aggreg = get_use_dates(
+    reports.daily   = cl.input,
+    reports         = cl.weekly,
+    agg.reldiff.tol = Inf,
+    dates.only      = FALSE ) %>%
+    dplyr::filter(!is.na(obs)) %>%
+    dplyr::select(date, obs, matches('agg$'))
+
+  res = list(
     cl.weekly  = cl.weekly,
     cl.input = cl.input,
+    inferred.aggreg = inferred.aggreg,
     R = R
   )
+
+  return(res)
 }
