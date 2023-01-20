@@ -9,7 +9,7 @@ suppressMessages({
 
 library(ern)
 
-fakedata = 1
+fakedata = 0
 
 if(!fakedata){
   source('../ern-dev/utils.R')
