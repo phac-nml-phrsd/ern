@@ -32,7 +32,7 @@ inc_to_R <- function(df, gi){
                              config = config)
 
   est_df = tmp$R %>%
-    dplyr::left_join(dat, by = c("t_start" = "t")) %>%
+    dplyr::left_join(dat, by = c("t_end" = "t")) %>%
     dplyr::rename(
       mean   = .data$`Mean(R)`,
       median = .data$`Median(R)`,
