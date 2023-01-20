@@ -11,7 +11,7 @@ inc_to_R <- function(df, gi){
 
   dat = df %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
-    dplyr::select(date, I) %>%
+    select(I, date, t) %>%
     tidyr::drop_na()
 
   config = EpiEstim::make_config(list(
@@ -31,10 +31,8 @@ inc_to_R <- function(df, gi){
                              method = 'uncertain_si',
                              config = config)
 
-  start_date = min(dat$date)
-
   est_df = tmp$R %>%
-    dplyr::mutate(date = as.Date(start_date) + .data$t_end) %>%
+    dplyr::left_join(dat, by = c("t_end" = "t")) %>%
     dplyr::rename(
       mean   = .data$`Mean(R)`,
       median = .data$`Median(R)`,
