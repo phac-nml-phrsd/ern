@@ -20,9 +20,12 @@ get_fecal_shedding <- function(pathogen, subtype = '') {
   fec = NULL
 
   if(tolower(pathogen) == 'sarscov2'){
-    y = 1:20
-    z = y^2*exp(-y/2)
-    fec = z/sum(z)
+    shed.asymp = exp(c(5,7.30103,7.083333,6.677121,6.30,5.9))
+    shed.symp = exp(c(5,7.30103,7.083333,6.677121,6.30,5.9))
+    shed.noninf = exp(c(5.40103,4.60103,3.90103,3.10103,2.10103,1.2))
+
+    fec = rowMeans(cbind(shed.asymp, shed.noninf, shed.symp))/
+      sum(rowMeans(cbind(shed.asymp, shed.noninf, shed.symp)))
 
     if(subtype == 'foo'){
       # TO DO...
