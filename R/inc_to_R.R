@@ -28,8 +28,8 @@ inc_to_R <- function(df, gi){
     ))
 
   tmp = EpiEstim::estimate_R(incid  = dat,
-                             method = 'uncertain_si',
-                             config = config)
+                             method = 'si_from_sample',
+                             si_sample = matrix(c(0, get_discrete_dist(gi))))
 
   est_df = tmp$R %>%
     dplyr::left_join(dat, by = c("t_end" = "t")) %>%
