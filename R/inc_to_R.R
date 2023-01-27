@@ -14,19 +14,6 @@ inc_to_R <- function(df, gi){
     select(I, date, t) %>%
     tidyr::drop_na()
 
-  config = EpiEstim::make_config(list(
-    mean_si     = gi$mean,
-    std_mean_si = gi$mean_sd,
-    min_mean_si = gi$mean - 2*gi$mean_sd,
-    max_mean_si = gi$mean + 2*gi$mean_sd,
-    std_si      = gi$sd,
-    std_std_si  = gi$sd_sd,
-    min_std_si  = gi$sd - 2*gi$sd_sd,
-    max_std_si  = gi$sd + 2*gi$sd_sd,
-    n1 = 200,
-    n2 = 50
-    ))
-
   tmp = EpiEstim::estimate_R(incid  = dat,
                              method = 'si_from_sample',
                              si_sample = matrix(c(0, get_discrete_dist(gi))))
