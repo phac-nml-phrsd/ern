@@ -47,10 +47,15 @@ estimate_R_cl_single <- function(
 
   # reports deconvoluted with reporting delay distribution
   # and then with incubation period distribution
-  incidence <- reports_to_incidence(
+  incidence <- (reports_to_incidence(
     reports.daily.scaled,
     reporting.delay,
     incubation.period,
+  )
+    # attach time index to incidence
+    %>% dplyr::mutate(
+      t = 1:nrow(.)
+    )
   )
 
   # estimate Rt
@@ -169,7 +174,7 @@ deconv <- function(
 
 #' Estimate Rt using EpiEstim
 #'
-#' @param incidence dataframe. estimated incidence. includes at least `date` and `value` columns.
+#' @param incidence dataframe. estimated incidence. includes at least `date`, `I`, and `t` columns.
 #' @param generation.interval list. parameters for generation interval from [`def_dist_generation_interval()`].
 #'
 #' @importFrom rlang .data
@@ -180,17 +185,11 @@ incidence_to_R <- function(
     generation.interval
 ){
 
-  date.lookup <- (incidence
-  %>% dplyr::transmute(
-    date,
-    t = 1:nrow(.))
-  )
-
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function)
   # -------------------------
   (EpiEstim::estimate_R(
-    incidence$value,
+    incidence$I,
     method = "si_from_sample",
     si_sample = matrix(c(0, get_discrete_dist(generation.interval)))
     # method = "parametric_si",
@@ -201,14 +200,13 @@ incidence_to_R <- function(
     #   std_si = generation.interval$sd
     # ))
   )$R
-  # just take mean estimate of R
-  # TODO: where does the rest of the uncertainty come from??
-  %>% janitor::clean_names()
-  %>% dplyr::left_join(date.lookup, by = c("t_end" = "t"))
+  %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
   %>% dplyr::select(-dplyr::starts_with("t_"))
   %>% dplyr::transmute(
     date,
-    value = .data$mean_r
+    # TODO: rename to R
+    mean = .data$mean_r,
+    I
   )
   )
 }
