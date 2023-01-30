@@ -205,7 +205,7 @@ incidence_to_R <- function(
   %>% dplyr::transmute(
     date,
     # TODO: rename to R
-    mean = .data$mean_r,
+    mean = .data$`Mean(R)`,
     I
   )
   )

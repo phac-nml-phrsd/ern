@@ -52,9 +52,14 @@ estimate_R_ww <- function(ww.conc,
                       fec            = dist.fec,
                       scaling.factor = scaling.factor)
 
+  i = inc[["inc"]] %>%
+    dplyr::mutate(I = .data$inc.deconvol) %>%
+    select(date,I, t) %>%
+    tidyr::drop_na()
+
   # Use the estimated incidence to calculate R:
-  rt = inc_to_R(df         = inc[["inc"]],
-                gi         = dist.gi)
+  rt = incidence_to_R(incidence = i,
+                      generation.interval = dist.gi)
 
   return(list(
     ww.conc   = ww.conc,

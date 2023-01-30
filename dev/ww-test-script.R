@@ -7,7 +7,7 @@ suppressMessages({
   library(patchwork)
 })
 
-library(ern)
+devtools::load_all()
 
 fakedata = 0
 
