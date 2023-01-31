@@ -11,7 +11,7 @@
 incidence_to_R <- function(
     incidence,
     generation.interval,
-    config.EpiEstim
+    config.EpiEstim = NULL
 ){
   # prep inputs
   # -------------------------

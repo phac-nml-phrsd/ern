@@ -4,7 +4,7 @@
 \alias{incidence_to_R}
 \title{Estimate Rt using EpiEstim}
 \usage{
-incidence_to_R(incidence, generation.interval, config.EpiEstim)
+incidence_to_R(incidence, generation.interval, config.EpiEstim = NULL)
 }
 \arguments{
 \item{incidence}{dataframe. estimated incidence. includes at least \code{date}, \code{I}, and \code{t} columns.}
