@@ -39,6 +39,8 @@ estimate_R_ww <- function(ww.conc,
          Aborting!")
   }
 
+  f = get_discrete_dist(dist.fec)
+
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
@@ -49,7 +51,7 @@ estimate_R_ww <- function(ww.conc,
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel:
   inc = deconv_ww_inc(d              = ww.smooth,
-                      fec            = dist.fec,
+                      fec            = f,
                       scaling.factor = scaling.factor)
 
   i = inc[["inc"]] %>%
