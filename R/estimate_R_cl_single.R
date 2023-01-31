@@ -59,9 +59,14 @@ estimate_R_cl_single <- function(
   )
 
   # estimate Rt
-  incidence_to_R(
+  (incidence_to_R(
     incidence,
     generation.interval
+  )
+    %>% dplyr::transmute(
+      .data$date,
+      value = .data$mean
+    )
   )
 
 }
@@ -138,7 +143,7 @@ reports_to_incidence <- function(
     %>% dplyr::left_join(date.lookup, by = "t")
     %>% dplyr::transmute(
       date,
-      value = .data$y
+      I = .data$y
     )
     %>% tibble::as_tibble()
   )

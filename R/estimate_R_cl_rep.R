@@ -16,7 +16,9 @@ estimate_R_cl_rep <- function(
       iter = 100
     )) {
 
-  # TODO: parallelize
+  # TODO: parallelize in a generic way (using a custom
+  # iteration function that we use both on the clinical
+  # and ww side)
   R = NULL
   for(i in 1:prm.R$iter){
     R = dplyr::bind_rows(

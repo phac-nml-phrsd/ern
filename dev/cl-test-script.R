@@ -1,7 +1,7 @@
 devtools::load_all()
 library(magrittr)
 
-dat = readRDS('tmp.rds') %>% dplyr::mutate(count = round(count/20))
+dat = readRDS('dev/tmp.rds') %>% dplyr::mutate(count = round(count/20))
 dat = dat[1:6,]
 
 max.dists = 10 # need to truncate distributions if you're using a very short timeseries
