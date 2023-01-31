@@ -4,14 +4,17 @@
 \alias{get_gamma_fec}
 \title{Fecal Shedding Gamma Distribution}
 \usage{
-get_gamma_fec(fec.df)
+get_gamma_fec(fec.list)
 }
 \arguments{
-\item{fec.df}{List of fecal shedding parameters}
+\item{fec.list}{List of fecal shedding parameters based on various shedding
+profiles (e.g. asymptomatic, symptomatic, and hospitalized symptomatic).}
 }
 \value{
-A numerical vector where each element represent one day since infection.
+A dataframe containing the mean and sd of gamma distributions for
+each shedding profile.
 }
 \description{
-Fecal Shedding Gamma Distribution
+Function generates a gamma distribution for each fecal shedding
+profile.
 }
