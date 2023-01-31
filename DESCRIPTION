@@ -17,7 +17,6 @@ Imports:
     dplyr,
     EpiEstim,
     ggplot2,
-    janitor,
     lubridate,
     magrittr,
     patchwork,
