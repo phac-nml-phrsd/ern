@@ -33,7 +33,8 @@ estimate_R_cl <- function(
     window = 7
   ),
   prm.R = list(
-    iter = 10
+    iter = 10,
+    config.EpiEstim = NULL
   )
 ) {
 

@@ -9,7 +9,8 @@ estimate_R_cl_single(
   dist.repfrac,
   dist.repdelay,
   dist.incub,
-  dist.gi
+  dist.gi,
+  prm.R
 )
 }
 \arguments{
@@ -22,6 +23,12 @@ estimate_R_cl_single(
 \item{dist.incub}{parameters for the incubation period distribution}
 
 \item{dist.gi}{parameters for the generation interval distribution}
+
+\item{prm.R}{settings for the ensemble. list with elements:
+\itemize{
+\item{\code{iter}: }{number of iterations for ensemble}
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, use default config from \code{EpiEstim}.}
+}}
 }
 \description{
 A single realization of the Rt estimate

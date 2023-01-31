@@ -4,16 +4,20 @@
 \alias{incidence_to_R}
 \title{Estimate Rt using EpiEstim}
 \usage{
-incidence_to_R(incidence, generation.interval)
+incidence_to_R(incidence, generation.interval, config.EpiEstim = NULL)
 }
 \arguments{
 \item{incidence}{dataframe. estimated incidence. includes at least \code{date}, \code{I}, and \code{t} columns.}
 
 \item{generation.interval}{list. parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+
+\item{config.EpiEstim}{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, use default config from \code{EpiEstim}.}
 }
 \description{
 Estimate Rt using EpiEstim
 }
 \seealso{
 \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}
+
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}
 }
