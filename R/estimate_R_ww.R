@@ -9,7 +9,10 @@
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to prevalence.
 #' This value may be assumed or independently calibrated to data.
 #' @param prm.smooth List. Parameters for the smoothing algorithm of the wastewater signal.
-#'
+#' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
+#' \itemize{
+#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
+#' }
 #' @return List. Elements include:
 #' - `ww.conc` original wastewater signal
 #' - `ww.smooth` smoothed wastewater signal
@@ -28,6 +31,9 @@ estimate_R_ww <- function(ww.conc,
                             align  = 'center',
                             method = 'loess',
                             span   = 0.20
+                          ),
+                          prm.R = list(
+                            config.EpiEstim = NULL
                           )
 ) {
 
@@ -58,8 +64,11 @@ estimate_R_ww <- function(ww.conc,
     tidyr::drop_na()
 
   # Use the estimated incidence to calculate R:
-  rt = incidence_to_R(incidence = i,
-                      generation.interval = dist.gi)
+  rt = incidence_to_R(
+    incidence = i,
+    generation.interval = dist.gi,
+    config.EpiEstim = prm.R$config.EpiEstim
+  )
 
   return(list(
     ww.conc   = ww.conc,
