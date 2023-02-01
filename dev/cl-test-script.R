@@ -28,7 +28,7 @@ prm.daily = list(
 prm.smooth = list( window = 7)
 prm.R = list(
   iter = 2
-  , config.EpiEstim = make_config(
+  , config.EpiEstim = EpiEstim::make_config(
     seed = 14
   )
 )

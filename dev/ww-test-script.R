@@ -42,6 +42,13 @@ prm.smooth = list(
   span   = 0.29
 )
 
+# prm.R = list(
+#   config.EpiEstim = NULL
+# )
+prm.R = list(
+  config.EpiEstim = EpiEstim::make_config(seed = 15)
+)
+
 dist.fec = ern::get_fecal_shedding('sarscov2')
 
 z = c( rep(1,6), c(2,3,3,3,2), rep(1,5))
@@ -61,7 +68,8 @@ r.estim = ern::estimate_R_ww(
   dist.fec       = dist.fec,
   dist.gi        = dist.gi,
   scaling.factor = 2,
-  prm.smooth     = prm.smooth
+  prm.smooth     = prm.smooth,
+  prm.R = prm.R
 )
 
 

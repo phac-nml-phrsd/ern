@@ -38,6 +38,14 @@ estimate_R_cl <- function(
   )
 ) {
 
+  # Checking arguments
+  # -------------------------
+
+  check_prm.R(prm.R)
+
+  # Aggregated -> daily reports
+  # -------------------------
+
   # attach time-index column to observed aggregated reports
   cl.agg <- attach_t_agg(
     cl.agg,
@@ -51,6 +59,9 @@ estimate_R_cl <- function(
     popsize   = popsize,
     prm.daily = prm.daily
   )
+
+  # Smooth daily reports
+  # -------------------------
 
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
@@ -71,7 +82,9 @@ estimate_R_cl <- function(
     )
   }
 
-  # estimate Rt many times and return summary
+  # Estimate Rt in an ensemble and return summary
+  # -------------------------
+
   R = estimate_R_cl_rep(
     cl.daily      = cl.daily,
     dist.repfrac  = dist.repfrac,
@@ -81,8 +94,9 @@ estimate_R_cl <- function(
     prm.R         = prm.R
   )
 
-  # Calculate the aggregated incidence
-  # from the inferred daily incidence:
+  # Calculate the aggregated reports from the inferred daily reports
+  # -------------------------
+
   inferred.agg = get_use_dates(
     reports.daily   = cl.daily,
     reports         = cl.agg,
@@ -90,6 +104,9 @@ estimate_R_cl <- function(
     dates.only      = FALSE ) %>%
     dplyr::filter(!is.na(obs)) %>%
     dplyr::select(date, obs, matches('agg$'))
+
+  # Return results
+  # -------------------------
 
   res = list(
     cl.agg  = cl.agg,

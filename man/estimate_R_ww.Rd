@@ -9,7 +9,8 @@ estimate_R_ww(
   dist.fec,
   dist.gi,
   scaling.factor = 1,
-  prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2)
+  prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
+  prm.R = list(config.EpiEstim = NULL)
 )
 }
 \arguments{
@@ -24,6 +25,11 @@ collection date and \code{val} for the pathogen concentration.}
 This value may be assumed or independently calibrated to data.}
 
 \item{prm.smooth}{List. Parameters for the smoothing algorithm of the wastewater signal.}
+
+\item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
+\itemize{
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+}}
 }
 \value{
 List. Elements include:

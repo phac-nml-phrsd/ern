@@ -24,10 +24,10 @@ estimate_R_cl_single(
 
 \item{dist.gi}{parameters for the generation interval distribution}
 
-\item{prm.R}{settings for the ensemble. list with elements:
+\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
 \itemize{
 \item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, use default config from \code{EpiEstim}.}
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
 }}
 }
 \description{

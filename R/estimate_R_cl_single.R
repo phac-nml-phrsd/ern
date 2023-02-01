@@ -5,10 +5,10 @@
 #' @param dist.repdelay parameters for the reporting delay distribution
 #' @param dist.incub parameters for the incubation period distribution
 #' @param dist.gi parameters for the generation interval distribution
-#' @param prm.R settings for the ensemble. list with elements:
+#' @param prm.R list. settings for the ensemble when calculating Rt. elements include:
 #' \itemize{
 #'  \item{`iter`: }{number of iterations for ensemble}
-#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, use default config from `EpiEstim`.}
+#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
 #' }
 #'
 #' @importFrom rlang .data
