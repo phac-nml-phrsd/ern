@@ -37,6 +37,10 @@ estimate_R_ww <- function(ww.conc,
                           )
 ) {
 
+  # Checking arguments
+  # -------------------------
+  check_prm.R(prm.R)
+
   # Checking if ww.conc df contains required variables
   if(!isTRUE("date" %in% names(ww.conc)) |
      !isTRUE("val" %in% names(ww.conc))

@@ -23,8 +23,6 @@ incidence_to_R <- function(
       method = method
     ))
   } else {
-    if(!is.null(config.EpiEstim$method)) stop("EpiEstim method cannot be changed for ern")
-    if(!is.null(config.EpiEstim$n2)) stop("parameters specific to EpiEstim method 'si_from_sample' cannot be changed for ern")
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
       incid = incid,
       method = method,
