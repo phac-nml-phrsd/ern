@@ -4,18 +4,14 @@
 #' @export
 def_dist_incubation_period <- function(){
   list(
-    dist = "lnorm",
-    mean = 1.621,
-    mean_sd = 0.064,
-    sd = 0.418,
-    sd_sd = 0.0691,
-    max = 15
+    dist = "gamma",
+    mean = 3.49,
+    mean_sd = 0.1477,
+    shape = 8.5,
+    shape_sd = 1.8945,
+    max = 8
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_incubation_period(
-  #   disease = "SARS-CoV-2",
-  #   source = "lauer"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the generation interval distribution
@@ -23,25 +19,20 @@ def_dist_incubation_period <- function(){
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(){
-  list(
+  x <- list(
     dist = "gamma",
-    mean = 3.635272,
-    mean_sd = 0.7109351,
-    sd = 3.07531,
-    sd_sd = 0.7695178,
+    mean = 6.84,
+    mean_sd = 0.7486,
+    shape = 2.39,
+    shape_sd = 0.3573,
     max = 15
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_generation_time(
-  #   disease = "SARS-CoV-2",
-  #   source = "ganyani"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the reporting fraction distribution
 #'
 #' @template return-dist
-#' @export
 def_dist_reporting_fraction <- function(){
   list(
       dist = "unif",
@@ -87,12 +78,19 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
-#' @export
 #'
 #' @examples prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 get_discrete_dist <- function(params){
-  if(!(params$dist %in% c("lnorm", "gamma"))) stop("distribution recipe has not been defined")
 
+  # check args
+  # -------------------------
+  check_dist(params)
+
+  if(!(params$dist %in% c("lnorm", "gamma"))) stop(paste0("Distribution recipe has not
+been defined for specified distribution type (dist = ", params$dist, ")"))
+
+  # get discrete dist
+  # -------------------------
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
       1:params$max,
@@ -102,14 +100,22 @@ get_discrete_dist <- function(params){
   }
 
   if(params$dist == "gamma"){
+    if("sd" %in% names(params)){
+      shape = params$mean^2/params$sd^2
+      scale = params$sd^2/params$mean
+    } else if("shape" %in% names(params)){
+      shape = params$shape
+      scale = params$mean/shape
+    }
     x <- stats::dgamma(
       1:params$max,
-      shape = params$mean^2/params$sd^2,
-      scale = params$sd^2/params$mean
+      shape = shape,
+      scale = scale
     )
   }
 
-  # normalize to 1
+  # normalize to 1 and return
+  # -------------------------
   x/sum(x)
 }
 
