@@ -237,7 +237,7 @@ summary.inc.per <- make_summary_table(
   )
 )
 
-knitr::kable(summary.inc.per, digits = 4)
+display_table(summary.inc.per)
 ```
 
 ## Mean fitted distributions
@@ -278,7 +278,7 @@ plot_mean_dist <- function(summary, max){
     + theme_bw()
     + theme(
       axis.title.y = element_blank(),
-      text = element_text(size = 20)
+      text = element_text(size = 16)
     )
   )
 }
