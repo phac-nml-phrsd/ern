@@ -4,18 +4,14 @@
 #' @export
 def_dist_incubation_period <- function(){
   list(
-    dist = "lnorm",
-    mean = 1.621,
-    mean_sd = 0.064,
-    sd = 0.418,
-    sd_sd = 0.0691,
-    max = 15
+    dist = "gamma",
+    mean = 3.49,
+    mean_sd = 0.1477,
+    shape = 8.5,
+    shape_sd = 1.8945,
+    max = 8
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_incubation_period(
-  #   disease = "SARS-CoV-2",
-  #   source = "lauer"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the generation interval distribution
@@ -23,19 +19,15 @@ def_dist_incubation_period <- function(){
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(){
-  list(
+  x <- list(
     dist = "gamma",
-    mean = 3.635272,
-    mean_sd = 0.7109351,
-    sd = 3.07531,
-    sd_sd = 0.7695178,
+    mean = 6.84,
+    mean_sd = 0.7486,
+    shape = 2.39,
+    shape_sd = 0.3573,
     max = 15
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_generation_time(
-  #   disease = "SARS-CoV-2",
-  #   source = "ganyani"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the reporting fraction distribution
