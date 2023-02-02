@@ -22,7 +22,7 @@ Daniel Park suggested using [Manica *et al.* 2022](https://www.sciencedirect.com
 
 We want a measure of uncertainty around each distribution parameter because we want to propagate uncertainty in the specification of these distributions through to the $R_t$ calculation. We will start with distribution parameters along with uncertainty around each parameter and use these givens to parameterize a *family* of distributions. Then we calculate $R_t$ using an ensemble, where for each realization we draw from the specified familes of distributions to select one generation interval distribution (and one incubation period in the case of clinical data) to use for that specific calculation.
 
-Note that Manica *et al* estimate distributions for two different generation times but we will use the **intrinsic generation time**.
+Note that Manica *et al.* estimate distributions for two different generation times but we will use the **intrinsic generation time**.
 
 ## The catch
 
@@ -165,7 +165,7 @@ print_fit_sd(mean = 3.49, ci = c(3.17, 3.77))
 
 Looks good!
 
-## Fitted parameter values  {#sec-params}
+## Fitted parameter values {#sec-params}
 
 Finally we have summaries of the fitted parameter values using the code above for each family of distributions!
 
