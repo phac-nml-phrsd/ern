@@ -17,3 +17,27 @@ will also be ignored.")
   }
 
 }
+
+#' Check distributions
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
+check_dist <- function(x){
+  if(x$dist == "gamma"){
+    if(!("sd" %in% names(x) | "shape" %in% names(x))){
+      stop(paste0("Gamma distributions must be specified with a mean and one of
+a standard deviation (sd) or a shape parameter (shape).
+Neither sd nor shape found: ", print(x)))
+    }
+    if("sd" %in% names(x) & "shape" %in% names(x)){
+      stop(paste0("Gamma distributions must be specified with a mean and either
+one of a standard deviation (sd) or a shape parameter (shape).
+Both sd and shape found: ", print(x)))
+    }
+
+  }
+}

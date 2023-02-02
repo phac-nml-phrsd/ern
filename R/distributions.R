@@ -41,7 +41,6 @@ def_dist_generation_interval <- function(){
 #' Define the reporting fraction distribution
 #'
 #' @template return-dist
-#' @export
 def_dist_reporting_fraction <- function(){
   list(
       dist = "unif",
@@ -87,12 +86,19 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
-#' @export
 #'
 #' @examples prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 get_discrete_dist <- function(params){
-  if(!(params$dist %in% c("lnorm", "gamma"))) stop("distribution recipe has not been defined")
 
+  # check args
+  # -------------------------
+  check_dist(params)
+
+  if(!(params$dist %in% c("lnorm", "gamma"))) stop(paste0("Distribution recipe has not
+been defined for specified distribution type (dist = ", params$dist, ")"))
+
+  # get discrete dist
+  # -------------------------
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
       1:params$max,
@@ -102,14 +108,22 @@ get_discrete_dist <- function(params){
   }
 
   if(params$dist == "gamma"){
+    if("sd" %in% names(params)){
+      shape = params$mean^2/params$sd^2
+      scale = params$sd^2/params$mean
+    } else if("shape" %in% names(params)){
+      shape = params$shape
+      scale = params$mean/shape
+    }
     x <- stats::dgamma(
       1:params$max,
-      shape = params$mean^2/params$sd^2,
-      scale = params$sd^2/params$mean
+      shape = shape,
+      scale = scale
     )
   }
 
-  # normalize to 1
+  # normalize to 1 and return
+  # -------------------------
   x/sum(x)
 }
 
