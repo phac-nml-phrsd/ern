@@ -293,5 +293,5 @@ plot_mean_dist(summary.gen.int, max = 21)
 ### Incubation period
 
 ```{r mean_dist_inc_per, echo = FALSE}
-plot_mean_dist(summary.inc.per, max = 10)
+plot_mean_dist(summary.inc.per, max = 8)
 ```
