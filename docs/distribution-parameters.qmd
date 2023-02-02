@@ -7,9 +7,13 @@ format:
 editor: visual
 ---
 
-```{r setup, echo=FALSE}
+```{r setup, echo = FALSE, message = FALSE}
 library(glue)
 library(tibble)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+devtools::load_all("..")
 ```
 
 [Jump to parameter values](#sec-params-gen-int "Fitted parameter values")
@@ -184,11 +188,20 @@ make_summary_table <- function(mean.inputs, shape.inputs){
   tb <- tribble(
     ~parameter,           ~`value type`,                 ~`value`,
     "distribution mean",  "mean (assumed)",              mean.inputs$mean,
-    "",                   "standard deviation (fitted)", fit.mean$sd,
-    "",                   "fit score",                   fit.mean$score,
+    NA,                   "standard deviation (fitted)", fit.mean$sd,
+    NA,                   "fit score",                   fit.mean$score,
     "distribution shape", "mean (assumed)",              shape.inputs$mean,
-    "",                   "standard deviation (fitted)", fit.shape$sd,
-    "",                   "fit score",                   fit.shape$score
+    NA,                   "standard deviation (fitted)", fit.shape$sd,
+    NA,                   "fit score",                   fit.shape$score
+  )
+}
+```
+
+```{r display_table, echo = FALSE}
+display_table <- function(tb){
+  knitr::kable(
+    tb %>% replace_na(list(parameter = "")), 
+    digits = 4
   )
 }
 ```
@@ -207,7 +220,7 @@ summary.gen.int <- make_summary_table(
   )
 )
 
-knitr::kable(summary.gen.int, digits = 4)
+display_table(summary.gen.int)
 ```
 
 ### Incubation period
@@ -225,4 +238,60 @@ summary.inc.per <- make_summary_table(
 )
 
 knitr::kable(summary.inc.per, digits = 4)
+```
+
+## Mean fitted distributions
+
+```{r plot_mean_dist, echo = FALSE}
+plot_mean_dist <- function(summary, max){
+  summary <- fill(summary, parameter)
+  mean = (summary 
+    %>% filter(parameter == "distribution mean",
+               `value type` == "mean (assumed)")
+    %>% pull(value)
+  )
+  shape = (summary 
+    %>% filter(parameter == "distribution shape",
+               `value type` == "mean (assumed)")
+    %>% pull(value)
+  )
+  
+  y <- get_discrete_dist(list(
+    dist = "gamma",
+    mean = mean,
+    mean_sd = NA,
+    shape = shape,
+    shape_sd = NA,
+    max = max
+  ))
+  
+  df <- tibble(x = 1:max, y = y)
+  
+  (ggplot(df,
+          aes(x = x, y = y))
+    + geom_col()
+    + scale_x_continuous(breaks = 1:max,
+                         expand = expansion(mult = 0))
+    + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))
+    + labs(x = "days",
+           title = "Density")
+    + theme_bw()
+    + theme(
+      axis.title.y = element_blank(),
+      text = element_text(size = 20)
+    )
+  )
+}
+```
+
+### Generation interval
+
+```{r mean_dist_gen_int, echo = FALSE}
+plot_mean_dist(summary.gen.int, max = 21)
+```
+
+### Incubation period
+
+```{r mean_dist_inc_per, echo = FALSE}
+plot_mean_dist(summary.inc.per, max = 10)
 ```
