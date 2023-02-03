@@ -16,16 +16,14 @@ method = 'si_from_sample' (like n2) cannot be modified and
 will also be ignored.")
   }
 
+  return()
 }
 
 #' Check distributions
 #'
 #' @param x
 #'
-#' @return
-#' @export
-#'
-#' @examples
+#' @return NULL
 check_dist <- function(x){
   if(x$dist == "gamma"){
     if(!("sd" %in% names(x) | "shape" %in% names(x))){
@@ -40,4 +38,19 @@ Both sd and shape found: ", print(x)))
     }
 
   }
+
+  return()
+}
+
+#' Check that deconvolution inputs are compatible
+#'
+#' @param obs numeric vector. signal (_e.g._, case reports)
+#' @param dist numeric vector. deconvolution kernel (_e.g._, reporting delay distribution)
+#'
+#' @return NULL
+check_for_deconv <- function(obs, dist){
+  if(length(dist) > length(obs)) stop(paste0("For deconvolutions, length of distribution vector cannot exceed number of observations.
+  - length of distribution vector: ", length(dist), "
+  - number of observations: ", length(obs)))
+  return()
 }
