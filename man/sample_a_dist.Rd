@@ -3,7 +3,7 @@
 \name{sample_a_dist}
 \alias{sample_a_dist}
 \title{Sample parameters for a single distribution assuming parameters
-come from a truncated normal}
+come from a Gamma distribution}
 \usage{
 sample_a_dist(dist)
 }
@@ -12,5 +12,5 @@ sample_a_dist(dist)
 }
 \description{
 Sample parameters for a single distribution assuming parameters
-come from a truncated normal
+come from a Gamma distribution
 }

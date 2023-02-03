@@ -10,7 +10,7 @@ estimate_R_ww(
   dist.gi,
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
-  prm.R = list(config.EpiEstim = NULL)
+  prm.R = list(window = 7, config.EpiEstim = NULL)
 )
 }
 \arguments{

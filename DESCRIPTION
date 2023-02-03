@@ -25,7 +25,6 @@ Imports:
     stats,
     tibble,
     tidyr,
-    TruncatedNormal,
     zoo
 Suggests: 
     knitr,
@@ -38,5 +37,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 LazyData: true

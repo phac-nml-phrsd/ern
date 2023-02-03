@@ -46,7 +46,7 @@ However, in the Manica *et al.* paper, they give their distribution parameter es
 
 ![](figs/manica-table2.png){fig-align="center"}
 
-Here we have estimates for the mean, shape, and scale parameters of each family of distributions. Of course, knowing at least two of these, we can specify a family of Gammas without a standard deviation---that's not the problem. The problem is that **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need a parametric approach to draw from the associated family of distributions for each realization of our $R_t$ calculation.
+Here we have estimates for the mean, shape, and scale parameters of each family of distributions. Of course, knowing at least two of these, we can specify a family of Gammas without a standard deviation---that's not the problem. The problem is that **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need a parameteric approach to draw from the associated family of distributions for each realization of our $R_t$ calculation.
 
 These credible intervals emerge as a summary of the Bayesian posterior distribution of each parameter. However, I didn't find any information in the paper (or its appendices) that would help identify the appropriate functional form for these distributions...
 
@@ -286,12 +286,12 @@ plot_mean_dist <- function(summary, max){
 
 ### Generation interval
 
-```{r mean_dist_gen_int, echo = FALSE}
+```{r mean_dist_gen_int, echo = FALSE, fig.width = 6, fig.height = 4}
 plot_mean_dist(summary.gen.int, max = 21)
 ```
 
 ### Incubation period
 
-```{r mean_dist_inc_per, echo = FALSE}
+```{r mean_dist_inc_per, echo = FALSE, fig.width = 6, fig.height = 4}
 plot_mean_dist(summary.inc.per, max = 8)
 ```

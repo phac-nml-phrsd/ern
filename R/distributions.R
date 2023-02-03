@@ -59,7 +59,7 @@ sample_a_dist <- function(dist){
     shape = mean^2/sd^2
     scale = sd^2/mean
 
-    rgamma(n = 1, shape = shape, scale = scale)
+    stats::rgamma(n = 1, shape = shape, scale = scale)
   }
   draw <- lapply(par_names, draw_from_gamma, dist = dist)
 
@@ -84,8 +84,6 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
-#'
-#' @examples prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 get_discrete_dist <- function(params){
 
   # check args

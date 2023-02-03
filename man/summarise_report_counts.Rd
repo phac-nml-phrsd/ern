@@ -9,6 +9,8 @@ summarise_report_counts(df, agg.reldiff.tol = 10)
 }
 \arguments{
 \item{df}{dataframe. as prepared in \code{\link[=get_use_dates]{get_use_dates()}}.}
+
+\item{agg.reldiff.tol}{numeric scalar. numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.}
 }
 \description{
 Summarise daily inferred reports
