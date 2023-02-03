@@ -62,4 +62,4 @@ p2 <- ggplot2::ggplot(r.estim$R,ggplot2::aes(x = date)) +
   ggplot2::labs(title = "estimated Rt") +
   ggplot2::theme(axis.title = ggplot2::element_blank())
 
-p1 + p2 + patchwork::plot_layout(ncol = 1)
+print(p1 + p2 + patchwork::plot_layout(ncol = 1))
