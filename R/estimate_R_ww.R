@@ -22,19 +22,21 @@
 #' @export
 #'
 #'
-estimate_R_ww <- function(ww.conc,
-                          dist.fec,
-                          dist.gi,
-                          scaling.factor = 1,
-                          prm.smooth = list(
-                            window = 14,
-                            align  = 'center',
-                            method = 'loess',
-                            span   = 0.20
-                          ),
-                          prm.R = list(
-                            config.EpiEstim = NULL
-                          )
+estimate_R_ww <- function(
+    ww.conc,
+    dist.fec,
+    dist.gi,
+    scaling.factor = 1,
+    prm.smooth = list(
+      window = 14,
+      align  = 'center',
+      method = 'loess',
+      span   = 0.20
+    ),
+    prm.R = list(
+      window = 7,
+      config.EpiEstim = NULL
+    )
 ) {
 
   # Checking arguments
@@ -71,7 +73,7 @@ estimate_R_ww <- function(ww.conc,
   rt = incidence_to_R(
     incidence = i,
     generation.interval = dist.gi,
-    config.EpiEstim = prm.R$config.EpiEstim
+    prm.R = prm.R
   )
 
   return(list(

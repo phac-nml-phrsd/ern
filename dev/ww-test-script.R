@@ -46,6 +46,7 @@ prm.smooth = list(
 #   config.EpiEstim = NULL
 # )
 prm.R = list(
+  window = 10,
   config.EpiEstim = EpiEstim::make_config(seed = 15)
 )
 
