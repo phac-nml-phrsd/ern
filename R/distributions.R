@@ -43,33 +43,39 @@ def_dist_reporting_fraction <- function(){
 }
 
 #' Sample parameters for a single distribution assuming parameters
-#' come from a truncated normal
+#' come from a Gamma distribution
 #'
 #' @param dist a list of distribution parameters, as defined by the `def_dist_*()` functions
 sample_a_dist <- function(dist){
 
-  # get bounds for truncated normals
-  mean_bounds <- get_tnorm_bounds(dist$mean, dist$mean_sd)
-  sd_bounds <- get_tnorm_bounds(dist$sd, dist$sd_sd)
+  # get parameter names that we're sampling
+  par_names <- gsub("_sd", "", grep("_sd$", names(dist), value = TRUE))
 
-  # sample parameters
-  mean = TruncatedNormal::rtnorm(n = 1,
-                mu = dist$mean,
-                lb = mean_bounds[1],
-                ub = mean_bounds[2])
-  sd = TruncatedNormal::rtnorm(n = 1,
-              mu = dist$sd,
-              lb = sd_bounds[1],
-              ub = sd_bounds[2])
+  # draw from gamma based on parameter name in dist list
+  draw_from_gamma <- function(par, dist){
+    mean = dist[[par]]
+    sd = dist[[paste0(par, "_sd")]]
 
-  # return in standardized distribution format
-  list(
-    dist = dist$dist,
-    mean = mean,
-    mean_sd = NA,
-    sd = sd,
-    sd_sd = NA,
-    max = dist$max
+    shape = mean^2/sd^2
+    scale = sd^2/mean
+
+    rgamma(n = 1, shape = shape, scale = scale)
+  }
+  draw <- lapply(par_names, draw_from_gamma, dist = dist)
+
+  # convert to standardized distribution format
+  empty <- rep(NA, length(draw))
+  out <- unlist(lapply(1:length(par_names), function(i){
+    list(draw[[i]], empty[[i]])
+  }), recursive = FALSE)
+  out_names <- unlist(lapply(par_names, function(x) paste0(x, c("", "_sd"))))
+  names(out) <- out_names
+
+  # return final list
+  c(
+    list(dist = dist$dist),
+    out,
+    list(max = dist$max)
   )
 }
 
@@ -117,22 +123,6 @@ been defined for specified distribution type (dist = ", params$dist, ")"))
   # normalize to 1 and return
   # -------------------------
   x/sum(x)
-}
-
-#' Get non-negative truncated normal bounds
-#'
-#' @param mean mean
-#' @param sd standard deviation
-get_tnorm_bounds <- function(mean, sd){
-  # figure out if mean-2*sd is below zero; if it is,
-  # take 0 as the lower bound, and set the
-  # upper bound as 2*mean (for symmetry about mean)
-  lb = max(0, mean - 2*sd)
-  ub = ifelse(lb == 0, 2*mean,
-              mean + 2*sd)
-
-  # return
-  c(lb, ub)
 }
 
 #' Sample from a distribution
