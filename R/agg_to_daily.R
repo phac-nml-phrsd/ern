@@ -106,8 +106,6 @@ fit_jags_aggreg <- function(
     Iinit = Iinit
   )
 
-  message(print(paste('Iinit =', data_jags$Iinit)))
-
   params = c("R0", "alpha", "I")
 
   inits <- function() {
@@ -162,6 +160,10 @@ fit_jags_aggreg <- function(
     R0 ~ dgamma(2,1)
     alpha ~ dgamma(1,1)
   }"
+
+  message("-----
+Running MCMC model to infer daily reports from aggregated reports...
+")
 
   mod <- rjags::jags.model(
     file = textConnection(model.text),
