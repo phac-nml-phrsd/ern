@@ -118,6 +118,9 @@ reports_to_incidence <- function(
   # -------------------------
 
   # deconv reports with reporting delay distribution
+  message("-----
+Deconvolving inferred daily reports with reporting delay
+distribution to get daily onsets...")
   onsets <- deconv(
     counts = reports.daily$value,
     dist = get_discrete_dist(reporting.delay),
@@ -128,6 +131,9 @@ reports_to_incidence <- function(
   # -------------------------
 
   # deconv onsets with incubation period distribution
+  message("-----
+Deconvolving daily onsets with incubation period
+distribution to get daily incidence...")
   incidence <- deconv(
     counts = onsets$y,
     dist = get_discrete_dist(incubation.period),
@@ -170,6 +176,10 @@ deconv <- function(
     dist,
     max.iter = 10
 ){
+  # check args
+  # -------------------------
+  check_for_deconv(counts, dist)
+
   # perform Richardson-Lucy deconvolution
   (deconvolution_RL(
     observed = counts,

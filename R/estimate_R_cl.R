@@ -71,12 +71,27 @@ estimate_R_cl <- function(
 
   # trim smoothed reports based on relative error criterion
   if(!is.null(prm.daily.check)){
-    if(is.null(prm.daily.check)) stop("please specify agg.reldiff.tol in prm.daily.check")
+    if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
+    message("-----
+- Aggregating inferred daily reports back using the original
+reporting schedule, and calculating relative difference with
+original reports...")
+
     cl.use.dates = get_use_dates(
       cl.daily,
       cl.agg,
       prm.daily.check$agg.reldiff.tol
     )
+    message(paste0("- Filtering out any daily inferred reports associated
+with inferred aggregates outside of the specified tolerance of ",
+                   prm.daily.check$agg.reldiff.tol, "%..."
+    ))
+    message(paste0("Before filtering: ", nrow(cl.daily), " daily reports"))
+    message(paste0("After filtering: ", length(cl.use.dates), " daily reports"))
+    message("To reduce the number of observations dropped in filtering, either:
+  - adjust MCMC parameters in prm.daily (burn, iter, chains) to
+      improve chances of MCMC convergence,
+  - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
     cl.daily = (cl.daily
        %>% dplyr::filter(date %in% cl.use.dates)
     )
@@ -96,7 +111,6 @@ estimate_R_cl <- function(
 
   # Calculate the aggregated reports from the inferred daily reports
   # -------------------------
-
   inferred.agg = get_use_dates(
     reports.daily   = cl.daily,
     reports         = cl.agg,

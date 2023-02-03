@@ -33,8 +33,8 @@ prm.R = list(
   )
 )
 
-prm.daily.check = NULL
-# prm.daily.check = list(agg.reldiff.tol = 200)
+# prm.daily.check = NULL
+prm.daily.check = list(agg.reldiff.tol = 200)
 
 p1 <- ggplot2::ggplot(dat,ggplot2::aes(x=date, y=count)) +
   ggplot2::geom_line()+ggplot2::geom_point() +
