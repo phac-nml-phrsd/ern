@@ -5,11 +5,7 @@
 #' @param dist.repdelay parameters for the reporting delay distribution
 #' @param dist.incub parameters for the incubation period distribution
 #' @param dist.gi parameters for the generation interval distribution
-#' @param prm.R list. settings for the ensemble when calculating Rt. elements include:
-#' \itemize{
-#'  \item{`iter`: }{number of iterations for ensemble}
-#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
-#' }
+#' @inheritParams incidence_to_R
 #'
 #' @importFrom rlang .data
 #'
@@ -68,7 +64,7 @@ estimate_R_cl_single <- function(
   (incidence_to_R(
     incidence,
     generation.interval,
-    config.EpiEstim = prm.R$config.EpiEstim
+    prm.R
   )
     %>% dplyr::transmute(
       .data$date,

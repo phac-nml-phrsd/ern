@@ -25,10 +25,11 @@ prm.daily = list(
   iter = 30,
   chains = 2
 )
-prm.smooth = list( window = 7)
+prm.smooth = list(window = 7)
 prm.R = list(
-  iter = 2
-  , config.EpiEstim = EpiEstim::make_config(
+  iter = 2,
+  # window = 10, # if window isn't specified, assume 7 day est window for Rt
+  config.EpiEstim = EpiEstim::make_config(
     seed = 14
   )
 )
