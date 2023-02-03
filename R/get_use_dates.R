@@ -2,10 +2,13 @@
 #'
 #' @inheritParams correct_underreporting
 #' @inheritParams get_realizations
+#' @param agg.reldiff.tol numeric scalar. numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
+#' @param dates.only logical. return use dates only or all columns of `reports.daily`
 #'
 #' @importFrom rlang .data
 get_use_dates <- function(
-    reports.daily, reports, agg.reldiff.tol,
+    reports.daily, reports,
+    agg.reldiff.tol,
     dates.only = TRUE
 ){
   reports.daily <- summarise_by_date(reports.daily)
@@ -67,6 +70,7 @@ summarise_by_date <- function(df){
 #' based on original reporting schedule and calculate error
 #'
 #' @param df dataframe. as prepared in [`get_use_dates()`].
+#' @inheritParams get_use_dates
 #'
 #' @importFrom rlang .data
 summarise_report_counts <- function(df, agg.reldiff.tol = 10){

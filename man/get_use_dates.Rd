@@ -10,6 +10,10 @@ get_use_dates(reports.daily, reports, agg.reldiff.tol, dates.only = TRUE)
 \item{reports.daily}{dataframe of daily reported cases. must at least include \code{value} column with counts.}
 
 \item{reports}{dataframe. original aggregated reports. must at least have \code{date} column}
+
+\item{agg.reldiff.tol}{numeric scalar. numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.}
+
+\item{dates.only}{logical. return use dates only or all columns of \code{reports.daily}}
 }
 \description{
 Get dates for which to use (trust) inferred daily reports
