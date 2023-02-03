@@ -136,15 +136,13 @@ deconvolution_RL <- function(
                      expected = expected_D)
     iter = iter+1
   }
-  if(verbose) message(paste('Number of iterations for RL:', iter))
+  if(verbose) message(paste('Number of iterations for Richardson-Lucy deconvolution: ', iter))
 
   # Clean
   clean_lambda <- function(xx){ifelse(xx>orig_ceiling, NA, xx)}
   lambda[times<=orig_min_t] = clean_lambda(lambda[times<=orig_min_t])
 
   # Return
-  if(verbose){print(sprintf('Returning RL after %.0f iterations', iter))}
-
   return(
     data.frame(time = times, imputed = lambda) %>%
       stats::setNames(c('time', out_col_name))
