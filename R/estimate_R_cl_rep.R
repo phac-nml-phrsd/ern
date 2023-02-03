@@ -11,10 +11,8 @@ estimate_R_cl_rep <- function(
     dist.repdelay,
     dist.incub,
     dist.gi,
-    prm.R = list(
-      iter = 100,
-      config.EpiEstim = NULL
-    )) {
+    prm.R
+){
 
   if(is.null(prm.R$config.EpiEstim)) message("Using default config in `EpiEstim::estimate_R()`.")
 
