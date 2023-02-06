@@ -36,7 +36,8 @@ estimate_R_ww <- function(
     prm.R = list(
       window = 7,
       config.EpiEstim = NULL
-    )
+    ),
+    iter = 100
 ) {
 
   # Checking arguments
@@ -51,7 +52,7 @@ estimate_R_ww <- function(
          Aborting!")
   }
 
-  f = get_discrete_dist(dist.fec)
+
 
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc
@@ -63,20 +64,26 @@ estimate_R_ww <- function(
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel:
   inc = deconv_ww_inc(d              = ww.smooth,
-                      fec            = f,
+                      fec            = dist.fec,
                       scaling.factor = scaling.factor)
 
-  i = inc[["inc"]] %>%
+  idf = inc[["inc"]] %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
     select(date,I, t) %>%
     tidyr::drop_na()
 
   # Use the estimated incidence to calculate R:
-  rt = incidence_to_R(
-    incidence = i,
-    generation.interval = dist.gi,
-    prm.R = prm.R
-  )
+  r = NULL
+  for(i in 1:iter){
+    sample.gi = sample_a_dist(dist.gi)
+    r = bind_rows(r,
+                  incidence_to_R(incidence = idf,
+                                  generation.interval = sample.gi,
+                                 prm.R = prm.R))
+  }
+
+  rt = r %>%
+    summarise_by_date()
 
   return(list(
     ww.conc   = ww.conc,
