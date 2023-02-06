@@ -58,9 +58,9 @@ summarise_by_date <- function(df){
   (df
    %>% dplyr::group_by(date)
    %>% dplyr::summarise(
-     med = stats::median(.data$value),
-     lwr = stats::quantile(.data$value, probs = 0.05),
-     upr = stats::quantile(.data$value, probs = 0.95),
+     med = stats::median(.data$mean),
+     lwr = stats::quantile(.data$mean, probs = 0.05),
+     upr = stats::quantile(.data$mean, probs = 0.95),
      .groups = "drop"
    )
   )

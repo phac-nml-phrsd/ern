@@ -3,7 +3,7 @@
 #' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza', 'RSV')
 #' @param subtype String.
 #'
-#' @return A numerical vector where each element represent one day since infection.
+#' @return A fecal shedding distribution stored as a list.
 #' @export
 #'
 #' @examples
@@ -20,12 +20,15 @@ get_fecal_shedding <- function(pathogen, subtype = '') {
   fec = NULL
 
   if(tolower(pathogen) == 'sarscov2'){
-    shed.asymp = exp(c(5,7.30103,7.083333,6.677121,6.30,5.9))
-    shed.symp = exp(c(5,7.30103,7.083333,6.677121,6.30,5.9))
-    shed.noninf = exp(c(5.40103,4.60103,3.90103,3.10103,2.10103,1.2))
-
-    fec = rowMeans(cbind(shed.asymp, shed.noninf, shed.symp))/
-      sum(rowMeans(cbind(shed.asymp, shed.noninf, shed.symp)))
+    # Values obtained from Nourbakhsh et. al. (2021)
+    fec = list(
+      dist = "gamma",
+      mean = 14.04042,
+      mean_sd = NULL,
+      sd = 10.07955,
+      sd_sd = NULL,
+      max = 36
+    )
 
     if(subtype == 'foo'){
       # TO DO...

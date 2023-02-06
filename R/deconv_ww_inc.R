@@ -14,9 +14,11 @@ deconv_ww_inc <- function(d, fec, scaling.factor){
 
   start_date = as.Date(dplyr::first(d$date))
 
+  f = get_discrete_dist(fec)
+
   inc = deconvolution_RL(observed = d$obs_scal,
                          times = d$t,
-                         p_delay = fec) %>%
+                         p_delay = f) %>%
     # Forces incidence to be a positive integer:
     dplyr::mutate(
       inc.deconvol = as.integer(ifelse(

@@ -12,7 +12,7 @@ get_fecal_shedding(pathogen, subtype = "")
 \item{subtype}{String.}
 }
 \value{
-A numerical vector where each element represent one day since infection.
+A fecal shedding distribution stored as a list.
 }
 \description{
 Fecal Shedding Distribution

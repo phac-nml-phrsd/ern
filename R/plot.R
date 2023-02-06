@@ -45,9 +45,9 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     xsc
 
   g.r = r.estim$R %>%
-    ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
+    ggplot2::ggplot(ggplot2::aes(x=date, y=med)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
-    # ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$qvlo, ymax = .data$qvhi), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
     ggplot2::geom_line() +
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
