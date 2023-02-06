@@ -1,22 +1,24 @@
 #' Ensemble estimate of Rt
 #'
 #' @inheritParams estimate_R_cl_single
-#' @param prm.R settings for the ensemble
 #'
 #' @return A summary of individual Rt realizations with 95% confidence intervals
 #' @export
-#'
+#' @seealso [EpiEstim::make_config()]
 estimate_R_cl_rep <- function(
     cl.daily,
     dist.repfrac,
     dist.repdelay,
     dist.incub,
     dist.gi,
-    prm.R = list(
-      iter = 100
-    )) {
+    prm.R
+){
 
-  # TODO: parallelize
+  if(is.null(prm.R$config.EpiEstim)) message("Using default config in `EpiEstim::estimate_R()`.")
+
+  # TODO: parallelize in a generic way (using a custom
+  # iteration function that we use both on the clinical
+  # and ww side)
   R = NULL
   for(i in 1:prm.R$iter){
     R = dplyr::bind_rows(
@@ -26,7 +28,8 @@ estimate_R_cl_rep <- function(
         dist.repfrac,
         dist.repdelay,
         dist.incub,
-        dist.gi
+        dist.gi,
+        prm.R
       )
     )
   }

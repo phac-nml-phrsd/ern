@@ -43,12 +43,13 @@ attach_t_agg <- function(x, first.agg.period = NULL){
   # Handling the first aggregation
   if(is.null(first.agg.period)){
     fa = as.integer(x$date[2]-x$date[1])
-    warning(paste0("Assuming the first observed report (from ", x$date[1], ")
-    is aggregated over ", fa , " previous days
-    (second observation's aggregation period).
-    This can be changed in `estimate_R_cl()`, using the
-    `prm.daily` argument (set a value for `first.agg.period`
-    in this parameter list)."))
+    message(paste0("-----
+Assuming the first observed report (from ", x$date[1], ")
+is aggregated over ", fa , " previous days
+(second observation's aggregation period).
+This can be changed in `estimate_R_cl()`, using the
+`prm.daily` argument (set a value for `first.agg.period`
+in this parameter list)."))
   }
   if(!is.null(first.agg.period)){
     fa = first.agg.period
@@ -105,8 +106,6 @@ fit_jags_aggreg <- function(
     Iinit = Iinit
   )
 
-  message(print(paste('Iinit =', data_jags$Iinit)))
-
   params = c("R0", "alpha", "I")
 
   inits <- function() {
@@ -161,6 +160,10 @@ fit_jags_aggreg <- function(
     R0 ~ dgamma(2,1)
     alpha ~ dgamma(1,1)
   }"
+
+  message("-----
+Running MCMC model to infer daily reports from aggregated reports...
+")
 
   mod <- rjags::jags.model(
     file = textConnection(model.text),

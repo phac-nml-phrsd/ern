@@ -10,7 +10,7 @@ estimate_R_cl_rep(
   dist.repdelay,
   dist.incub,
   dist.gi,
-  prm.R = list(iter = 100)
+  prm.R
 )
 }
 \arguments{
@@ -24,11 +24,19 @@ estimate_R_cl_rep(
 
 \item{dist.gi}{parameters for the generation interval distribution}
 
-\item{prm.R}{settings for the ensemble}
+\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\itemize{
+\item{\code{iter}: }{number of iterations for ensemble}
+\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+}}
 }
 \value{
 A summary of individual Rt realizations with 95\% confidence intervals
 }
 \description{
 Ensemble estimate of Rt
+}
+\seealso{
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}
 }

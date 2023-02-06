@@ -33,9 +33,19 @@ estimate_R_cl <- function(
     window = 7
   ),
   prm.R = list(
-    iter = 10
+    iter = 10,
+    window = 7,
+    config.EpiEstim = NULL
   )
 ) {
+
+  # Checking arguments
+  # -------------------------
+
+  check_prm.R(prm.R)
+
+  # Aggregated -> daily reports
+  # -------------------------
 
   # attach time-index column to observed aggregated reports
   cl.agg <- attach_t_agg(
@@ -51,6 +61,9 @@ estimate_R_cl <- function(
     prm.daily = prm.daily
   )
 
+  # Smooth daily reports
+  # -------------------------
+
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
     cl.daily   = cl.daily.raw,
@@ -59,18 +72,35 @@ estimate_R_cl <- function(
 
   # trim smoothed reports based on relative error criterion
   if(!is.null(prm.daily.check)){
-    if(is.null(prm.daily.check)) stop("please specify agg.reldiff.tol in prm.daily.check")
+    if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
+    message("-----
+- Aggregating inferred daily reports back using the original
+reporting schedule, and calculating relative difference with
+original reports...")
+
     cl.use.dates = get_use_dates(
       cl.daily,
       cl.agg,
       prm.daily.check$agg.reldiff.tol
     )
+    message(paste0("- Filtering out any daily inferred reports associated
+with inferred aggregates outside of the specified tolerance of ",
+                   prm.daily.check$agg.reldiff.tol, "%..."
+    ))
+    message(paste0("Before filtering: ", nrow(cl.daily), " daily reports"))
+    message(paste0("After filtering: ", length(cl.use.dates), " daily reports"))
+    message("To reduce the number of observations dropped in filtering, either:
+  - adjust MCMC parameters in prm.daily (burn, iter, chains) to
+      improve chances of MCMC convergence,
+  - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
     cl.daily = (cl.daily
        %>% dplyr::filter(date %in% cl.use.dates)
     )
   }
 
-  # estimate Rt many times and return summary
+  # Estimate Rt in an ensemble and return summary
+  # -------------------------
+
   R = estimate_R_cl_rep(
     cl.daily      = cl.daily,
     dist.repfrac  = dist.repfrac,
@@ -80,8 +110,8 @@ estimate_R_cl <- function(
     prm.R         = prm.R
   )
 
-  # Calculate the aggregated incidence
-  # from the inferred daily incidence:
+  # Calculate the aggregated reports from the inferred daily reports
+  # -------------------------
   inferred.agg = get_use_dates(
     reports.daily   = cl.daily,
     reports         = cl.agg,
@@ -89,6 +119,9 @@ estimate_R_cl <- function(
     dates.only      = FALSE ) %>%
     dplyr::filter(!is.na(obs)) %>%
     dplyr::select(date, obs, matches('agg$'))
+
+  # Return results
+  # -------------------------
 
   res = list(
     cl.agg  = cl.agg,

@@ -14,7 +14,7 @@ estimate_R_cl(
   prm.daily = list(burn = 500, iter = 2000, chains = 20, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
-  prm.R = list(iter = 10)
+  prm.R = list(iter = 10, window = 7, config.EpiEstim = NULL)
 )
 }
 \arguments{
@@ -40,7 +40,12 @@ date of the observation, \code{count} for the count of reported cases.}
 
 \item{prm.smooth}{smoothing parameters}
 
-\item{prm.R}{settings for the ensemble}
+\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\itemize{
+\item{\code{iter}: }{number of iterations for ensemble}
+\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+}}
 }
 \value{
 List. Elements include:

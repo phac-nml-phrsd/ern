@@ -4,18 +4,14 @@
 #' @export
 def_dist_incubation_period <- function(){
   list(
-    dist = "lnorm",
-    mean = 1.621,
-    mean_sd = 0.064,
-    sd = 0.418,
-    sd_sd = 0.0691,
-    max = 15
+    dist = "gamma",
+    mean = 3.49,
+    mean_sd = 0.1477,
+    shape = 8.5,
+    shape_sd = 1.8945,
+    max = 8
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_incubation_period(
-  #   disease = "SARS-CoV-2",
-  #   source = "lauer"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the generation interval distribution
@@ -23,25 +19,20 @@ def_dist_incubation_period <- function(){
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(){
-  list(
+  x <- list(
     dist = "gamma",
-    mean = 3.635272,
-    mean_sd = 0.7109351,
-    sd = 3.07531,
-    sd_sd = 0.7695178,
+    mean = 6.84,
+    mean_sd = 0.7486,
+    shape = 2.39,
+    shape_sd = 0.3573,
     max = 15
   )
-  # copied over from EpiNow2
-  # EpiNow2::get_generation_time(
-  #   disease = "SARS-CoV-2",
-  #   source = "ganyani"
-  # )
+  # see docs/distribution-params.html for refs
 }
 
 #' Define the reporting fraction distribution
 #'
 #' @template return-dist
-#' @export
 def_dist_reporting_fraction <- function(){
   list(
       dist = "unif",
@@ -52,33 +43,39 @@ def_dist_reporting_fraction <- function(){
 }
 
 #' Sample parameters for a single distribution assuming parameters
-#' come from a truncated normal
+#' come from a Gamma distribution
 #'
 #' @param dist a list of distribution parameters, as defined by the `def_dist_*()` functions
 sample_a_dist <- function(dist){
 
-  # get bounds for truncated normals
-  mean_bounds <- get_tnorm_bounds(dist$mean, dist$mean_sd)
-  sd_bounds <- get_tnorm_bounds(dist$sd, dist$sd_sd)
+  # get parameter names that we're sampling
+  par_names <- gsub("_sd", "", grep("_sd$", names(dist), value = TRUE))
 
-  # sample parameters
-  mean = TruncatedNormal::rtnorm(n = 1,
-                mu = dist$mean,
-                lb = mean_bounds[1],
-                ub = mean_bounds[2])
-  sd = TruncatedNormal::rtnorm(n = 1,
-              mu = dist$sd,
-              lb = sd_bounds[1],
-              ub = sd_bounds[2])
+  # draw from gamma based on parameter name in dist list
+  draw_from_gamma <- function(par, dist){
+    mean = dist[[par]]
+    sd = dist[[paste0(par, "_sd")]]
 
-  # return in standardized distribution format
-  list(
-    dist = dist$dist,
-    mean = mean,
-    mean_sd = NA,
-    sd = sd,
-    sd_sd = NA,
-    max = dist$max
+    shape = mean^2/sd^2
+    scale = sd^2/mean
+
+    stats::rgamma(n = 1, shape = shape, scale = scale)
+  }
+  draw <- lapply(par_names, draw_from_gamma, dist = dist)
+
+  # convert to standardized distribution format
+  empty <- rep(NA, length(draw))
+  out <- unlist(lapply(1:length(par_names), function(i){
+    list(draw[[i]], empty[[i]])
+  }), recursive = FALSE)
+  out_names <- unlist(lapply(par_names, function(x) paste0(x, c("", "_sd"))))
+  names(out) <- out_names
+
+  # return final list
+  c(
+    list(dist = dist$dist),
+    out,
+    list(max = dist$max)
   )
 }
 
@@ -87,12 +84,17 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
-#' @export
-#'
-#' @examples prm <- def_dist_incubation_period(); get_discrete_dist(prm)
 get_discrete_dist <- function(params){
-  if(!(params$dist %in% c("lnorm", "gamma"))) stop("distribution recipe has not been defined")
 
+  # check args
+  # -------------------------
+  check_dist(params)
+
+  if(!(params$dist %in% c("lnorm", "gamma"))) stop(paste0("Distribution recipe has not
+been defined for specified distribution type (dist = ", params$dist, ")"))
+
+  # get discrete dist
+  # -------------------------
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
       1:params$max,
@@ -102,31 +104,23 @@ get_discrete_dist <- function(params){
   }
 
   if(params$dist == "gamma"){
+    if("sd" %in% names(params)){
+      shape = params$mean^2/params$sd^2
+      scale = params$sd^2/params$mean
+    } else if("shape" %in% names(params)){
+      shape = params$shape
+      scale = params$mean/shape
+    }
     x <- stats::dgamma(
       1:params$max,
-      shape = params$mean^2/params$sd^2,
-      scale = params$sd^2/params$mean
+      shape = shape,
+      scale = scale
     )
   }
 
-  # normalize to 1
+  # normalize to 1 and return
+  # -------------------------
   x/sum(x)
-}
-
-#' Get non-negative truncated normal bounds
-#'
-#' @param mean mean
-#' @param sd standard deviation
-get_tnorm_bounds <- function(mean, sd){
-  # figure out if mean-2*sd is below zero; if it is,
-  # take 0 as the lower bound, and set the
-  # upper bound as 2*mean (for symmetry about mean)
-  lb = max(0, mean - 2*sd)
-  ub = ifelse(lb == 0, 2*mean,
-              mean + 2*sd)
-
-  # return
-  c(lb, ub)
 }
 
 #' Sample from a distribution

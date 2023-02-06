@@ -5,6 +5,7 @@
 #' @param dist.repdelay parameters for the reporting delay distribution
 #' @param dist.incub parameters for the incubation period distribution
 #' @param dist.gi parameters for the generation interval distribution
+#' @inheritParams incidence_to_R
 #'
 #' @importFrom rlang .data
 #'
@@ -14,7 +15,8 @@ estimate_R_cl_single <- function(
     dist.repfrac,
     dist.repdelay,
     dist.incub,
-    dist.gi
+    dist.gi,
+    prm.R
 ){
 
   # sample one realization of reports.daily (smoothed)
@@ -59,9 +61,15 @@ estimate_R_cl_single <- function(
   )
 
   # estimate Rt
-  incidence_to_R(
+  (incidence_to_R(
     incidence,
-    generation.interval
+    generation.interval,
+    prm.R
+  )
+    %>% dplyr::transmute(
+      .data$date,
+      value = .data$mean
+    )
   )
 
 }
@@ -106,6 +114,9 @@ reports_to_incidence <- function(
   # -------------------------
 
   # deconv reports with reporting delay distribution
+  message("-----
+Deconvolving inferred daily reports with reporting delay
+distribution to get daily onsets...")
   onsets <- deconv(
     counts = reports.daily$value,
     dist = get_discrete_dist(reporting.delay),
@@ -116,6 +127,9 @@ reports_to_incidence <- function(
   # -------------------------
 
   # deconv onsets with incubation period distribution
+  message("-----
+Deconvolving daily onsets with incubation period
+distribution to get daily incidence...")
   incidence <- deconv(
     counts = onsets$y,
     dist = get_discrete_dist(incubation.period),
@@ -138,7 +152,7 @@ reports_to_incidence <- function(
     %>% dplyr::left_join(date.lookup, by = "t")
     %>% dplyr::transmute(
       date,
-      value = .data$y
+      I = .data$y
     )
     %>% tibble::as_tibble()
   )
@@ -158,6 +172,10 @@ deconv <- function(
     dist,
     max.iter = 10
 ){
+  # check args
+  # -------------------------
+  check_for_deconv(counts, dist)
+
   # perform Richardson-Lucy deconvolution
   (deconvolution_RL(
     observed = counts,
@@ -169,44 +187,5 @@ deconv <- function(
   %>% dplyr::rename(
     t = .data$time,
     y = .data$RL_result)
-  )
-}
-
-#' Estimate Rt using EpiEstim
-#'
-#' @param incidence dataframe. estimated incidence. includes at least `date`, `I`, and `t` columns.
-#' @param generation.interval list. parameters for generation interval from [`def_dist_generation_interval()`].
-#'
-#' @importFrom rlang .data
-#'
-#' @seealso [`def_dist_generation_interval()`]
-incidence_to_R <- function(
-    incidence,
-    generation.interval
-){
-
-  # calculate Rt based on _one_ generation interval
-  # (handle GI sampling outside of this function)
-  # -------------------------
-  (EpiEstim::estimate_R(
-    incidence$I,
-    method = "si_from_sample",
-    si_sample = matrix(c(0, get_discrete_dist(generation.interval)))
-    # method = "parametric_si",
-    # config = EpiEstim::make_config(list(
-    #   # mean distribution parameters
-    #   mean_si = generation.interval$mean,
-    #   # sd distribution parameters
-    #   std_si = generation.interval$sd
-    # ))
-  )$R
-  %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
-  %>% dplyr::select(-dplyr::starts_with("t_"))
-  %>% dplyr::transmute(
-    date,
-    # TODO: rename to R
-    mean = .data$`Mean(R)`,
-    I
-  )
   )
 }
