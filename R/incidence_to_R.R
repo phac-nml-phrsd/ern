@@ -23,13 +23,15 @@ incidence_to_R <- function(
 
   # make config
   incid <- incidence$I
-  method <- "si_from_sample"
+  method <- "non_parametric_si"
   if(is.null(prm.R$config.EpiEstim)){
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
       incid = incid,
-      method = method
+      method = method,
+      si_distr = c(0, get_discrete_dist(generation.interval))
     ))
   } else {
+    prm.R$config.EpiEstim$si_distr = c(0, get_discrete_dist(generation.interval))
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
       incid = incid,
       method = method,
@@ -55,7 +57,6 @@ incidence_to_R <- function(
   R <- EpiEstim::estimate_R(
     incid = incid,
     method = method,
-    si_sample = matrix(c(0, get_discrete_dist(generation.interval))),
     config = config.EpiEstim
   )$R
 

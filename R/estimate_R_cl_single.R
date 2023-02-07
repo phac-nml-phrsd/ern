@@ -61,15 +61,10 @@ estimate_R_cl_single <- function(
   )
 
   # estimate Rt
-  (incidence_to_R(
+  incidence_to_R(
     incidence,
     generation.interval,
     prm.R
-  )
-    %>% dplyr::transmute(
-      .data$date,
-      value = .data$mean
-    )
   )
 
 }
