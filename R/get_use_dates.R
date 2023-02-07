@@ -11,7 +11,7 @@ get_use_dates <- function(
     agg.reldiff.tol,
     dates.only = TRUE
 ){
-  reports.daily <- summarise_by_date(reports.daily)
+  reports.daily <- summarise_by_date(reports.daily %>% rename(mean = value))
 
   # make unified df with observed data
   reports <- (reports
@@ -51,7 +51,7 @@ get_use_dates <- function(
 
 #' Summarise observations by date
 #'
-#' @param df dataframe. has at least `date` and `value` columns.
+#' @param df dataframe. has at least `date` and `mean` columns.
 #'
 #' @importFrom rlang .data
 summarise_by_date <- function(df){
