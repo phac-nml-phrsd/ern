@@ -45,7 +45,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     xsc
 
   g.r = r.estim$R %>%
-    ggplot2::ggplot(ggplot2::aes(x=date, y=med)) +
+    ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
     ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
     ggplot2::geom_line() +
@@ -95,8 +95,7 @@ plot_diagnostic_cl <- function(
     plot.margin = ggplot2::margin(t=5, r=0, b=5, l=0, unit="pt")
   )
 
-  # Rt plot
-  # -------------------------
+  # ==== Rt plot ====
 
   ylim <- (r.estim$R
    %>% dplyr::filter(.data$use)
@@ -110,7 +109,7 @@ plot_diagnostic_cl <- function(
    + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr,
                           alpha = .data$use),
                           na.rm = TRUE)
-   + ggplot2::geom_line(ggplot2::aes(y = .data$med, linetype = .data$use),
+   + ggplot2::geom_line(ggplot2::aes(y = .data$mean, linetype = .data$use),
                         linewidth = 1, na.rm = TRUE)
    + ggplot2::scale_alpha_manual(values = alpha_scale)
    + ggplot2::scale_linetype_manual(values = linetype_scale)
@@ -120,8 +119,8 @@ plot_diagnostic_cl <- function(
    + th
   )
 
-  # original input (aggregated cases)
-  # -------------------------
+  # ==== original input (aggregated cases) =====
+
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.agg
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
@@ -133,20 +132,20 @@ plot_diagnostic_cl <- function(
   )
 
   # inferred input (smoothed daily cases)
-  # -------------------------
+
   p3 <- (ggplot2::ggplot(
     (r.estim$cl.daily
      %>% summarise_by_date()
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
          ggplot2::aes(x = date))
      + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha = alpha_scale[2])
-     + ggplot2::geom_line(ggplot2::aes(y = .data$med), linewidth = 1)
+     + ggplot2::geom_line(ggplot2::aes(y = .data$mean), linewidth = 1)
      + ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)")
      + th
   )
 
   # inferred input (smoothed daily cases)
-  # -------------------------
+
   p4 <- r.estim$inferred.aggreg %>%
     ggplot2::ggplot(ggplot2::aes(x=date)) +
     ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
@@ -158,8 +157,8 @@ plot_diagnostic_cl <- function(
     th
 
 
-  # composite plot
-  # -------------------------
+  # ==== composite plot ====
+
 
   g = patchwork::wrap_plots(p1,p2,p3,p4, ncol=1)
   return(g)

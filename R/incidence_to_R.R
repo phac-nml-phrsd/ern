@@ -18,16 +18,15 @@ incidence_to_R <- function(
     generation.interval,
     prm.R
 ){
-  # prep inputs
-  # -------------------------
+  # === prep inputs ====
 
   # make config
-  incid <- incidence$I
+  incid  <- incidence$I
   method <- "non_parametric_si"
   if(is.null(prm.R$config.EpiEstim)){
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
-      incid = incid,
-      method = method,
+      incid    = incid,
+      method   = method,
       si_distr = c(0, get_discrete_dist(generation.interval))
     ))
   } else {
@@ -51,24 +50,31 @@ incidence_to_R <- function(
     config.EpiEstim$t_end <- t_end[valid]
   }
 
+  # ==== Calculate Rt ====
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function)
-  # -------------------------
+
   R <- EpiEstim::estimate_R(
     incid = incid,
     method = method,
     config = config.EpiEstim
   )$R
 
-  # prep output
-  # -------------------------
-  (R
+  # ==== prep output ====
+
+  res = (R
     %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
     %>% dplyr::select(-dplyr::starts_with("t_"))
     %>% dplyr::transmute(
       date,
       mean = .data$`Mean(R)`,
-      I
-    )
+      lo   = .data$`Quantile.0.025(R)`,
+      hi   = .data$`Quantile.0.975(R)`,
+      I )
   )
+  return(res)
 }
+
+# - - - - - - - - -
+
+

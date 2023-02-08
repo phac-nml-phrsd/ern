@@ -55,15 +55,19 @@ get_use_dates <- function(
 #'
 #' @importFrom rlang .data
 summarise_by_date <- function(df){
-  (df
-   %>% dplyr::group_by(date)
-   %>% dplyr::summarise(
-     med = stats::median(.data$mean),
-     lwr = stats::quantile(.data$mean, probs = 0.05),
-     upr = stats::quantile(.data$mean, probs = 0.95),
+  res = df %>%
+    dplyr::group_by(date) %>%
+    dplyr::summarise(
+     mean = mean(.data$mean),  # DC: TAKE THE MEAN??
+     #
+     # what we do below for 'lwr' and 'upr' is not statistically correct,
+     # but likely "good enough" for now.
+     #
+     lwr = mean(.data$lo),
+     upr = mean(.data$hi),
      .groups = "drop"
    )
-  )
+  return(res)
 }
 
 #' Summarise daily inferred reports

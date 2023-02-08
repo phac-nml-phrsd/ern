@@ -42,6 +42,25 @@ def_dist_reporting_fraction <- function(){
   # just a guess
 }
 
+
+#' Draw from gamma based on parameter name in dist list
+#'
+#' @param par String. Name of the parameter to sample.
+#' @param dist List. Distribution definition.
+#'
+#' @return Numeric. The sampled value.
+#'
+draw_from_gamma <- function(par, dist){
+  mean = dist[[par]]
+  sd_2 = (dist[[paste0(par, "_sd")]])^2
+
+  shape = mean^2 / sd_2
+  scale = sd_2 / mean
+
+  return( stats::rgamma(n = 1, shape = shape, scale = scale) )
+}
+
+
 #' Sample parameters for a single distribution assuming parameters
 #' come from a Gamma distribution
 #'
@@ -51,32 +70,33 @@ sample_a_dist <- function(dist){
   # get parameter names that we're sampling
   par_names <- gsub("_sd", "", grep("_sd$", names(dist), value = TRUE))
 
-  # draw from gamma based on parameter name in dist list
-  draw_from_gamma <- function(par, dist){
-    mean = dist[[par]]
-    sd = dist[[paste0(par, "_sd")]]
-
-    shape = mean^2/sd^2
-    scale = sd^2/mean
-
-    stats::rgamma(n = 1, shape = shape, scale = scale)
-  }
   draw <- lapply(par_names, draw_from_gamma, dist = dist)
 
-  # convert to standardized distribution format
+  # == DEBUG
+  # print(paste('DEBUG sad:', draw))
+  # ==
+
+  # === convert to standardized distribution format
+  #
   empty <- rep(NA, length(draw))
-  out <- unlist(lapply(1:length(par_names), function(i){
-    list(draw[[i]], empty[[i]])
-  }), recursive = FALSE)
-  out_names <- unlist(lapply(par_names, function(x) paste0(x, c("", "_sd"))))
+  out <- unlist(
+    lapply(X = 1:length(par_names),
+           FUN = function(i){
+             list(draw[[i]], empty[[i]])
+           }),
+    recursive = FALSE)
+
+  out_names <- unlist(lapply(par_names,
+                             function(x) paste0(x, c("", "_sd"))))
   names(out) <- out_names
 
   # return final list
-  c(
+  res = c(
     list(dist = dist$dist),
     out,
-    list(max = dist$max)
-  )
+    list(max = dist$max) )
+
+  return(res)
 }
 
 #' Get a discretized, truncated version of a distribution

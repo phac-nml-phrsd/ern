@@ -9,7 +9,11 @@
 #'
 #' @return
 inc2R_one_gi <- function(i, dist.gi, incidence, prm.R) {
-  sample.gi = sample_a_dist(dist.gi)
+  set.seed(i)
+  sample.gi = sample_a_dist(dist = dist.gi)
+
+  # print(paste('DEBUG',i,'mean GI =', sample.gi$mean))
+
   res = incidence_to_R(incidence = incidence,
                        generation.interval = sample.gi,
                        prm.R = prm.R)
