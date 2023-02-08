@@ -1,4 +1,21 @@
 
+#' Helper function.
+#' Converts incidence to Rt after sampling one generation interval distribution
+#'
+#' @param i Iteration index. (not used but required when using `lapply()`)
+#' @param dist.gi Generation interval distribution.
+#' @param incidence Incidence object.
+#' @param prm.R List of configuration parameters for EpiEstim.
+#'
+#' @return
+inc2R_one_gi <- function(i, dist.gi, incidence, prm.R) {
+  sample.gi = sample_a_dist(dist.gi)
+  res = incidence_to_R(incidence = incidence,
+                       generation.interval = sample.gi,
+                       prm.R = prm.R)
+  return(res)
+}
+
 
 #' @title Estimate the effective reproduction from wastewater concentration data.
 #'
@@ -12,6 +29,7 @@
 #' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
 #' \itemize{
 #'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
+#' @param iter Integer. Number of samples for the (uncertain) generation interval distribution.
 #' }
 #' @return List. Elements include:
 #' - `ww.conc` original wastewater signal
@@ -41,7 +59,6 @@ estimate_R_ww <- function(
 ) {
 
   # Checking arguments
-  # -------------------------
   check_prm.R(prm.R)
 
   # Checking if ww.conc df contains required variables
@@ -51,8 +68,6 @@ estimate_R_ww <- function(
     stop("date and value columns are required. Please check ww.conc.
          Aborting!")
   }
-
-
 
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc
@@ -73,14 +88,9 @@ estimate_R_ww <- function(
     tidyr::drop_na()
 
   # Use the estimated incidence to calculate R:
-  r = NULL
-  for(i in 1:iter){
-    sample.gi = sample_a_dist(dist.gi)
-    r = bind_rows(r,
-                  incidence_to_R(incidence = idf,
-                                  generation.interval = sample.gi,
-                                 prm.R = prm.R))
-  }
+  r = lapply(X = 1:iter, FUN = inc2R_one_gi,
+             dist.gi = dist.gi, incidence = idf, prm.R = prm.R) %>%
+    dplyr::bind_rows()
 
   rt = r %>%
     summarise_by_date()
