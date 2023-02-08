@@ -10,6 +10,7 @@
 #' @export
 #'
 #' @seealso [estimate_R_ww()]
+#'
 plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   ggplot2::theme_set(ggplot2::theme_bw())
@@ -23,13 +24,13 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = .data$val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
-      ggplot2::aes(y = .data$obs),
+      ggplot2::aes(y = obs),
       color = 'steelblue4',
-      size = 1,
+      linewidth = 1,
       alpha = 0.5
     ) +
     xsc +
@@ -39,15 +40,16 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     )
 
   g.inc = r.estim$inc %>%
-    ggplot2::ggplot(ggplot2::aes(x=date, y = .data$inc.deconvol)) +
+    ggplot2::ggplot(ggplot2::aes(x=date, y = inc.deconvol)) +
     ggplot2::geom_line()+
-    ggplot2::labs(title='Deconvoluted incidence', x = 'infection date', y='cases')+
+    ggplot2::labs(title ='Deconvoluted incidence',
+                  x = 'infection date', y='cases')+
     xsc
 
   g.r = r.estim$R %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line() +
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
@@ -58,7 +60,6 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   if(!is.null(caption)) g = g + ggplot2::labs(caption=caption)
 
   return(g)
-
 }
 
 #' Diagnostic plot for R estimation from clinical data
