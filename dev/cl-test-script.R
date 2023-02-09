@@ -55,6 +55,10 @@ r.estim = estimate_R_cl(
   prm.daily.check = prm.daily.check
 )
 
+# DC: this is broken
+# pd = plot_diagnostic_cl(r.estim)
+
+
 p2 <- ggplot2::ggplot(r.estim$R,ggplot2::aes(x = date)) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dashed") +
   ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha = 0.3) +
