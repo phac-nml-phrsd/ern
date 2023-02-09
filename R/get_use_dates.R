@@ -11,7 +11,9 @@ get_use_dates <- function(
     agg.reldiff.tol,
     dates.only = TRUE
 ){
-  reports.daily <- summarise_by_date(reports.daily %>% rename(mean = value))
+  reports.daily <- reports.daily %>%
+    dplyr::rename(mean = value) %>%
+    summarise_by_date()
 
   # make unified df with observed data
   reports <- (reports
@@ -55,18 +57,37 @@ get_use_dates <- function(
 #'
 #' @importFrom rlang .data
 summarise_by_date <- function(df){
-  res = df %>%
-    dplyr::group_by(date) %>%
-    dplyr::summarise(
-     mean = mean(.data$mean),  # DC: TAKE THE MEAN??
-     #
-     # what we do below for 'lwr' and 'upr' is not statistically correct,
-     # but likely "good enough" for now.
-     #
-     lwr = mean(.data$lo),
-     upr = mean(.data$hi),
-     .groups = "drop"
-   )
+
+  a = names(df)
+  has.lo.hi = all(c('lo','hi') %in% a)
+
+  # TODO: Fix this, there shouldn't be the if statement...
+  # should be the same for wastewater and clinical(?)
+
+  if(has.lo.hi){
+    res = df %>%
+      dplyr::group_by(date) %>%
+      dplyr::summarise(
+        mean = mean(.data$mean),
+        #
+        # what we do below for 'lwr' and 'upr' is not statistically correct,
+        # but likely "good enough" for now.
+        #
+        lwr = mean(.data$lo),
+        upr = mean(.data$hi),
+        .groups = "drop" )
+  }
+
+  if(!has.lo.hi){
+    res = df %>%
+      dplyr::group_by(date) %>%
+      dplyr::summarise(
+        mean = mean(.data$mean),
+        lwr  = stats::quantile(.data$mean, probs = 0.025),
+        upr  = stats::quantile(.data$mean, probs = 0.975),
+        .groups = "drop" )
+  }
+
   return(res)
 }
 
@@ -82,7 +103,7 @@ summarise_report_counts <- function(df, agg.reldiff.tol = 10){
    # aggregated fitted reports
    %>% dplyr::group_by(.data$date.report)
    %>% dplyr::mutate(
-     dplyr::across(c(.data$med, .data$lwr,.data$ upr), sum,
+     dplyr::across(c(.data$mean, .data$lwr,.data$ upr), sum,
                    .names = "{.col}.agg"))
    %>% dplyr::ungroup()
    %>% dplyr::mutate(
@@ -96,18 +117,17 @@ summarise_report_counts <- function(df, agg.reldiff.tol = 10){
   # we want to filter out start of inferred daily reports until
   # estimates have converged to below a specified tolerance
   use.dates <- (df
-    %>% dplyr::select(.data$date.report, .data$med.agg.reldiff)
+    %>% dplyr::select(.data$date.report, .data$mean.agg.reldiff)
     %>% tidyr::drop_na()
     %>% dplyr::mutate(
       # set "use" flag for fitted aggregated reports within a
       # 10% tolerance
-      use = abs(.data$med.agg.reldiff) < agg.reldiff.tol
+      use = abs(.data$mean.agg.reldiff) < agg.reldiff.tol
     )
     # figure out first date where fitted aggregated reports fall
     # within above threshold for relative error
     # drop values before that point in time
     %>% dplyr::mutate(use.cumm = cumsum(.data$use))
-    # %>% select(date, med.agg.reldiff, use, use.cumm)
     %>% dplyr::filter(.data$use.cumm > 0)
     %>% dplyr::pull(.data$date.report)
   )

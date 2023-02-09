@@ -58,7 +58,7 @@ r.estim = estimate_R_cl(
 p2 <- ggplot2::ggplot(r.estim$R,ggplot2::aes(x = date)) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dashed") +
   ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha = 0.3) +
-  ggplot2::geom_line(ggplot2::aes(y = med)) +
+  ggplot2::geom_line(ggplot2::aes(y = mean)) +
   ggplot2::scale_x_date(limits = range(dat$date)) +
   ggplot2::labs(title = "estimated Rt") +
   ggplot2::theme(axis.title = ggplot2::element_blank())

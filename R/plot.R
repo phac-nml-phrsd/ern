@@ -153,7 +153,7 @@ plot_diagnostic_cl <- function(
     ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
     ggplot2::geom_line(ggplot2::aes(y=obs)) +
     ggplot2::geom_pointrange(
-      ggplot2::aes(y=med.agg, ymin=lwr.agg, ymax=upr.agg),
+      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
       color= 'red2', alpha=0.6)+
     ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
     th
