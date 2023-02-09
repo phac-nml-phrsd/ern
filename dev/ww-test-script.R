@@ -80,6 +80,6 @@ g = ern::plot_diagnostic_ww(r.estim, caption = ifelse(fakedata,'fake',siteid))
 plot(g)
 
 r.estim$R %>%
-  select(date, med) %>%
+  select(date, mean) %>%
   filter(date > ymd('2022-11-20'))
 
