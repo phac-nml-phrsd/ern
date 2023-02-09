@@ -40,12 +40,9 @@ estimate_R_cl <- function(
 ) {
 
   # Checking arguments
-  # -------------------------
-
   check_prm.R(prm.R)
 
-  # Aggregated -> daily reports
-  # -------------------------
+  # ==== Aggregated -> daily reports ====
 
   # attach time-index column to observed aggregated reports
   cl.agg <- attach_t_agg(
@@ -61,8 +58,7 @@ estimate_R_cl <- function(
     prm.daily = prm.daily
   )
 
-  # Smooth daily reports
-  # -------------------------
+  # ==== Smooth daily reports =====
 
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
@@ -71,6 +67,7 @@ estimate_R_cl <- function(
   )
 
   # trim smoothed reports based on relative error criterion
+
   if(!is.null(prm.daily.check)){
     if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
     message("-----
@@ -79,10 +76,10 @@ reporting schedule, and calculating relative difference with
 original reports...")
 
     cl.use.dates = get_use_dates(
-      cl.daily,
-      cl.agg,
-      prm.daily.check$agg.reldiff.tol
-    )
+      reports.daily   = cl.daily,
+      reports         = cl.agg,
+      agg.reldiff.tol = prm.daily.check$agg.reldiff.tol)
+
     message(paste0("- Filtering out any daily inferred reports associated
 with inferred aggregates outside of the specified tolerance of ",
                    prm.daily.check$agg.reldiff.tol, "%..."
@@ -99,7 +96,6 @@ with inferred aggregates outside of the specified tolerance of ",
   }
 
   # Estimate Rt in an ensemble and return summary
-  # -------------------------
 
   R = estimate_R_cl_rep(
     cl.daily      = cl.daily,
@@ -111,7 +107,7 @@ with inferred aggregates outside of the specified tolerance of ",
   )
 
   # Calculate the aggregated reports from the inferred daily reports
-  # -------------------------
+
   inferred.agg = get_use_dates(
     reports.daily   = cl.daily,
     reports         = cl.agg,
@@ -121,7 +117,6 @@ with inferred aggregates outside of the specified tolerance of ",
     dplyr::select(date, obs, matches('agg$'))
 
   # Return results
-  # -------------------------
 
   res = list(
     cl.agg  = cl.agg,

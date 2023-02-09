@@ -134,16 +134,17 @@ plot_diagnostic_cl <- function(
 
   # inferred input (smoothed daily cases)
 
-  p3 <- (ggplot2::ggplot(
-    (r.estim$cl.daily
-     %>% summarise_by_date()
-     %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
+  p3 <- ggplot2::ggplot(
+    r.estim$cl.daily %>%
+       summarise_by_date() %>%
+       dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date))),
          ggplot2::aes(x = date))
-     + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha = alpha_scale[2])
+     + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr),
+                            alpha = alpha_scale[2])
      + ggplot2::geom_line(ggplot2::aes(y = .data$mean), linewidth = 1)
      + ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)")
      + th
-  )
+
 
   # inferred input (smoothed daily cases)
 
