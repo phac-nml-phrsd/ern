@@ -4,7 +4,7 @@
 \alias{def_dist_generation_interval}
 \title{Define the generation interval distribution}
 \usage{
-def_dist_generation_interval()
+def_dist_generation_interval(pathogen = "sars-cov-2")
 }
 \value{
 List with components

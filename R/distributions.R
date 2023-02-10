@@ -18,13 +18,13 @@ def_dist_incubation_period <- function(){
 #'
 #' @template return-dist
 #' @export
-def_dist_generation_interval <- function(pathogen = 'sars-cov-2'){
-  
+def_dist_generation_interval <- function(pathogen = 'sarscov2'){
+
   x = NULL
-  
+
   p = tolower(pathogen)
-  
-  if(p == 'sars-cov-2'){
+
+  if(p == 'sarscov2'){
     x <- list(
       dist = "gamma",
       mean = 6.84,
@@ -33,7 +33,7 @@ def_dist_generation_interval <- function(pathogen = 'sars-cov-2'){
       shape_sd = 0.3573,
       max = 15)
   }
-  
+
     if(p == 'influenza'){
     x <- list(
       dist = "gamma",
@@ -43,7 +43,7 @@ def_dist_generation_interval <- function(pathogen = 'sars-cov-2'){
       shape_sd = 0.3,
       max = 14)
   }
-  
+
   return(x)
   # see docs/distribution-params.html for refs
 }
