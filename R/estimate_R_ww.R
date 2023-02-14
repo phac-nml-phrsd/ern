@@ -1,23 +1,41 @@
 
 #' Helper function.
-#' Converts incidence to Rt after sampling one generation interval distribution
+#' Converts wastewater to Rt after sampling one fecal shedding and
+#'  one generation interval distribution.
 #'
 #' @param i Iteration index. (not used but required when using `lapply()`)
+#' @param dist.fec Fecal shedding distribution.
 #' @param dist.gi Generation interval distribution.
-#' @param incidence Incidence object.
+#' @param wastewater Smoothed wastewater time-series.
+#' @param scaling.factor Scaling from wastewater concentration to prevalence.
+#'  This value may be assumed or independently calibrated to data.
 #' @param prm.R List of configuration parameters for EpiEstim.
 #'
 #' @return
-inc2R_one_gi <- function(i, dist.gi, incidence, prm.R) {
+inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
+                         scaling.factor, prm.R) {
   set.seed(i)
+  sample.fec = sample_a_dist(dist = dist.fec)
   sample.gi = sample_a_dist(dist = dist.gi)
 
-  # print(paste('DEBUG',i,'mean GI =', sample.gi$mean))
+  inc = deconv_ww_inc(d              = wastewater,
+                      fec            = sample.fec,
+                      scaling.factor = scaling.factor)
 
-  res = incidence_to_R(incidence = incidence,
+  i.df = inc[["inc"]] %>%
+    dplyr::mutate(I = .data$inc.deconvol) %>%
+    select(date,I, t) %>%
+    tidyr::drop_na()
+
+  rt = incidence_to_R(incidence = i.df,
                        generation.interval = sample.gi,
                        prm.R = prm.R)
-  return(res)
+
+  r = list(
+    i = i.df,
+    rt = rt
+  )
+  return(r)
 }
 
 
@@ -81,28 +99,27 @@ estimate_R_ww <- function(
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
-  # and using the fecal shedding distribution as the kernel:
-  inc = deconv_ww_inc(d              = ww.smooth,
-                      fec            = dist.fec,
-                      scaling.factor = scaling.factor)
-
-  idf = inc[["inc"]] %>%
-    dplyr::mutate(I = .data$inc.deconvol) %>%
-    select(date,I, t) %>%
-    tidyr::drop_na()
-
+  # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
-  r = lapply(X = 1:iter, FUN = inc2R_one_gi,
-             dist.gi = dist.gi, incidence = idf, prm.R = prm.R) %>%
-    dplyr::bind_rows()
+  r = lapply(X = 1:iter, FUN = inc2R_one_iter,
+             dist.gi = dist.gi, dist.fec = dist.fec,
+             wastewater = ww.smooth, scaling.factor = scaling.factor,
+             prm.R = prm.R)
 
-  rt = r %>%
-    summarise_by_date()
+  i = lapply(r, `[[`, 1) %>%
+    dplyr::bind_rows() %>%
+    transmute(value = .data$I,
+              date) %>%
+    summarise_by_date_iters()
+
+  rt = lapply(r, `[[`, 2) %>%
+    dplyr::bind_rows() %>%
+    summarise_by_date_ens()
 
   return(list(
     ww.conc   = ww.conc,
     ww.smooth = ww.smooth,
-    inc       = inc[['inc']],
+    inc       = i,
     R         = rt
   )
   )
