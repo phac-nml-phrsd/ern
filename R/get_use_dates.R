@@ -12,8 +12,7 @@ get_use_dates <- function(
     dates.only = TRUE
 ){
   reports.daily <- reports.daily %>%
-    dplyr::rename(mean = value) %>%
-    summarise_by_date()
+    summarise_by_date_iters()
 
   # make unified df with observed data
   reports <- (reports
