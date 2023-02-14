@@ -56,11 +56,7 @@ z = c( rep(1,6), c(2,3,3,3,2), rep(1,5))
 # dist.fec = z/sum(z)
 # plot(dist.fec, typ='o')
 
-dist.gi  = ern::get_gi('sarscov2')
-dist.gi$mean <- 4
-dist.gi$mean_sd <- 0.1
-dist.gi$sd <- 0.1
-dist.gi$sd_sd <- 0.01
+dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
 
 # ---- Estimation ----
 
@@ -68,7 +64,7 @@ r.estim = ern::estimate_R_ww(
   ww.conc        = ww.conc,
   dist.fec       = dist.fec,
   dist.gi        = dist.gi,
-  scaling.factor = 2,
+  scaling.factor = 1,
   prm.smooth     = prm.smooth,
   prm.R = prm.R
 )

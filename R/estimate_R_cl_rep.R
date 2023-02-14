@@ -36,7 +36,7 @@ estimate_R_cl_rep <- function(
 
   # return summary of ensembles
   (R
-    %>% summarise_by_date() # 95% CIs
+    %>% summarise_by_date_ens() # 95% CIs
     # flag which points to trust or not
     # beginning of estimate takes a bit to converge
     # use one max generation interval as rule of thumb

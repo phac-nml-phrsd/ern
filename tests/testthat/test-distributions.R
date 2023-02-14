@@ -37,3 +37,10 @@ test_that("gamma distributions get specified correctly", {
     )
   )
 })
+
+test_that("def_dist_fecal_shedding detects incorrect pathogen",
+          {
+            p = "sick"
+            expect_error(def_dist_fecal_shedding(pathogen = p),
+                         "Pathogen not found. Aborting!")
+          })
