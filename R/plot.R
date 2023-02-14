@@ -40,7 +40,8 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     )
 
   g.inc = r.estim$inc %>%
-    ggplot2::ggplot(ggplot2::aes(x=date, y = inc.deconvol)) +
+    ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line()+
     ggplot2::labs(title ='Deconvoluted incidence',
                   x = 'infection date', y='cases')+
