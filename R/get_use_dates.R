@@ -51,42 +51,44 @@ get_use_dates <- function(
 
 # helpers -----------------------------------------------------------------
 
-#' Summarise observations by date
+#' Summarise observations by date for iterated data
 #'
-#' @param df dataframe. has at least `date` and `mean` columns.
+#' @description This function summarises raw iterations of data.
+#'
+#' @param df dataframe. Must have `date` and `value` columns.
 #'
 #' @importFrom rlang .data
-summarise_by_date <- function(df){
+summarise_by_date_iters <- function(df){
+  res = df %>%
+    dplyr::group_by(date) %>%
+    dplyr::summarise(
+      mean = mean(.data$value),
+      lwr  = stats::quantile(.data$value, probs = 0.025),
+      upr  = stats::quantile(.data$value, probs = 0.975),
+      .groups = "drop" )
 
-  a = names(df)
-  has.lo.hi = all(c('lo','hi') %in% a)
+  return(res)
+}
 
-  # TODO: Fix this, there shouldn't be the if statement...
-  # should be the same for wastewater and clinical(?)
-
-  if(has.lo.hi){
-    res = df %>%
-      dplyr::group_by(date) %>%
-      dplyr::summarise(
-        mean = mean(.data$mean),
-        #
-        # what we do below for 'lwr' and 'upr' is not statistically correct,
-        # but likely "good enough" for now.
-        #
-        lwr = mean(.data$lo),
-        upr = mean(.data$hi),
-        .groups = "drop" )
-  }
-
-  if(!has.lo.hi){
-    res = df %>%
-      dplyr::group_by(date) %>%
-      dplyr::summarise(
-        mean = mean(.data$mean),
-        lwr  = stats::quantile(.data$mean, probs = 0.025),
-        upr  = stats::quantile(.data$mean, probs = 0.975),
-        .groups = "drop" )
-  }
+#' Summarise observations by date for iterated ensemble data
+#'
+#' @description This function summarises iterations of ensemble data.
+#'
+#' @param df dataframe. Must have `date`, `mean`, `lo`, and `hi` columns.
+#'
+#' @importFrom rlang .data
+summarise_by_date_ens <- function(df){
+  res = df %>%
+    dplyr::group_by(date) %>%
+    dplyr::summarise(
+      mean = mean(.data$mean),
+      #
+      # what we do below for 'lwr' and 'upr' is not statistically correct,
+      # but likely "good enough" for now.
+      #
+      lwr = mean(.data$lo),
+      upr = mean(.data$hi),
+      .groups = "drop" )
 
   return(res)
 }
