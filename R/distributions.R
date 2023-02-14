@@ -16,9 +16,16 @@ def_dist_incubation_period <- function(){
 
 #' Define the generation interval distribution
 #'
+#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
+#'
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
+
+  # Check if correct pathogen specified
+  if(!isTRUE(pathogen %in% c('sarscov2', 'influenza'))){
+    stop("Pathogen not found. Aborting!")
+  }
 
   x = NULL
 
@@ -69,10 +76,10 @@ def_dist_reporting_fraction <- function(){
 #' @export
 #'
 #' @examples
-#' fec = get_fecal_shedding('sarscov2')
+#' fec = def_dist_fecal_shedding('sarscov2')
 #' print(fec)
 #'
-def_dist_fecal_shedding <- function(pathogen, subtype = '') {
+def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
   # Check if correct pathogen specified
   if(!isTRUE(pathogen %in% c('sarscov2', 'influenza', 'rsv'))){
