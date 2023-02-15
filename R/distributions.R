@@ -22,12 +22,7 @@ def_dist_incubation_period <- function(){
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
-  # Check if correct pathogen specified
-  if(!isTRUE(pathogen %in% c('sarscov2', 'influenza'))){
-    stop("Pathogen not found. Aborting!")
-  }
-
-  x = NULL
+ x = NULL
 
   p = tolower(pathogen)
 
@@ -61,6 +56,11 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       max = 11)
   }
 
+   # Check if pathogen was found
+  if(is.null(x){
+    stop(paste0("Unkown generation interval distribution for pathogen `", pathogen,"` not found. Aborting!"))
+  }
+  
   return(x)
   # see docs/distribution-params.html for refs
 }
