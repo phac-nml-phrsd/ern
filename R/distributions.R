@@ -57,7 +57,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
   }
 
    # Check if pathogen was found
-  if(is.null(x){
+  if(is.null(x)){
     stop(paste0("Unkown generation interval distribution for pathogen `", pathogen,"` not found. Aborting!"))
   }
   
