@@ -50,6 +50,16 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       shape_sd = 0.3,
       max = 14)
   }
+  
+  if(p == 'rsv'){
+    x <- list(
+      dist = "gamma",
+      mean = 4.7,
+      mean_sd = 1.2,
+      sd = 2,
+      sd_sd = 0.3,
+      max = 11)
+  }
 
   return(x)
   # see docs/distribution-params.html for refs
