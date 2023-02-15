@@ -76,7 +76,7 @@ summarise_by_date_iters <- function(df){
 #' @param df dataframe. Must have `date`, `mean`, `lo`, and `hi` columns.
 #'
 #' @importFrom rlang .data
-summarise_by_date_ens <- function(df){
+summarise_by_date_ens <- function(df, CI = 0.95){
   res = df %>%
     dplyr::group_by(date) %>%
     dplyr::summarise(
@@ -85,8 +85,8 @@ summarise_by_date_ens <- function(df){
       # what we do below for 'lwr' and 'upr' is not statistically correct,
       # but likely "good enough" for now.
       #
-      lwr = mean(.data$lo),
-      upr = mean(.data$hi),
+      lwr = quantile(.data$lo, probs = 0.5 - CI/2),
+      upr = quantile(.data$hi, probs = 0.5 + CI/2),
       .groups = "drop" )
 
   return(res)

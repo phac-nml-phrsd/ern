@@ -6,6 +6,9 @@
 \usage{
 def_dist_generation_interval(pathogen = "sarscov2")
 }
+\arguments{
+\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
+}
 \value{
 List with components
 \itemize{

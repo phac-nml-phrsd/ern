@@ -4,7 +4,7 @@
 \alias{summarise_by_date_ens}
 \title{Summarise observations by date for iterated ensemble data}
 \usage{
-summarise_by_date_ens(df)
+summarise_by_date_ens(df, CI = 0.95)
 }
 \arguments{
 \item{df}{dataframe. Must have \code{date}, \code{mean}, \code{lo}, and \code{hi} columns.}

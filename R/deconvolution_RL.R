@@ -38,7 +38,7 @@ deconvolution_RL <- function(
     max_iter = 50,
     out_col_name = 'RL_result',
     right_censor = TRUE,
-    verbose = TRUE){
+    verbose = FALSE){
 
   # Check inputs
   stopifnot(is.vector(observed) & is.vector(times) & is.vector(p_delay))

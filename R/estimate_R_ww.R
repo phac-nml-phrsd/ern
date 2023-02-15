@@ -25,14 +25,16 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
     select(date,I, t) %>%
-    tidyr::drop_na()
+    tidyr::drop_na() %>%
+    mutate(iter = i)
 
   rt = incidence_to_R(incidence = i.df,
                        generation.interval = sample.gi,
-                       prm.R = prm.R)
+                       prm.R = prm.R) %>%
+    mutate(iter = i)
 
   r = list(
-    i = i.df,
+    inc = i.df,
     rt = rt
   )
   return(r)
@@ -50,9 +52,11 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
 #' @param prm.smooth List. Parameters for the smoothing algorithm of the wastewater signal.
 #' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
 #' \itemize{
+#'  \item `window`: number of days defining the window of data used by `EpiEstim` to estimate Rt
+#'  \item `CI`: Numeric between 0 and 1. Confidence interval width for Rt estimates after sampling uncertain distributions.
 #'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
-#' @param iter Integer. Number of samples for the (uncertain) generation interval distribution.
 #' }
+#' @param iter Integer. Number of samples for the (uncertain) generation interval distribution.
 #' @return List. Elements include:
 #' - `ww.conc` original wastewater signal
 #' - `ww.smooth` smoothed wastewater signal
@@ -74,6 +78,7 @@ estimate_R_ww <- function(
       span   = 0.20
     ),
     prm.R = list(
+      CI = 0.95,
       window = 7,
       config.EpiEstim = NULL
     ),
@@ -106,7 +111,7 @@ estimate_R_ww <- function(
              wastewater = ww.smooth, scaling.factor = scaling.factor,
              prm.R = prm.R)
 
-  i = lapply(r, `[[`, 1) %>%
+  inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%
     transmute(value = .data$I,
               date) %>%
@@ -114,12 +119,12 @@ estimate_R_ww <- function(
 
   rt = lapply(r, `[[`, 2) %>%
     dplyr::bind_rows() %>%
-    summarise_by_date_ens()
+    summarise_by_date_ens(CI = prm.R$CI)
 
   return(list(
     ww.conc   = ww.conc,
     ww.smooth = ww.smooth,
-    inc       = i,
+    inc       = inc,
     R         = rt
   )
   )

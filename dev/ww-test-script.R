@@ -13,7 +13,7 @@ fakedata = 0
 
 if(!fakedata){
   source('../ern-dev/utils.R')
-  siteid = 'TAB'
+  siteid = 'EGB'
   date.start =  "2022-10-15"
   ww.conc = readRDS("../nml-azure-to-r/out/nml-database.RDS") %>%
     clean_ww(gene_target = "covN2") %>%
@@ -46,15 +46,14 @@ prm.smooth = list(
 #   config.EpiEstim = NULL
 # )
 prm.R = list(
+  CI = 0.95,
   window = 10,
   config.EpiEstim = EpiEstim::make_config(seed = 15)
 )
 
-dist.fec = ern::get_fecal_shedding('sarscov2')
+dist.fec = ern::def_dist_fecal_shedding('sarscov2')
 
-z = c( rep(1,6), c(2,3,3,3,2), rep(1,5))
-# dist.fec = z/sum(z)
-# plot(dist.fec, typ='o')
+dist.fec$mean_sd <- 1
 
 dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
 
@@ -66,16 +65,22 @@ r.estim = ern::estimate_R_ww(
   dist.gi        = dist.gi,
   scaling.factor = 1,
   prm.smooth     = prm.smooth,
-  prm.R = prm.R
+  prm.R = prm.R,
+  iter = 20
 )
 
+inc = r.estim$inc
+g.inc = inc %>% ggplot(aes(x=date))+
+  geom_line(aes(y=mean)) + geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3)+
+  scale_y_continuous(limits = c(0,500))
+
+g.r = r.estim$R %>% ggplot(aes(x=date))+
+  geom_line(aes(y=mean)) + geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3)+
+  scale_y_continuous(limits = c(0,5))
+g.inc / g.r + labs(caption=dist.fec$mean_sd)
 
 # r.estim$R %>% ggplot(aes(x=date, y=mean)) + geom_line()
 
 g = ern::plot_diagnostic_ww(r.estim, caption = ifelse(fakedata,'fake',siteid))
-plot(g)
-
-r.estim$R %>%
-  select(date, mean) %>%
-  filter(date > ymd('2022-11-20'))
+# plot(g)
 

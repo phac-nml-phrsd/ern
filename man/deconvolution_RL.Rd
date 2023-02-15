@@ -11,7 +11,7 @@ deconvolution_RL(
   max_iter = 50,
   out_col_name = "RL_result",
   right_censor = TRUE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
