@@ -118,20 +118,32 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
 
   if(tolower(pathogen) == 'influenza'){
-    y = 1:15
-    z = y^2*exp(-y/2)
-    fec = z/sum(z)
-
+     # This is a dummy distribution
+     # TODO: look at the literature to inform those values
+    fec = list(
+      dist = "gamma",
+      mean = 12,
+      mean_sd = 3,
+      sd = 7,
+      sd_sd = 2,
+      max = 29
+    )
     if(subtype == 'foo'){
       # TO DO...
     }
   }
 
   if(tolower(pathogen) == 'rsv'){
-    y = 1:10
-    z = y^2*exp(-y/3)
-    fec = z/sum(z)
-
+   # This is a dummy distribution
+   # TODO: look at the literature to inform those values
+    fec = list(
+      dist = "gamma",
+      mean = 9,
+      mean_sd = 3,
+      sd = 5,
+      sd_sd = 1,
+      max = 21
+    )
     if(subtype == 'foo'){
       # TO DO...
     }
