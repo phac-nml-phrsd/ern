@@ -45,10 +45,8 @@ estimate_R_cl <- function(
   # ==== Aggregated -> daily reports ====
 
   # attach time-index column to observed aggregated reports
-  cl.agg <- attach_t_agg(
-    cl.agg,
-    first.agg.period = prm.daily$first.agg.period
-  )
+  cl.agg <- attach_t_agg(x = cl.agg,
+                         first.agg.period = prm.daily$first.agg.period)
 
   # estimate daily reports using JAGS model
   cl.daily.raw = agg_to_daily(

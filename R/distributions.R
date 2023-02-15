@@ -45,7 +45,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       shape_sd = 0.3,
       max = 14)
   }
-  
+
   if(p == 'rsv'){
     x <- list(
       dist = "gamma",
@@ -60,7 +60,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
   if(is.null(x)){
     stop(paste0("Unkown generation interval distribution for pathogen `", pathogen,"` not found. Aborting!"))
   }
-  
+
   return(x)
   # see docs/distribution-params.html for refs
 }
@@ -68,6 +68,9 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 #' Define the reporting fraction distribution
 #'
 #' @template return-dist
+#' @export
+#'
+#'
 def_dist_reporting_fraction <- function(){
   list(
       dist = "unif",

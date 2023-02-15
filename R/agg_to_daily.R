@@ -17,15 +17,16 @@ agg_to_daily <- function(
 
   gi = get_discrete_dist(sample_a_dist(dist.gi))
 
-  (fit_jags_aggreg(
+  df.daily.inc = fit_jags_aggreg(
     g = gi, N = popsize,
     obs.times = cl.agg$t,
     Y = cl.agg$count,
-    mcmc.params = prm.daily
-  )
-    %>% reshape_fit_jags()
-    %>% get_realizations(cl.agg)
-  )
+    mcmc.params = prm.daily ) %>%
+    reshape_fit_jags() %>%
+    get_realizations(cl.agg)
+
+  return(df.daily.inc)
+
 }
 
 # helpers -----------------------------------------------------------------
@@ -58,10 +59,11 @@ in this parameter list)."))
     is set to', fa, 'days.'))
   }
 
-  res = (x
-   %>% dplyr::mutate(t = as.numeric(date - min(date)) + fa)
-   %>% dplyr::arrange(t)
-  )
+  date.min = min(x$date)
+
+  res = x %>%
+    dplyr::mutate(t = as.numeric(date - date.min) + fa) %>%
+    dplyr::arrange(t)
 
   return(res)
 }
