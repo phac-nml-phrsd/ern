@@ -11,7 +11,7 @@
 #'  This value may be assumed or independently calibrated to data.
 #' @param prm.R List of configuration parameters for EpiEstim.
 #'
-#' @return
+#' @return a list with elements `inc` (incidence) and `rt` (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
                          scaling.factor, prm.R) {
   set.seed(i)
@@ -24,14 +24,14 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
 
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
-    select(date,I, t) %>%
+    dplyr::select(date,I, t) %>%
     tidyr::drop_na() %>%
-    mutate(iter = i)
+    dplyr::mutate(iter = i)
 
   rt = incidence_to_R(incidence = i.df,
                        generation.interval = sample.gi,
                        prm.R = prm.R) %>%
-    mutate(iter = i)
+    dplyr::mutate(iter = i)
 
   r = list(
     inc = i.df,
@@ -113,7 +113,7 @@ estimate_R_ww <- function(
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%
-    transmute(value = .data$I,
+    dplyr::transmute(value = .data$I,
               date) %>%
     summarise_by_date_iters()
 

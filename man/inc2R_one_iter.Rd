@@ -22,6 +22,9 @@ This value may be assumed or independently calibrated to data.}
 
 \item{prm.R}{List of configuration parameters for EpiEstim.}
 }
+\value{
+a list with elements \code{inc} (incidence) and \code{rt} (reproduction number)
+}
 \description{
 Helper function.
 Converts wastewater to Rt after sampling one fecal shedding and

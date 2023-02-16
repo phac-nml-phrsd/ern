@@ -56,7 +56,7 @@ estimate_R_cl_single <- function(
   )
     # attach time index to incidence
     %>% dplyr::mutate(
-      t = 1:nrow(.)
+      t = 1:nrow(.data)
     )
   )
 

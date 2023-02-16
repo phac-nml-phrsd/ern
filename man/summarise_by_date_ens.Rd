@@ -8,6 +8,8 @@ summarise_by_date_ens(df, CI = 0.95)
 }
 \arguments{
 \item{df}{dataframe. Must have \code{date}, \code{mean}, \code{lo}, and \code{hi} columns.}
+
+\item{CI}{numeric. Confidence interval width for the summary, as a proportion (\code{CI = 0.95} uses the 95\% confidence interval)}
 }
 \description{
 This function summarises iterations of ensemble data.
