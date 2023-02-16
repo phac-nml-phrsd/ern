@@ -74,6 +74,7 @@ summarise_by_date_iters <- function(df){
 #' @description This function summarises iterations of ensemble data.
 #'
 #' @param df dataframe. Must have `date`, `mean`, `lo`, and `hi` columns.
+#' @param CI numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
 #'
 #' @importFrom rlang .data
 summarise_by_date_ens <- function(df, CI = 0.95){
@@ -85,8 +86,8 @@ summarise_by_date_ens <- function(df, CI = 0.95){
       # what we do below for 'lwr' and 'upr' is not statistically correct,
       # but likely "good enough" for now.
       #
-      lwr = quantile(.data$lo, probs = 0.5 - CI/2),
-      upr = quantile(.data$hi, probs = 0.5 + CI/2),
+      lwr = stats::quantile(.data$lo, probs = 0.5 - CI/2),
+      upr = stats::quantile(.data$hi, probs = 0.5 + CI/2),
       .groups = "drop" )
 
   return(res)

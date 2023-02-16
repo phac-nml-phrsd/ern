@@ -24,11 +24,11 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = .data$val)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
-      ggplot2::aes(y = obs),
+      ggplot2::aes(y = .data$obs),
       color = 'steelblue4',
       linewidth = 1,
       alpha = 0.5
@@ -41,7 +41,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.inc = r.estim$inc %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
     ggplot2::geom_line()+
     ggplot2::labs(title ='Deconvoluted incidence',
                   x = 'infection date', y='cases')+
@@ -50,7 +50,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   g.r = r.estim$R %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
     ggplot2::geom_line() +
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
@@ -151,11 +151,11 @@ plot_diagnostic_cl <- function(
 
   p4 <- r.estim$inferred.agg %>%
     ggplot2::ggplot(ggplot2::aes(x=date)) +
-    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
-    ggplot2::geom_line(ggplot2::aes(y=obs)) +
-    ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
+    ggplot2::geom_point(ggplot2::aes(y=.data$obs), size=2) +
+    ggplot2::geom_line(ggplot2::aes(y=.data$obs)) +
+    ggplot2::geom_line(ggplot2::aes(y=.data$mean.agg), color= 'red2', alpha=0.3) +
     ggplot2::geom_pointrange(
-      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
+      ggplot2::aes(y=.data$mean.agg, ymin=.data$lwr.agg, ymax=.data$upr.agg),
       color= 'red2', alpha=0.6) +
     ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
     th

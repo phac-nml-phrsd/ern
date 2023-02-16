@@ -7,6 +7,7 @@
 #' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @return List. Elements include:
 #' - `cl.agg` original aggregated reports signal
@@ -111,8 +112,8 @@ with inferred aggregates outside of the specified tolerance of ",
     reports         = cl.agg,
     agg.reldiff.tol = Inf,
     dates.only      = FALSE ) %>%
-    dplyr::filter(!is.na(obs)) %>%
-    dplyr::select(date, obs, matches('agg$'))
+    dplyr::filter(!is.na(.data$obs)) %>%
+    dplyr::select(date, .data$obs, dplyr::matches('agg$'))
 
   # Return results
 
