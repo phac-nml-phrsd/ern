@@ -15,7 +15,7 @@ agg_to_daily <- function(
   prm.daily
 ) {
 
-  gi = get_discrete_dist(sample_a_dist(dist.gi))
+  gi = get_discrete_dist(dist.gi)
 
   df.daily.inc = fit_jags_aggreg(
     g = gi, N = popsize,
