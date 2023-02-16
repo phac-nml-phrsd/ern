@@ -135,34 +135,32 @@ plot_diagnostic_cl <- function(
 
   # inferred input (smoothed daily cases)
 
-  p3 <- ggplot2::ggplot(
-    r.estim$cl.daily %>%
-       summarise_by_date() %>%
-       dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date))),
-         ggplot2::aes(x = date))
-     + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr),
-                            alpha = alpha_scale[2])
-     + ggplot2::geom_line(ggplot2::aes(y = .data$mean), linewidth = 1)
-     + ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)")
-     + th
+  tmp = r.estim$cl.daily %>%
+    summarise_by_date_iters() %>%
+    dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))
 
-
-  # inferred input (smoothed daily cases)
-
-  p4 <- r.estim$inferred.aggreg %>%
-    ggplot2::ggplot(ggplot2::aes(x=date)) +
-    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
-    ggplot2::geom_line(ggplot2::aes(y=obs)) +
-    ggplot2::geom_pointrange(
-      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
-      color= 'red2', alpha=0.6)+
-    ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
+  p3 <- ggplot2::ggplot(tmp, ggplot2::aes(x = date)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr),
+                         alpha = alpha_scale[2]) +
+    ggplot2::geom_line(ggplot2::aes(y = .data$mean), linewidth = 1) +
+    ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)") +
     th
 
 
+  # Comparison observations vs aggregated data from inferred daily incidence
+
+  p4 <- r.estim$inferred.agg %>%
+    ggplot2::ggplot(ggplot2::aes(x=date)) +
+    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
+    ggplot2::geom_line(ggplot2::aes(y=obs)) +
+    ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
+    ggplot2::geom_pointrange(
+      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
+      color= 'red2', alpha=0.6) +
+    ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
+    th
+
   # ==== composite plot ====
-
-
-  g = patchwork::wrap_plots(p1,p2,p3,p4, ncol=1)
+  g = patchwork::wrap_plots(p1,p3,p4, ncol=1)
   return(g)
 }
