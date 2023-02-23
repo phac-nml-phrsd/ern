@@ -1,8 +1,53 @@
 devtools::load_all()
 library(magrittr)
+suppressMessages({
+  library(tidyr)
+  library(dplyr)
+  library(ggplot2)
+  library(lubridate)
+  library(stringr)
+  library(patchwork)
+})
 
+if(0){
 dat = readRDS('dev/tmp.rds') %>% dplyr::mutate(count = round(count/20))
 dat = dat[1:6,]
+popsize=1e7
+}
+
+if(1){
+
+  pt = 'AB'
+  vg = 'RSV'
+
+  dat = readRDS('dev/RVDSS.rds') %>%
+    ungroup() %>%
+    filter(season == '2022/2023',
+           prov == pt,
+           virus.group == vg,
+           type == 'npos',
+           between(date,
+                   ymd('2022-10-25'),
+                   ymd('2023-01-22'))) %>%
+    rename(count = v)
+
+  ggplot(dat,aes(x=date, y=count))+geom_line()+geom_point()+
+    labs(title=paste(vg, pt))
+
+  get_popsize <- function(prov) {
+
+    res = switch(EXPR = prov,
+                 BC = 5e6,
+                 AB = 4e6,
+                 SK = 1e6,
+                 MB = 1e6,
+                 ON = 14e6,
+                 QC = 8e6
+    )
+    return(res)
+  }
+  popsize = get_popsize(pt)
+}
 
 max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
@@ -21,8 +66,8 @@ dist.gi      = def_dist_generation_interval()
 dist.gi$max = max.dists
 
 prm.daily = list(
-  burn = 30,
-  iter = 30,
+  burn = 300,
+  iter = 300,
   chains = 2
 )
 prm.smooth = list(window = 7)
@@ -42,22 +87,31 @@ p1 <- ggplot2::ggplot(dat,ggplot2::aes(x=date, y=count)) +
   ggplot2::labs(title = "weekly reports") +
   ggplot2::theme(axis.title = ggplot2::element_blank())
 
+# ---DEBUG
+dist.gi =  list(
+  dist = "gamma",
+  mean = 5 ,
+  mean_sd = 0.7486,
+  shape = 2.39,
+  shape_sd = 0.3573,
+  max = 10)
+# ---END DEBUG
+
 r.estim = estimate_R_cl(
   cl.agg        = dat,
   dist.repdelay = dist.repdelay,
   dist.repfrac  = dist.repfrac,
   dist.incub    = dist.incub,
   dist.gi       = dist.gi,
-  popsize       = 1e7,
+  popsize       = popsize,
   prm.smooth    = prm.smooth,
   prm.daily     = prm.daily,
   prm.R         = prm.R,
   prm.daily.check = prm.daily.check
 )
 
-# DC: this is broken
-# pd = plot_diagnostic_cl(r.estim)
-
+pd = plot_diagnostic_cl(r.estim)
+plot(pd)
 
 p2 <- ggplot2::ggplot(r.estim$R,ggplot2::aes(x = date)) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dashed") +
