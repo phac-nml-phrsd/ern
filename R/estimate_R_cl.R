@@ -42,6 +42,7 @@ estimate_R_cl <- function(
 
   # Checking arguments
   check_prm.R(prm.R)
+  check_data_clin(cl.agg)
 
   # ==== Aggregated -> daily reports ====
 

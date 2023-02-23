@@ -18,7 +18,8 @@ agg_to_daily <- function(
   gi = get_discrete_dist(dist.gi)
 
   df.daily.inc = fit_jags_aggreg(
-    g = gi, N = popsize,
+    g = gi,
+    N = popsize,
     obs.times = cl.agg$t,
     Y = cl.agg$count,
     mcmc.params = prm.daily ) %>%
@@ -26,7 +27,6 @@ agg_to_daily <- function(
     get_realizations(cl.agg)
 
   return(df.daily.inc)
-
 }
 
 # helpers -----------------------------------------------------------------
@@ -96,6 +96,9 @@ fit_jags_aggreg <- function(
   # (assumes same aggregation period for the first
   # data point (Y[1]) as the second one. `+1` prevents Iinit=0)
   Iinit = Y[1] / (obs.times[2] - obs.times[1]) + 1
+
+  if(Iinit <=0) stop('Initial incidence cannot be negative. ABORTING!')
+  if(Iinit > N) stop('Initial incidence cannot be larger than population size. ABORTING!')
 
   data_jags = list(
     obs.times = obs.times,
