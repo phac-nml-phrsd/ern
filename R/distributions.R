@@ -43,7 +43,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       mean_sd = 1.1,
       shape = 2,
       shape_sd = 0.3,
-      max = 14)
+      max = 10)
   }
 
   if(p == 'rsv'){
@@ -53,7 +53,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       mean_sd = 1.2,
       sd = 2,
       sd_sd = 0.3,
-      max = 11)
+      max = 10)
   }
 
    # Check if pathogen was found

@@ -52,7 +52,7 @@ estimate_R_cl <- function(
 
   # estimate daily reports using JAGS model
   cl.daily.raw = agg_to_daily(
-    cl.agg = cl.agg,
+    cl.agg    = cl.agg,
     dist.gi   = dist.gi,
     popsize   = popsize,
     prm.daily = prm.daily
