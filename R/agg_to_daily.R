@@ -130,7 +130,7 @@ fit_jags_aggreg <- function(
 
     for(t in 2:ng){
       tmp[t] <- sum(g[1:(t-1)] * I[t-1:(t-1)])
-      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha) + 0.9   # <-- adding `0.9` avoids JAGS error `invalid parent value`... not fully clear why.
       I[t]   ~ dpois(Im[t])
       S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
     }
@@ -142,7 +142,7 @@ fit_jags_aggreg <- function(
     for(t in (ng+1):n.days){
       tmp[t] <- sum(g[1:ng] * I[t-(1:ng)])
       S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
-      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha) + 0.9
       I[t]   ~ dpois(Im[t])
     }
 
@@ -184,8 +184,8 @@ Running MCMC model to infer daily reports from aggregated reports...
 
   # Posterior iterations:
   mod_sim <- rjags::coda.samples(model = mod,
-                          variable.names = params,
-                          n.iter = mcmc.params$iter)
+                                 variable.names = params,
+                                 n.iter = mcmc.params$iter)
 
   return(mod_sim)
 }
