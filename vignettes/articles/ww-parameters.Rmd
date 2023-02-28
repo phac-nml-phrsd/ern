@@ -1,0 +1,204 @@
+---
+title: "Estimating fecal shedding parameters to obtain reproductive number from wastewater data"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE, message=FALSE, warning=FALSE}
+library(ern)
+library(tidyverse)
+```
+
+## Wastewater
+
+Viral concentration in wastewater has become a popular metric in tracking community transmission of respiratory illnesses. Infected individuals shed viral particles, which are then passed and collected at wastewater treatment facilities. Wastewater samples are then tested for viral concentration. Daily changes of viral concentration allow modellers to examine trends and estimate effective reproductive number ($R_t$).
+
+### Wastewater parameters needed to obtain $R_t$
+
+In order to estimate $R_t$ from wastewater data, daily viral concentration must be deconvoluted into daily incidence. This incidence time-series is then used to generate $R_t$ estimates.
+
+The following parameters are required:
+
+-   **Fecal shedding kinetics:** kinetics on how infected individuals shed viral particles into wastewater. This article will focus on how fecal shedding kinetics were estimated for `ern`.
+
+-   **Generation interval:** time between infection and transmission. Click [here](distribution-parameters.html) for how the generation interval for SARS-CoV-2 was estimated.
+
+Using data from literature, these parameters can be estimated and used to obtain $R_t$.
+
+## Fecal shedding kinetics
+
+Individuals infected wtih respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) are able to pass their viral particles into wastewater through their stool. Fecal shedding kinetics refers to the kinetics of such fecal shedding.
+
+Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.*\_2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
+
+![](../figs/WWFig1.PNG)
+
+As the above diagram shows, infectious symptomatic and asymptomatic individuals ($I$ and $J$) contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals who are infectious and require hospitalization ($J$) do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized.
+
+### Fitting fecal shedding kinetics to a distribution
+
+Within each of the 4 compartments lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.*\_2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
+
+```{r, echo=FALSE}
+shed.i = data.frame(
+  x = seq(from = 1, to = 12, by = 2),
+  y = c(5, 7.30103, 7.083333, 6.677121, 6.30, 5.9)
+)
+
+plot(x = shed.i$x,
+     y = shed.i$y,
+     "b",
+     main = "Fecal shedding kinetics: I compartment. Mean days of shedding: 12",
+     xlab = "days",
+     ylab = "log viral load")
+
+shed.a = data.frame(
+  x = seq(from = 1, to = 10, by = 2),
+  y = c(5,7.30103,7.083333,6.677121, 6.30)
+)
+plot(x = shed.a$x,
+     y = shed.a$y,
+     "b",
+     main = "Fecal shedding kinetics: A compartment. Mean days of shedding: 10",
+     xlab = "days",
+     ylab = "log viral load")
+
+shed.j = data.frame(
+  x = seq(from = 1, to = 8, by = 2),
+  y = c(5,7.30103,7.083333,6.677121)
+)
+plot(x = shed.j$x,
+     y = shed.j$y,
+     "b",
+     main = "Fecal shedding kinetics: J compartment. Mean days of shedding: 8",
+     xlab = "days",
+     ylab = "log viral load")
+
+shed.z = data.frame(
+  x = seq(from = 1, to = 24, by = 4),
+  y = c(5.40103,4.60103,3.90103,3.10103,2.10103,1.2)
+)
+plot(x = shed.z$x,
+     y = shed.z$y,
+     "b",
+     main = "Fecal shedding kinetics: Z compartment. Mean days of shedding: 24",
+     xlab = "days",
+     ylab = "log viral load")
+```
+
+Using these fecal shedding kinetics values for the 4 compartments, a general fecal shedding distribution for SARS-CoV-2 can be estimated for `ern` . This is first done by creating dataframes representing the various fecal shedding profiles of individuals exposed to SARS-CoV-2 ($I$ + $Z$, $A$ + $Z$, $J$).
+
+```{r}
+shed.symp = data.frame(
+  x = c(seq(from = 1, to = 12, by = 2),seq(from = 13, to = 36, by = 4)),
+  y = c(5, 7.30103, 7.083333, 6.677121, 6.30, 5.9, 5.40103,4.60103,3.90103,3.10103,2.10103,1.2)
+)
+
+shed.asymp = data.frame(
+  x = c(seq(from = 1, to = 10, by = 2),seq(from = 11, to = 34, by = 4)),
+  y = c(5, 7.30103, 7.083333, 6.677121, 6.30, 5.40103,4.60103,3.90103,3.10103,2.10103,1.2)
+)
+
+shed.hosp = data.frame(
+  x = seq(from = 1, to = 8, by = 2),
+  y = c(5,7.30103,7.083333,6.677121)
+)
+
+
+```
+
+Using these fecal shedding profiles, a mean fecal shedding distribution can be created by combining the 3 dataframes, and taking the daily mean viral shedding between the 3 shedding profiles and normalizing to 1.
+
+```{r}
+fec.l = list(
+  shed.symp,
+  shed.asymp,
+  shed.hosp
+)
+
+df = dplyr::bind_rows(fec.l) %>%
+  dplyr::group_by(x) %>%
+  dplyr::summarise(y = mean(y, na.rm=TRUE))
+
+df$y = df$y/sum(df$y)
+```
+
+```{r, echo=FALSE}
+plot(x = df$x,
+     y = df$y,
+     main = "Average fecal shedding kinetics distribution",
+     xlab = "days",
+     ylab = "log viral load")
+```
+
+Using the [`stats4`](https://stat.ethz.ch/R-manual/R-patched/library/stats4/html/mle.html) package, a maximum likelihood estimation can be used to estimate a gamma distribution that fits the fecal shedding distribution along with standard error parameters. This gamma distribution can then be used in `ern` to obtain incidence estimates needed to generate $R_t$. The code below illustrates how the fitted fecal shedding gamma distribution for SARS-CoV-2 was obtained for `ern`.
+
+```{r}
+get_gamma_fec <- function(df){
+  log_likelihood = function(mean,shape){
+    a = shape
+    s = mean/shape
+    return(-sum(df$y*(dgamma(df$x, shape = a, scale = s, log = TRUE))))
+  }
+
+  res = stats4::summary(stats4::mle(minuslogl = log_likelihood,
+                                    start = list(mean = 14, shape = 2),
+                                    nobs = nrow(df)))
+
+  f = list(
+    dist = "gamma",
+    mean = res@coef[[1]],
+    mean_sd = res@coef[[3]],
+    shape = res@coef[[2]],
+    shape_sd = res@coef[[4]],
+    max = max(df$x)
+  )
+
+  return(f)
+}
+
+fec = get_gamma_fec(df)
+
+fec
+```
+
+Below illustrates how the gamma distribution fits to the observed fecal shedding distribution for SARS-CoV-2.
+
+```{r, echo=FALSE}
+y = dgamma(df$x, shape = fec$shape, scale = fec$mean/fec$shape)
+plot(x = df$x,
+     y = y/sum(y), 
+     'l',
+     main = "Fitted fecal shedding kinetics distribution",
+     xlab = "days",
+     ylab = "log viral load")
+points(x = df$x, y = df$y)
+```
+
+## Parameter values
+
+### SARS-CoV-2
+
+```{r, echo=FALSE}
+fec.dist = ern::def_dist_fecal_shedding()
+
+tribble(
+  ~parameter,           ~`value type`,                 ~`value`,
+    "fecal distribution mean",  "mean",              fec.dist$mean,
+    "",                   "standard deviation", fec.dist$mean_sd,
+    "fecal distribution shape", "mean",              fec.dist$shape,
+    "",                   "standard deviation", fec.dist$shape_sd,
+) %>%
+  knitr::kable(
+    digits = 4
+  )
+```
+
+### Other respiratory illnesses
+
+In future releases, fecal shedding parameter estimates for RSV and influenza will be estimated using fecal kinetics data from literature. SARS-CoV-2 fecal shedding estimates will be routinely updated as more literature data is obtained.
