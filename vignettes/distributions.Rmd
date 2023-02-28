@@ -1,19 +1,27 @@
 ---
-title: "Estimating parameters for various distributions induced by SARS-CoV-2 Omicron"
-author: "Irena Papst"
-format:
-  html:
-      embed-resources: true
-editor: visual
+title: "Estimating parameters for various distributions used in `ern`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating parameters for various distributions used in `ern`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 ```{r setup, echo = FALSE, message = FALSE}
+library(ern)
+
 library(glue)
 library(tibble)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
-devtools::load_all("..")
 ```
 
 [Jump to parameter values](#sec-params-gen-int "Fitted parameter values")
