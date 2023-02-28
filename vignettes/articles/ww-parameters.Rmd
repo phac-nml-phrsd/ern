@@ -112,7 +112,7 @@ shed.severe = data.frame(
 
 ```
 
-Using these fecal shedding profiles, a mean fecal shedding distribution can be created by combining the 3 dataframes, and taking the daily mean viral shedding between the 3 shedding profiles and normalizing to 1.
+Using these fecal shedding profiles, a mean fecal shedding distribution can be created by combining the 3 dataframes, and taking the daily mean viral shedding between the 3 shedding profiles.
 
 ```{r}
 fec.l = list(
@@ -137,7 +137,7 @@ plot(x = df$x,
 
 Using the [`stats4`](https://stat.ethz.ch/R-manual/R-patched/library/stats4/html/mle.html) package, a maximum likelihood estimation can be used to estimate a gamma distribution that fits the fecal shedding distribution along with standard error parameters. This gamma distribution can then be used in `ern` to obtain incidence estimates needed to generate $R_t$. The code below illustrates how the fitted fecal shedding gamma distribution for SARS-CoV-2 was obtained for `ern`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 get_gamma_fec <- function(df){
   log_likelihood = function(mean,shape){
     a = shape
@@ -176,12 +176,12 @@ Below illustrates how the gamma distribution fits to the observed fecal shedding
 ```{r, echo=FALSE}
 y = dgamma(df$x, shape = fec$shape, scale = fec$mean/fec$shape)
 plot(x = df$x,
-     y = y, 
+     y = y/sum(y), 
      'l',
      main = "Fitted fecal shedding kinetics distribution",
      xlab = "days",
-     ylab = "log viral load")
-points(x = df$x, y = df$y)
+     ylab = "log viral load (normalized)")
+points(x = df$x, y = df$y/sum(df$y))
 ```
 
 ## Parameter values
