@@ -1,6 +1,10 @@
 ---
-title: Estimating fecal shedding parameters to obtain reproductive number from wastewater
-  data
+title: "Estimating fecal shedding parameters to obtain reproductive number from wastewater"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating fecal shedding parameters to obtain reproductive number from wastewater}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -37,7 +41,7 @@ Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, 
 
 Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
 
-![](../figs/WWFig1.PNG)
+![](figs/WWFig1.PNG)
 _**IP:** I wouldn't include the caption from the original paper in this screenshot because it refers to "main text" which is the paper, but could easily be confused for the body of this vignette. Either add your own figure caption explaining the relevant components/notation or describe it all in the vignette text._
 
 As the above diagram shows, infectious symptomatic and asymptomatic individuals ($I$ and $J$) contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals who are infectious and require hospitalization ($J$) do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized.
