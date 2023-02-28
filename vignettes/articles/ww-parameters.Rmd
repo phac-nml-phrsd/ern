@@ -20,7 +20,7 @@ Viral concentration in wastewater has become a popular metric in tracking commun
 
 ### Wastewater parameters needed to obtain $R_t$
 
-In order to estimate $R_t$ from wastewater data, daily viral concentration must be deconvoluted into daily incidence. This incidence time-series is then used to generate $R_t$ estimates.
+In order to estimate $R_t$ from wastewater data, daily viral concentration must be deconvoluted into daily incidence (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)). This incidence time-series is then used to generate $R_t$ estimates.
 
 The following parameters are required:
 
@@ -32,9 +32,9 @@ Using data from literature, these parameters can be estimated and used to obtain
 
 ## Fecal shedding kinetics
 
-Individuals infected wtih respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) are able to pass their viral particles into wastewater through their stool. Fecal shedding kinetics refers to the kinetics of such fecal shedding.
+Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) shed viral particles into wastewater through their stool. Fecal shedding kinetics refers to the change of the individual's shedding amount in stools as a function of time since infection.
 
-Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.*\_2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
+Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
 
 ![](../figs/WWFig1.PNG)
 
@@ -42,7 +42,7 @@ As the above diagram shows, infectious symptomatic and asymptomatic individuals 
 
 ### Fitting fecal shedding kinetics to a distribution
 
-Within each of the 4 compartments lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.*\_2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
+Within each of the 4 compartments lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
 
 ```{r, echo=FALSE}
 shed.i = data.frame(
@@ -104,7 +104,7 @@ shed.asymp = data.frame(
   y = c(5, 7.30103, 7.083333, 6.677121, 6.30, 5.40103,4.60103,3.90103,3.10103,2.10103,1.2)
 )
 
-shed.hosp = data.frame(
+shed.severe = data.frame(
   x = seq(from = 1, to = 8, by = 2),
   y = c(5,7.30103,7.083333,6.677121)
 )
@@ -118,14 +118,13 @@ Using these fecal shedding profiles, a mean fecal shedding distribution can be c
 fec.l = list(
   shed.symp,
   shed.asymp,
-  shed.hosp
+  shed.severe
 )
 
 df = dplyr::bind_rows(fec.l) %>%
   dplyr::group_by(x) %>%
   dplyr::summarise(y = mean(y, na.rm=TRUE))
 
-df$y = df$y/sum(df$y)
 ```
 
 ```{r, echo=FALSE}
@@ -133,7 +132,7 @@ plot(x = df$x,
      y = df$y,
      main = "Average fecal shedding kinetics distribution",
      xlab = "days",
-     ylab = "log viral load")
+     ylab = "log viral load", typ='b')
 ```
 
 Using the [`stats4`](https://stat.ethz.ch/R-manual/R-patched/library/stats4/html/mle.html) package, a maximum likelihood estimation can be used to estimate a gamma distribution that fits the fecal shedding distribution along with standard error parameters. This gamma distribution can then be used in `ern` to obtain incidence estimates needed to generate $R_t$. The code below illustrates how the fitted fecal shedding gamma distribution for SARS-CoV-2 was obtained for `ern`.
@@ -146,16 +145,21 @@ get_gamma_fec <- function(df){
     return(-sum(df$y*(dgamma(df$x, shape = a, scale = s, log = TRUE))))
   }
 
-  res = stats4::summary(stats4::mle(minuslogl = log_likelihood,
+  mle.res = stats4::mle(minuslogl = log_likelihood,
                                     start = list(mean = 14, shape = 2),
-                                    nobs = nrow(df)))
-
+                                    nobs = nrow(df))
+  
+  res = stats4::summary(mle.res)
+  ci = stats4::confint(object = mle.res, level = 0.68)
+  
   f = list(
     dist = "gamma",
-    mean = res@coef[[1]],
-    mean_sd = res@coef[[3]],
+    mean  = res@coef[[1]],
     shape = res@coef[[2]],
-    shape_sd = res@coef[[4]],
+    # we assume this parameter will be sampled with 
+    # a normal distribution (hence 68%CI ~ 2 std dev):
+    mean_sd  = (ci[1,2] - ci[1,1])/2, 
+    shape_sd = (ci[2,2] - ci[2,1])/2,
     max = max(df$x)
   )
 
@@ -172,7 +176,7 @@ Below illustrates how the gamma distribution fits to the observed fecal shedding
 ```{r, echo=FALSE}
 y = dgamma(df$x, shape = fec$shape, scale = fec$mean/fec$shape)
 plot(x = df$x,
-     y = y/sum(y), 
+     y = y, 
      'l',
      main = "Fitted fecal shedding kinetics distribution",
      xlab = "days",
@@ -185,17 +189,15 @@ points(x = df$x, y = df$y)
 ### SARS-CoV-2
 
 ```{r, echo=FALSE}
-fec.dist = ern::def_dist_fecal_shedding()
-
 tribble(
   ~parameter,           ~`value type`,                 ~`value`,
-    "fecal distribution mean",  "mean",              fec.dist$mean,
-    "",                   "standard deviation", fec.dist$mean_sd,
-    "fecal distribution shape", "mean",              fec.dist$shape,
-    "",                   "standard deviation", fec.dist$shape_sd,
+    "fecal distribution mean",  "mean",              fec$mean,
+    "",                   "standard deviation", fec$mean_sd,
+    "fecal distribution shape", "mean",              fec$shape,
+    "",                   "standard deviation", fec$shape_sd,
 ) %>%
   knitr::kable(
-    digits = 4
+    digits = 1
   )
 ```
 
