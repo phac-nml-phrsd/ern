@@ -1,5 +1,6 @@
 ---
-title: "Estimating fecal shedding parameters to obtain reproductive number from wastewater data"
+title: Estimating fecal shedding parameters to obtain reproductive number from wastewater
+  data
 ---
 
 ```{r, include = FALSE}
@@ -14,33 +15,34 @@ library(ern)
 library(tidyverse)
 ```
 
-## Wastewater
+Viral concentration in wastewater has become a popular metric in tracking community transmission of respiratory illnesses. Infected individuals shed viral particles, which are then passed and collected at wastewater treatment facilities. Wastewater samples are then tested for viral concentration. Daily changes of viral concentration allow modellers to examine trends and estimate the effective reproductive number ($R_t$) over time.
 
-Viral concentration in wastewater has become a popular metric in tracking community transmission of respiratory illnesses. Infected individuals shed viral particles, which are then passed and collected at wastewater treatment facilities. Wastewater samples are then tested for viral concentration. Daily changes of viral concentration allow modellers to examine trends and estimate effective reproductive number ($R_t$).
+## Estimating $R_t$ from wastewater {#sec-est-Rt}
 
-### Wastewater parameters needed to obtain $R_t$
+The process we use to estimate $R_t$ from viral concentration in wastewater in `ern` is as follows:
 
-In order to estimate $R_t$ from wastewater data, daily viral concentration must be deconvoluted into daily incidence (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)). This incidence time-series is then used to generate $R_t$ estimates.
+1. Pre-process the **time series of viral concentration in wastewater** to prepare for computing $R_t$. This step involves smoothing the rather noisy viral concentration data, as well as mapping from viral concentration to numbers of infections using a scaling factor. 
 
-The following parameters are required:
+1. Specify a **fecal shedding distribution** which describes how infected individuals shed viral particles into wastewater over time. This article focuses on how a family of fecal shedding distributions were estimated for `ern` from literature.
 
--   **Fecal shedding kinetics:** kinetics on how infected individuals shed viral particles into wastewater. This article will focus on how fecal shedding kinetics were estimated for `ern`.
+1. Perform a deconvolution of the pre-processed viral concentration time series using the fecal shedding distribution in order to obtain a **daily incidence time series** (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)).
 
--   **Generation interval:** time between infection and transmission. Click [here](distribution-parameters.html) for how the generation interval for SARS-CoV-2 was estimated.
+1. Specify a **generation interval distribution**, which describes the time interval between an individual's infection and their transmission to another person. The way in which parameters for the family of generation intervals used in `ern` are estimated is described in the `distributions` vignette.
 
-Using data from literature, these parameters can be estimated and used to obtain $R_t$.
+1. Perform a deconvolution of the daily incidence time series with the generation interval distribution to obtain the **$R_t$ time series**. 
 
 ## Fecal shedding kinetics
 
-Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) shed viral particles into wastewater through their stool. Fecal shedding kinetics refers to the change of the individual's shedding amount in stools as a function of time since infection.
+Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) shed viral particles into wastewater through their stool. In order to estimate the fecal shedding distributions needed for the $R_t$ calculation described [above](#sec-est-Rt), we must assume a model for the fecal shedding kinetics, which refers to the change of the individual's shedding amount in stools as a function of time since infection.
 
 Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
 
 ![](../figs/WWFig1.PNG)
+_**IP:** I wouldn't include the caption from the original paper in this screenshot because it refers to "main text" which is the paper, but could easily be confused for the body of this vignette. Either add your own figure caption explaining the relevant components/notation or describe it all in the vignette text._
 
 As the above diagram shows, infectious symptomatic and asymptomatic individuals ($I$ and $J$) contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals who are infectious and require hospitalization ($J$) do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized.
 
-### Fitting fecal shedding kinetics to a distribution
+### Fitting a distribution based on fecal shedding kinetics
 
 Within each of the 4 compartments lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
 
