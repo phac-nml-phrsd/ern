@@ -2,7 +2,7 @@
 % Please edit documentation in R/distributions.R
 \name{draw_from_gamma}
 \alias{draw_from_gamma}
-\title{Draw from gamma based on parameter name in dist list}
+\title{Draw from gamma based on parameter name in distribution list.}
 \usage{
 draw_from_gamma(par, dist)
 }
@@ -15,5 +15,5 @@ draw_from_gamma(par, dist)
 Numeric. The sampled value.
 }
 \description{
-Draw from gamma based on parameter name in dist list
+Draw from gamma based on parameter name in distribution list.
 }

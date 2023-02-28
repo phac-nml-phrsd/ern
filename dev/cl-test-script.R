@@ -12,13 +12,15 @@ suppressMessages({
 if(0){
 dat = readRDS('dev/tmp.rds') %>% dplyr::mutate(count = round(count/20))
 dat = dat[1:6,]
-popsize=1e7
+popsize = 1e7
+pathogen = 'sarscov2'
 }
 
 if(1){
 
   pt = 'AB'
   vg = 'RSV'
+  pathogen = vg
 
   dat = readRDS('dev/RVDSS.rds') %>%
     ungroup() %>%
@@ -52,17 +54,21 @@ if(1){
 max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
 dist.repdelay = list(
-  dist = 'lnorm',
-  mean = 1.5,
-  mean_sd = 0.05,
-  sd = 0.64,
-  sd_sd = 0.05,
-  max = max.dists
+  dist = 'gamma',
+  mean = 5,
+  mean_sd = 1,
+  sd = 1,
+  sd_sd = 0.1,
+  max = 10
 )
-dist.repfrac = def_dist_reporting_fraction()
-dist.incub   = def_dist_incubation_period()
+dist.repfrac = list(
+  dist = "unif",
+  min = 0.1,
+  max = 0.3
+)
+dist.incub   = def_dist_incubation_period(pathogen)
 dist.incub$max = max.dists # need if we're talking fewer data points
-dist.gi      = def_dist_generation_interval()
+dist.gi      = def_dist_generation_interval(pathogen)
 dist.gi$max = max.dists
 
 prm.daily = list(
@@ -87,14 +93,14 @@ p1 <- ggplot2::ggplot(dat,ggplot2::aes(x=date, y=count)) +
   ggplot2::labs(title = "weekly reports") +
   ggplot2::theme(axis.title = ggplot2::element_blank())
 
-# ---DEBUG
-dist.gi =  list(
-  dist = "gamma",
-  mean = 5 ,
-  mean_sd = 0.7486,
-  shape = 2.39,
-  shape_sd = 0.3573,
-  max = 10)
+# # ---DEBUG
+# dist.gi =  list(
+#   dist = "gamma",
+#   mean = 5 ,
+#   mean_sd = 0.7486,
+#   shape = 2.39,
+#   shape_sd = 0.3573,
+#   max = 10)
 # ---END DEBUG
 
 r.estim = estimate_R_cl(
