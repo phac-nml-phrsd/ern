@@ -105,13 +105,11 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
     # Values obtained from Nourbakhsh et. al. (2021)
     fec = list(
       dist = "gamma",
-      mean = 14.04042,
-      mean_sd = 2,
-      # mean_sd & sd_sd are currently inputted values. TODO: Use MLE to get
-      # reliable estimates
-      sd = 10.07955,
-      sd_sd = 2,
-      max = 36
+      mean = 12.9128,
+      mean_sd = 9.743434,
+      shape = 1.759285,
+      shape_sd = 2.291109,
+      max = 33
     )
 
     if(subtype == 'foo'){
