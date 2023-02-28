@@ -137,7 +137,9 @@ plot_diagnostic_cl <- function(
 
   tmp = r.estim$cl.daily %>%
     summarise_by_date_iters() %>%
-    dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))
+    dplyr::filter(dplyr::between(date,
+                                 min(r.estim$R$date, na.rm = TRUE),
+                                 max(r.estim$R$date, na.rm = TRUE)))
 
   p3 <- ggplot2::ggplot(tmp, ggplot2::aes(x = date)) +
     ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr),

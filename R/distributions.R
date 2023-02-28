@@ -1,17 +1,55 @@
 #' Define the incubation period distribution
 #'
+#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
+#'
 #' @template return-dist
 #' @export
-def_dist_incubation_period <- function(){
-  list(
-    dist = "gamma",
-    mean = 3.49,
-    mean_sd = 0.1477,
-    shape = 8.5,
-    shape_sd = 1.8945,
-    max = 8
-  )
-  # see docs/distribution-params.html for refs
+def_dist_incubation_period <- function(pathogen = 'sarscov2'){
+
+  res = NULL
+  p = tolower(pathogen)
+
+  if(p %in% c('sarscov2', 'cov2', 'sars2')){
+    res = list(
+      dist     = "gamma",
+      mean     = 3.49,
+      mean_sd  = 0.1477,
+      shape    = 8.5,
+      shape_sd = 1.8945,
+      max      = 8
+    )
+    # see docs/distribution-params.html for refs
+  }
+
+  if(p %in% c('influenza', 'flua', 'flub')){
+    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
+    # https://doi.org/10.1016/S1473-3099(09)70069-6
+    res = list(
+      dist     = "gamma",
+      mean     = 2.5,
+      mean_sd  = 0.5,
+      sd       = 1.0,
+      sd_sd    = 0.2,
+      max      = 6
+    )
+  }
+
+  if(p %in% c('rsv', 'rsva', 'rsvb')){
+    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
+    # https://doi.org/10.1016/S1473-3099(09)70069-6
+    res = list(
+      dist     = "gamma",
+      mean     = 5.0,
+      mean_sd  = 1.0,
+      sd       = 1.0,
+      sd_sd    = 0.2,
+      max      = 6
+    )
+  }
+  if(is.null(res)){
+    stop(paste0("Unkown incubation period distribution for pathogen `", pathogen,"` not found. Aborting!"))
+  }
+  return(res)
 }
 
 #' Define the generation interval distribution
@@ -22,62 +60,74 @@ def_dist_incubation_period <- function(){
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
- x = NULL
-
+  x = NULL
   p = tolower(pathogen)
 
-  if(p == 'sarscov2'){
+  if(p %in% c('sarscov2', 'cov2', 'sars2')){
+    # see docs/distribution-params.html for refs
     x <- list(
-      dist = "gamma",
-      mean = 6.84,
-      mean_sd = 0.7486,
-      shape = 2.39,
+      dist     = "gamma",
+      mean     = 6.84,
+      mean_sd  = 0.7486,
+      shape    = 2.39,
       shape_sd = 0.3573,
-      max = 15)
+      max      = 15)
   }
 
-    if(p == 'influenza'){
+  if(p %in% c('influenza', 'flua', 'flub')){
+    # ref: te Beest et al. Epidemiology. 2013
+    # https://www.jstor.org/stable/23487826
     x <- list(
-      dist = "gamma",
-      mean = 5.5,
-      mean_sd = 1.1,
-      shape = 2,
-      shape_sd = 0.3,
-      max = 14)
+      dist     = "gamma",
+      mean     = 2.5,
+      mean_sd  = 0.5,
+      sd       = 1.0,
+      sd_sd    = 0.3,
+      max      = 8)
   }
 
-  if(p == 'rsv'){
+  if(p %in% c('rsv', 'rsva', 'rsvb')){
+    # ref: Otomaru et al. Open Forum Infectious Diseases. 2019.
+    # https://doi.org/10.1093/ofid/ofz045
+    # TODO: explore more the literature...
     x <- list(
-      dist = "gamma",
-      mean = 4.7,
-      mean_sd = 1.2,
-      sd = 2,
-      sd_sd = 0.3,
-      max = 11)
+      dist     = "gamma",
+      mean     = 3.2,
+      mean_sd  = 0.5,
+      sd       = 1.1,
+      sd_sd    = 0.1,
+      max      = 8)
   }
 
-   # Check if pathogen was found
+  # Check if pathogen was found
   if(is.null(x)){
     stop(paste0("Unkown generation interval distribution for pathogen `", pathogen,"` not found. Aborting!"))
   }
 
   return(x)
-  # see docs/distribution-params.html for refs
 }
 
 #' Define the reporting fraction distribution
+#'
+#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
 #'
 #' @template return-dist
 #' @export
 #'
 #'
 def_dist_reporting_fraction <- function(){
-  list(
+
+  if(TRUE){
+    res = list(
       dist = "unif",
       min = 0.1,
       max = 0.3
-  )
-  # just a guess
+    )
+  }
+
+  warning('def_dist_reporting_fraction is NOT defined. Using Unif(0.1,0.3) by defaut!')
+
+  return(res)
 }
 
 #' @title Define fecal Shedding Distribution
@@ -94,15 +144,19 @@ def_dist_reporting_fraction <- function(){
 #'
 def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
+  p   = tolower(pathogen)
+
   # Check if correct pathogen specified
-  if(!isTRUE(pathogen %in% c('sarscov2', 'influenza', 'rsv'))){
+  if(!isTRUE(p %in% c('sarscov2', 'influenza', 'rsv'))){
     stop("Pathogen not found. Aborting!")
   }
 
   fec = NULL
 
-  if(tolower(pathogen) == 'sarscov2'){
-    # Values obtained from Nourbakhsh et. al. (2021)
+  if(p == 'sarscov2'){
+    # ref: Nourbakhsh et. al. (Epidemics, 2021)
+    # https://doi.org/10.1016/j.epidem.2022.100560
+
     fec = list(
       dist = "gamma",
       mean = 12.9128,
@@ -118,32 +172,32 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
   }
 
 
-  if(tolower(pathogen) == 'influenza'){
+  if(p == 'influenza'){
      # This is a dummy distribution
      # TODO: look at the literature to inform those values
     fec = list(
-      dist = "gamma",
-      mean = 12,
-      mean_sd = 3,
-      sd = 7,
-      sd_sd = 2,
-      max = 29
+      dist    = "gamma",
+      mean    = 9,
+      mean_sd = 1,
+      sd      = 6,
+      sd_sd   = 1,
+      max     = 29
     )
     if(subtype == 'foo'){
       # TO DO...
     }
   }
 
-  if(tolower(pathogen) == 'rsv'){
+  if(p == 'rsv'){
    # This is a dummy distribution
    # TODO: look at the literature to inform those values
     fec = list(
-      dist = "gamma",
-      mean = 9,
+      dist    = "gamma",
+      mean    = 12,
       mean_sd = 3,
-      sd = 5,
-      sd_sd = 1,
-      max = 21
+      sd      = 7,
+      sd_sd   = 2,
+      max     = 29
     )
     if(subtype == 'foo'){
       # TO DO...
@@ -154,7 +208,7 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 }
 
 
-#' Draw from gamma based on parameter name in dist list
+#' Draw from gamma based on parameter name in distribution list.
 #'
 #' @param par String. Name of the parameter to sample.
 #' @param dist List. Distribution definition.
@@ -182,10 +236,6 @@ sample_a_dist <- function(dist){
   par_names <- gsub("_sd", "", grep("_sd$", names(dist), value = TRUE))
 
   draw <- lapply(par_names, draw_from_gamma, dist = dist)
-
-  # == DEBUG
-  # print(paste('DEBUG sad:', draw))
-  # ==
 
   # === convert to standardized distribution format
   #
@@ -217,15 +267,14 @@ sample_a_dist <- function(dist){
 #' @return vector with discretized density
 get_discrete_dist <- function(params){
 
-  # check args
-  # -------------------------
+  # --- check args
   check_dist(params)
 
   if(!(params$dist %in% c("lnorm", "gamma"))) stop(paste0("Distribution recipe has not
 been defined for specified distribution type (dist = ", params$dist, ")"))
 
-  # get discrete dist
-  # -------------------------
+  # --- get discrete dist
+
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
       1:params$max,
@@ -249,9 +298,8 @@ been defined for specified distribution type (dist = ", params$dist, ")"))
     )
   }
 
-  # normalize to 1 and return
-  # -------------------------
-  x/sum(x)
+  # --- normalize to 1 and return
+  return(x/sum(x))
 }
 
 #' Sample from a distribution
