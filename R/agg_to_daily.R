@@ -18,7 +18,8 @@ agg_to_daily <- function(
   gi = get_discrete_dist(dist.gi)
 
   df.daily.inc = fit_jags_aggreg(
-    g = gi, N = popsize,
+    g = gi,
+    N = popsize,
     obs.times = cl.agg$t,
     Y = cl.agg$count,
     mcmc.params = prm.daily ) %>%
@@ -26,7 +27,6 @@ agg_to_daily <- function(
     get_realizations(cl.agg)
 
   return(df.daily.inc)
-
 }
 
 # helpers -----------------------------------------------------------------
@@ -97,6 +97,9 @@ fit_jags_aggreg <- function(
   # data point (Y[1]) as the second one. `+1` prevents Iinit=0)
   Iinit = Y[1] / (obs.times[2] - obs.times[1]) + 1
 
+  if(Iinit <=0) stop('Initial incidence cannot be negative. ABORTING!')
+  if(Iinit > N) stop('Initial incidence cannot be larger than population size. ABORTING!')
+
   data_jags = list(
     obs.times = obs.times,
     n.days = n.days,
@@ -127,7 +130,7 @@ fit_jags_aggreg <- function(
 
     for(t in 2:ng){
       tmp[t] <- sum(g[1:(t-1)] * I[t-1:(t-1)])
-      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha) + 0.9   # <-- adding `0.9` avoids JAGS error `invalid parent value`... not fully clear why.
       I[t]   ~ dpois(Im[t])
       S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
     }
@@ -139,7 +142,7 @@ fit_jags_aggreg <- function(
     for(t in (ng+1):n.days){
       tmp[t] <- sum(g[1:ng] * I[t-(1:ng)])
       S[t]   <- ifelse(N > sum(I[1:t]), N - sum(I[1:t]), 0)
-      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha)
+      Im[t]  <- R0 * tmp[t] * (S[t-1]/N)^(1+alpha) + 0.9
       I[t]   ~ dpois(Im[t])
     }
 
@@ -181,8 +184,8 @@ Running MCMC model to infer daily reports from aggregated reports...
 
   # Posterior iterations:
   mod_sim <- rjags::coda.samples(model = mod,
-                          variable.names = params,
-                          n.iter = mcmc.params$iter)
+                                 variable.names = params,
+                                 n.iter = mcmc.params$iter)
 
   return(mod_sim)
 }

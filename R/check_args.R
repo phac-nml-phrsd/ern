@@ -54,3 +54,25 @@ check_for_deconv <- function(obs, dist){
   - number of observations: ", length(obs)))
   return()
 }
+
+
+
+
+#' Check the dataframe of clinical data
+#'
+#' @param dat The dataframe of clinical data
+#'
+#' @return NULL
+#'
+check_data_clin <- function(dat) {
+
+  n = names(dat)
+
+  if(!'count' %in% n)
+    stop('The dataframe of observation must have a `count` column. ABORTING!')
+
+  if(!'date' %in% n)
+    stop('The dataframe of observation must have a `date` column. ABORTING!')
+
+  return()
+}

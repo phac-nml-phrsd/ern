@@ -4,7 +4,10 @@
 \alias{def_dist_reporting_fraction}
 \title{Define the reporting fraction distribution}
 \usage{
-def_dist_reporting_fraction()
+def_dist_reporting_fraction(pathogen = "sarscov2")
+}
+\arguments{
+\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
 }
 \value{
 List with components
