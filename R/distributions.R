@@ -2,16 +2,20 @@
 #'
 #' @template return-dist
 #' @export
-def_dist_incubation_period <- function(){
-  list(
-    dist = "gamma",
-    mean = 3.49,
-    mean_sd = 0.1477,
-    shape = 8.5,
-    shape_sd = 1.8945,
-    max = 8
-  )
-  # see docs/distribution-params.html for refs
+def_dist_incubation_period <- function(pathogen = c("sarscov2")){
+
+  if(pathogen == "sarscov2"){
+    list(
+      dist = "gamma",
+      mean = 3.49,
+      mean_sd = 0.1477,
+      shape = 8.5,
+      shape_sd = 1.8945,
+      max = 8
+    )
+    # see vignette("distributions") for derivation/refs
+  }
+
 }
 
 #' Define the generation interval distribution
@@ -21,8 +25,8 @@ def_dist_incubation_period <- function(){
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
-
- x = NULL
+  # TODO: rewrite pathogen argument to only allow for the options defined below
+  x = NULL
 
   p = tolower(pathogen)
 
@@ -34,6 +38,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       shape = 2.39,
       shape_sd = 0.3573,
       max = 15)
+    # see vignette("distributions") for derivation/refs
   }
 
     if(p == 'influenza'){
@@ -62,7 +67,6 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
   }
 
   return(x)
-  # see docs/distribution-params.html for refs
 }
 
 #' Define the reporting fraction distribution
@@ -217,6 +221,7 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
+#' @export
 get_discrete_dist <- function(params){
 
   # check args

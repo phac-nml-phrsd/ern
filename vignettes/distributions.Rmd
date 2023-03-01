@@ -1,6 +1,11 @@
 ---
 title: "Estimating parameters for various distributions used in `ern`"
-output: rmarkdown::html_vignette
+output: 
+  bookdown::html_document2:
+      base_format: rmarkdown::html_vignette
+      fig_caption: true
+      number_sections: false
+      global_numbering: true
 vignette: >
   %\VignetteIndexEntry{Estimating parameters for various distributions used in `ern`}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,125 +29,57 @@ library(dplyr)
 library(ggplot2)
 ```
 
-[Jump to parameter values](#sec-params-gen-int "Fitted parameter values")
+[Jump to estimated parameter values](#sec-params)
 
-## Motivation
+In order to calculate Rt from clinical reports or wastewater concentration, we need to assume a few quantities, including a generation interval distribution. The generation interval is the time between consecutive infections. Once we have a generation time distribution, we can take a daily incidence time series and use it to estimate a daily $\mathcal{R}_t$ time series by deconvolving incidence with the generation time distribution.
 
-In order to calculate Rt from clinical reports or wastewater concentation, we need to assume a few things, including a generation interval distribution. For clinical reports, we additionally need an incubation time distribution. For COVID-19 in Canada, the most relevant parameter estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron.
+In order to estimate incidence, we need a few more pieces of information depending on the primary data source. For clinical case reports, we additionally need an incubation time distribution, which gives the time between infection and symptom onset, and a reporting delay distribution, which gives the time between symptom onset and a case report. For wastewater concentration, we need a fecal shedding distribution, which describes how individuals shed viral particles into wastewater over time during an infection.
 
-Daniel Park suggested using [Manica *et al.* 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405) to get parameter estimates these distributions as the data is specifically Omicron-based. This paper also gives a measure of uncertainty around each parameter estimate.
+This article focuses on quantifying families of distributions for the generation interval, incubation period, and fecal shedding. The reporting delay distribution is estimated directly from PHAC linelist data.
 
-We want a measure of uncertainty around each distribution parameter because we want to propagate uncertainty in the specification of these distributions through to the $R_t$ calculation. We will start with distribution parameters along with uncertainty around each parameter and use these givens to parameterize a *family* of distributions. Then we calculate $R_t$ using an ensemble, where for each realization we draw from the specified familes of distributions to select one generation interval distribution (and one incubation period in the case of clinical data) to use for that specific calculation.
+# Generation interval and incubation period distributions
 
-Note that Manica *et al.* estimate distributions for two different generation times but we will use the **intrinsic generation time**.
+## Available data
 
-## The catch
+For COVID-19 in Canada, the most relevant distribution estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron. [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405) assume both the incubation period and generation interval are gamma distributed, and then they use Omicron infection data to estimate distribution parameters for each quantity, along with measures of uncertainty for each parameter.^[Note that Manica _et al._ estimate distributions for two different generation times but we will use the **intrinsic generation time**.]
 
-Currently in the `ern` package, we have infrastructure to calculate $R_t$ with a family of distributions as described above, where the family is specified by:
-
--   a distribution type (*e.g.* Gamma, log-normal)
-
--   a distribution mean
-
--   a standard deviation about that mean
-
--   a distribution standard deviation
-
--   a standard deviation about that standard deviation
-
-However, in the Manica *et al.* paper, they give their distribution parameter estimates as follows:
-
-![](figs/manica-table2.png){fig-align="center"}
-
-Here we have estimates for the mean, shape, and scale parameters of each family of distributions. Of course, knowing at least two of these, we can specify a family of Gammas without a standard deviation---that's not the problem. The problem is that **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need a parameteric approach to draw from the associated family of distributions for each realization of our $R_t$ calculation.
-
-These credible intervals emerge as a summary of the Bayesian posterior distribution of each parameter. However, I didn't find any information in the paper (or its appendices) that would help identify the appropriate functional form for these distributions...
-
-## Ben & dC to the rescue
-
-I talked to Ben Bolker about this problem and he pointed out:
-
-> Bayesian posterior distributions do not generally have known/assumed functional forms; they emerge from the forms chosen for the likelihood and the priors (\*if\* one chooses a conjugate prior then the form of the posterior is analytically tractable \-- otherwise it's just whatever comes out of the sampler).
-
-Ben suggested something that David Champredon had described to me earlier in general terms: assume each distribution parameter is itself Gamma distributed (or log-normal, or another continuous distribution with non-negative support since these parameters must be non-negative). Then, assume the credible interval bounds give quantiles of this distribution and use them, along with a mean (equal to the mean estimate of the focal parameter) to fit a Gamma distribution.
-
-However, for each Gamma family of distributions, we need to fit distributions over **two** parameters to specify it. Ben suggested doing two independent one-dimensional optimizations to fit distributions for mean and the shape for each family. According to Ben, for the Gamma, the shape and scale are often more strongly correlated than the mean and shape, hence why we should choose the latter pair for two independent one-dimensional optimizations. Alternatively, one should instead perform a two-dimensional optimization over shape and scale simultaneously, but that could be tricky.
-
-## The method
-
-For each distribution parameter we're trying to fit (*e.g.*, generation interval mean and generation interval shape), we have the mean and 95% credible interval bounds. Fix the mean as if it's the truth, and optimize over the unknown shape parameter. Once we have that in hand we can derive a standard deviation for the unknown distribution parameter.
-
-## The doing
-
-Here is some sample code courtesy of Ben to accomplish the optimization task as described above:
-
-```{r optim_base}
-#| results: hold
-score_fun <- function(s, m = 3.49, ci_target = c(3.17, 3.77)) {
-  # define gamma parameters
-  shape <- s
-  scale <- m/s
-  # get quantiles
-  ci <- qgamma(c(0.025, 0.975), shape = shape, scale = scale)
-  # calculate sum of square differences as a score
-  return(sum((ci-ci_target)^2))
-}
-
-opt_out <- optim(
-  # initial value for shape
-  par = 1, 
-  # scoring function
-  fn = score_fun,
-  # bounds on shape
-  lower = 0.0001, upper = 1000,
-  method = "Brent"
-)
-
-shape_best <- opt_out$par
-sd_best <- 3.49/sqrt(shape_best)
-
-print(glue("fitted sd: {round(sd_best, 4)}"))
-print(glue("min sum of squared diffs: {round(opt_out$value, 6)}"))
+```{r manica-table, echo = FALSE, fig.align="center", fig.cap='**Table 2 from [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405)**. Original caption: "Estimates for the incubation period, diagnostic delay, intrinsic and realized generation time, and household serial intervals of the SARS-CoV-2 Omicron variant. Reported parameters of shape and scale for the incubation period and intrinsic generation time refer to a gamma distribution. Estimates of the incubation period are dervied from the analysis of 80 participants to a single superspreading event in Norway. Data taken from Brandal _et al_."'}
+knitr::include_graphics("figs/manica-table.png",
+                        dpi = 144)
 ```
 
-In the code above, we use the following little calculation to derive the formula for the standard deviation, $\sigma$, of a Gamma distribution given the mean, $\mu$, and shape parameter, $\alpha$ (via the scale parameter, $\beta$):
 
-$$
-\begin{align}
-\mu = \alpha\beta&, \quad \sigma^2 = \alpha\beta^2 \\ \\
-\beta &= \mu/\alpha \\
-\sigma^2 &= \alpha\beta^2 \\
-&= \alpha(\mu/\alpha)^2 \\
-&= \alpha\mu^2/\alpha^2 \\
-&=\mu^2/\alpha \\ \\
-\sigma &= \mu/\sqrt{\alpha}
-\end{align}
-$$
+Manica _et al._ give estimates for the mean, shape, and scale parameters of each family of (gamma) distributions (Figure \@ref(fig:manica-table)). However, **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need each family of distributions to be specified in a _parameteric_ way, because of how we compute $\mathcal{R}_t$ with various sources of uncertainty: we generate an ensemble of simulations for the $\mathcal{R}_t$ time series, where for each individual simulation, we draw from the specified families of distributions (among other quantities) to select one distribution of each type to use for that specific calculation.
 
-We'll encode this formula in a function for later use:
+The following section describes how we generated parametric specifications for the families of generation interval and incubation period distributions from the non-parameteric uncertainties given by Manica _et al._
 
-```{r shape_to_sd}
-shape_to_sd <- function(shape, mean) mean/sqrt(shape)
-```
+## Parameterizing families of distributions from non-parametric uncertainties
 
-Let's wrap all of this in another function where we specify the mean and credible interval bounds and get out the standard deviation:
+We will specify each family of gamma distributions with a mean and shape parameter (the "distribution parameters"), along with standard deviations about each of these two parameters. 
 
-```{r optim_wrapped}
-make_score_fun <- function(){
+We assume that each distribution parameter is itself gamma distributed. The mean of this distribution is assumed to be the corresponding mean value listed in Figure \@ref(fig:manica-table). In order to estimate a standard deviation for this distribution, we assume that the credible interval bounds give quantiles and use them, along with a mean (equal to the mean estimate of the focal parameter) to fit shape parameter for a gamma distribution. Once we have the fitted shape parameter, we can calculate the corresponding standard deviation. 
+
+For each family of gamma distributions, we need to fit distributions as described above over **two** parameters to specify it. We will perform two independent one-dimensional optimizations of the shape parameter for the distributions of the mean and the shape parameter of each gamma family.
+
+The following code defines a function (`fit_sd()`) to perform the aforementioned one-dimensional optimization:
+
+```{r optim}
+# Fit a standard deviation for a gamma distribution
+# given a mean and 95% quantiles
+fit_sd <- function(mean, ci){
   
+  # Score function for optimization
+  # s = shape
+  # m = assumed mean
+  # ci_target = the 95% credible interval bounds, assumed to be 2.5% and 97.5% quantiles
   score_fun <- function(s, m, ci_target) {
     shape <- s
     scale <- m/s
     ci <- qgamma(c(0.025, 0.975), shape = shape, scale = scale)
     return(sum((ci-ci_target)^2))
   }
-  
-  return(score_fun)
-}
 
-fit_sd <- function(mean, ci){
-  score_fun <- make_score_fun()
-
+  # Optimize over shape
   opt_out <- optim(
     par = 1, 
     fn = score_fun,
@@ -152,7 +89,7 @@ fit_sd <- function(mean, ci){
     method = "Brent"
   )
   
-  # get best shape parameter found and return standard deviation
+  # Get best shape parameter found and return associated standard deviation
   shape_best <- opt_out$par
   sd_best <- shape_to_sd(shape_best, mean)
   
@@ -161,27 +98,16 @@ fit_sd <- function(mean, ci){
     score = opt_out$value
   ))
 }
+
+# Helper function to compute a gamma's standard deviation given the shape and mean
+shape_to_sd <- function(shape, mean) mean/sqrt(shape)
 ```
-
-Let's make sure we get the same fitted parameter (and score) as in the base code above using our wrapped function:
-
-```{r optim_wrapped_test}
-print_fit_sd <- function(mean, ci){
-  fit <- fit_sd(mean, ci)
-  print(glue("fitted sd: {round(fit$sd, 4)}"))
-  print(glue("min sum of squared diffs: {round(fit$score, 6)}"))
-}
-
-print_fit_sd(mean = 3.49, ci = c(3.17, 3.77))
-```
-
-Looks good!
 
 ## Fitted parameter values {#sec-params}
 
-Finally we have summaries of the fitted parameter values using the code above for each family of distributions!
+We use the method above to generate fitted parameter values for each family of distributions, which are encoded in `ern::def_dist_generation_interval(pathogen = "sarscov2")` and `ern::def_dist_incubation_period(pathogen = "sarscov2")`. The parameters are summarised here in Tables \@ref(tab:summary-gen-int) (generation interval) and \@ref(tab:summary-inc-per) (incubation period).
 
-```{r make_fit_table}
+```{r make_fit_table, echo = FALSE}
 #' Make table summarizing parameters for each family of distributions
 #'
 #' @param mean.inputs list with elements `mean` (scalar) and `ci` (numeric vector of length 2) 
@@ -206,17 +132,16 @@ make_summary_table <- function(mean.inputs, shape.inputs){
 ```
 
 ```{r display_table, echo = FALSE}
-display_table <- function(tb){
+display_table <- function(tb, caption){
   knitr::kable(
     tb %>% replace_na(list(parameter = "")), 
-    digits = 4
+    digits = 4,
+    caption = caption
   )
 }
 ```
 
-### Generation interval {#sec-params-gen-int}
-
-```{r summary_gen_int, echo = FALSE}
+```{r summary-gen-int, echo = FALSE}
 summary.gen.int <- make_summary_table(
   mean.inputs = list(
     mean = 6.84,
@@ -228,12 +153,11 @@ summary.gen.int <- make_summary_table(
   )
 )
 
-display_table(summary.gen.int)
+display_table(summary.gen.int,
+              caption = "Parameters for the family of generation interval distributions")
 ```
 
-### Incubation period
-
-```{r summary_inc_per, echo = FALSE}
+```{r summary-inc-per, echo = FALSE}
 summary.inc.per <- make_summary_table(
   mean.inputs = list(
     mean = 3.49,
@@ -245,13 +169,14 @@ summary.inc.per <- make_summary_table(
   )
 )
 
-display_table(summary.inc.per)
+display_table(summary.inc.per,
+              caption = "Parameters for the family of incubation period distributions")
 ```
 
-## Mean fitted distributions
+The mean fitted distributions (that is, the distributions generated by taking the mean distribution mean and mean shape parameter) are illustrated in Figures \@ref(fig:plot-mean-gen-int) (generation interval) and \@ref(fig:plot-mean-inc-per) (incubation period).
 
 ```{r plot_mean_dist, echo = FALSE}
-plot_mean_dist <- function(summary, max){
+plot_mean_dist <- function(summary, max, title){
   summary <- fill(summary, parameter)
   mean = (summary 
     %>% filter(parameter == "distribution mean",
@@ -282,24 +207,26 @@ plot_mean_dist <- function(summary, max){
                          expand = expansion(mult = 0))
     + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))
     + labs(x = "days",
-           title = "Density")
+           title = title)
     + theme_bw()
     + theme(
       axis.title.y = element_blank(),
-      text = element_text(size = 16)
+      text = element_text(size = 12)
     )
   )
 }
 ```
 
-### Generation interval
-
-```{r mean_dist_gen_int, echo = FALSE, fig.width = 6, fig.height = 4}
-plot_mean_dist(summary.gen.int, max = 21)
+```{r plot-mean-gen-int, echo = FALSE, fig.width = 4, fig.height = 2.5, fig.cap = "Generation interval distributino for the mean value of the mean and shape parameter"}
+plot_mean_dist(summary.gen.int, max = 21,
+               title = "Mean generation interval distribution")
 ```
 
-### Incubation period
-
-```{r mean_dist_inc_per, echo = FALSE, fig.width = 6, fig.height = 4}
-plot_mean_dist(summary.inc.per, max = 8)
+```{r plot-mean-inc-per, echo = FALSE, fig.width = 4, fig.height = 2.5, fig.cap = "Incubation period distributino for the mean value of the mean and shape parameter"}
+plot_mean_dist(summary.inc.per, max = 8, 
+               title = "Mean incubation period distribution")
 ```
+
+# Fecal shedding distribution
+
+**TODO:** Merge `ww-parameters` vignette into this doc here.
