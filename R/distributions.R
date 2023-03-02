@@ -129,10 +129,10 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
     fec = list(
       dist = "gamma",
-      mean = 12.90215,
-      mean_sd = 1.136829,
-      shape = 1.759937,
-      shape_sd = 0.2665988,
+      mean = 12.9021,
+      mean_sd = 1.1368,
+      shape = 1.7599,
+      shape_sd = 0.2666,
       max = 33
     )
 

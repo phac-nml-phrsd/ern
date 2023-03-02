@@ -31,8 +31,6 @@ library(ggplot2)
 
 [Jump to estimated parameter values](#sec-params) 
 
-**WY:** I think having a final table with all parameter estimates (GI, incubation, fecal shedding) would be best. I'll leave it to you on how to best organize this. 
-
 In order to calculate Rt from clinical reports or wastewater concentration, we need to assume a few quantities, including a generation interval distribution. The generation interval is the time between consecutive infections. Once we have a generation time distribution, we can take a daily incidence time series and use it to estimate a daily $\mathcal{R}_t$ time series by deconvolving incidence with the generation time distribution.
 
 In order to estimate incidence, we need a few more pieces of information depending on the primary data source. For clinical case reports, we additionally need an incubation time distribution, which gives the time between infection and symptom onset, and a reporting delay distribution, which gives the time between symptom onset and a case report. For wastewater concentration, we need a fecal shedding distribution, which describes how individuals shed viral particles into wastewater over time during an infection.
@@ -105,9 +103,9 @@ fit_sd <- function(mean, ci){
 shape_to_sd <- function(shape, mean) mean/sqrt(shape)
 ```
 
-### Fitted parameter values {#sec-params}
+### Fitted parameter values 
 
-We use the method above to generate fitted parameter values for each family of distributions, which are encoded in `ern::def_dist_generation_interval(pathogen = "sarscov2")` and `ern::def_dist_incubation_period(pathogen = "sarscov2")`. The parameters are summarised here in Tables \@ref(tab:summary-gen-int) (generation interval) and \@ref(tab:summary-inc-per) (incubation period).
+We use the method above to generate fitted parameter values for each family of distributions, which are encoded in `ern::def_dist_generation_interval(pathogen = "sarscov2")` and `ern::def_dist_incubation_period(pathogen = "sarscov2")`. The parameters are summarised here in Tables \@ref(tab:table-gen-int) (generation interval) and \@ref(tab:table-inc-per) (incubation period).
 
 ```{r make_fit_table, echo = FALSE}
 #' Make table summarizing parameters for each family of distributions
@@ -122,28 +120,28 @@ make_summary_table <- function(mean.inputs, shape.inputs){
   fit.shape <- fit_sd(mean = shape.inputs$mean, ci = shape.inputs$ci)
   
   tb <- tribble(
-    ~parameter,           ~`value type`,                 ~`value`,
-    "distribution mean",  "mean (assumed)",              mean.inputs$mean,
-    NA,                   "standard deviation (fitted)", fit.mean$sd,
-    NA,                   "fit score",                   fit.mean$score,
-    "distribution shape", "mean (assumed)",              shape.inputs$mean,
-    NA,                   "standard deviation (fitted)", fit.shape$sd,
-    NA,                   "fit score",                   fit.shape$score
+    ~parameter,           ~`value type`,        ~origin,    ~`value`,
+    "distribution mean",  "mean",               "assumed",  mean.inputs$mean,
+    NA,                   "standard deviation", "fitted",   fit.mean$sd,
+    "distribution shape", "mean",               "assumed",  shape.inputs$mean,
+    NA,                   "standard deviation", "fitted",   fit.shape$sd,
   )
 }
 ```
 
 ```{r display_table, echo = FALSE}
-display_table <- function(tb, caption){
+display_table <- function(tb, caption = "", digits = 4){
   knitr::kable(
-    tb %>% replace_na(list(parameter = "")), 
-    digits = 4,
+    tb %>% mutate(
+    across(where(is.character), ~replace_na(.x, ""))
+  ), 
+    digits = digits,
     caption = caption
   )
 }
 ```
 
-```{r summary-gen-int, echo = FALSE}
+```{r table-gen-int, echo = FALSE}
 summary.gen.int <- make_summary_table(
   mean.inputs = list(
     mean = 6.84,
@@ -159,7 +157,7 @@ display_table(summary.gen.int,
               caption = "Parameters for the family of generation interval distributions")
 ```
 
-```{r summary-inc-per, echo = FALSE}
+```{r table-inc-per, echo = FALSE}
 summary.inc.per <- make_summary_table(
   mean.inputs = list(
     mean = 3.49,
@@ -182,12 +180,12 @@ plot_mean_dist <- function(summary, max, title){
   summary <- fill(summary, parameter)
   mean = (summary 
     %>% filter(parameter == "distribution mean",
-               `value type` == "mean (assumed)")
+               `value type` == "mean")
     %>% pull(value)
   )
   shape = (summary 
     %>% filter(parameter == "distribution shape",
-               `value type` == "mean (assumed)")
+               `value type` == "mean")
     %>% pull(value)
   )
   
@@ -401,19 +399,52 @@ plot(x = df$x,
 points(x = df$x, y = df$y/sum(df$y))
 ```
 
-### Fecal shedding parameter values
+### Fitted parameter values
 
 ```{r, echo=FALSE}
-tribble(
-  ~parameter,           ~`value type`,                 ~`value`,
-    "fecal distribution mean",  "mean",              fec$mean,
-    "",                   "standard deviation", fec$mean_sd,
-    "fecal distribution shape", "mean",              fec$shape,
-    "",                   "standard deviation", fec$shape_sd,
-) %>%
-  knitr::kable(
-    digits = 1
+summary.fec.shed <- tribble(
+  ~parameter,             ~`value type`,        ~origin,  ~`value`,
+    "distribution mean",  "mean",               "fitted", fec$mean,
+    NA,                   "standard deviation", "fitted", fec$mean_sd,
+    "distribution shape", "mean",               "fitted", fec$shape,
+    NA,                   "standard deviation", "fitted", fec$shape_sd,
+)
+
+display_table(summary.fec.shed,
+              caption = "Parameters for the family of fecal shedding distributions")
+```
+
+## Parameters for all distributions {#sec-params}
+
+Table \@ref(tab:table-all) simply summarizes all families of (gamma) distributions derived in this article.
+
+```{r display_table_all, echo = FALSE}
+display_table_all <- function(df.list, caption){
+  df <- (bind_rows(lapply(names(df.list), function(x){
+    df <- (df.list[[x]] %>% mutate(distribution = NA) %>% relocate(distribution, .before = everything()))
+    df$distribution[1] <- x
+    
+    df
+  }))
+    %>% select(-origin)
   )
+  
+  display_table(df, caption = caption)
+}
+```
+
+
+```{r table-all, echo = FALSE}
+df.list <- list(
+  `generation interval` = summary.gen.int,
+  `incubation period` = summary.inc.per,
+  `fecal shedding` = summary.fec.shed
+)
+
+display_table_all(
+  df.list = df.list,
+  caption = "Summary of parameters for each family of distributions as implemented in `ern`"
+)
 ```
 
 ## Other respiratory illnesses
