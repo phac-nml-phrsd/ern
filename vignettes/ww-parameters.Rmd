@@ -10,7 +10,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4
 )
 ```
 
@@ -25,15 +27,15 @@ Viral concentration in wastewater has become a popular metric in tracking commun
 
 The process we use to estimate $R_t$ from viral concentration in wastewater in `ern` is as follows:
 
-1. Pre-process the **time series of viral concentration in wastewater** to prepare for computing $R_t$. This step involves smoothing the rather noisy viral concentration data, as well as mapping from viral concentration to numbers of infections using a scaling factor. 
+1.  Pre-process the **time series of viral concentration in wastewater** to prepare for computing $R_t$. This step involves smoothing the rather noisy viral concentration data, as well as mapping from viral concentration to numbers of infections using a scaling factor.
 
-1. Specify a **fecal shedding distribution** which describes how infected individuals shed viral particles into wastewater over time. This article focuses on how a family of fecal shedding distributions were estimated for `ern` from literature.
+2.  Specify a **fecal shedding distribution** which describes how infected individuals shed viral particles into wastewater over time. This article focuses on how a family of fecal shedding distributions were estimated for `ern` from literature.
 
-1. Perform a deconvolution of the pre-processed viral concentration time series using the fecal shedding distribution in order to obtain a **daily incidence time series** (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)).
+3.  Perform a deconvolution of the pre-processed viral concentration time series using the fecal shedding distribution in order to obtain a **daily incidence time series** (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)).
 
-1. Specify a **generation interval distribution**, which describes the time interval between an individual's infection and their transmission to another person. The way in which parameters for the family of generation intervals used in `ern` are estimated is described in the `distributions` vignette.
+4.  Specify a **generation interval distribution**, which describes the time interval between an individual's infection and their transmission to another person. The way in which parameters for the family of generation intervals used in `ern` are estimated is described in the `distributions` vignette.
 
-1. Perform a deconvolution of the daily incidence time series with the generation interval distribution to obtain the **$R_t$ time series**. 
+5.  Perform a deconvolution of the daily incidence time series with the generation interval distribution to obtain the $R_t$ **time series.**
 
 ## Fecal shedding kinetics
 
@@ -41,14 +43,13 @@ Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, 
 
 Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
 
-![](figs/WWFig1.PNG)
-_**IP:** I wouldn't include the caption from the original paper in this screenshot because it refers to "main text" which is the paper, but could easily be confused for the body of this vignette. Either add your own figure caption explaining the relevant components/notation or describe it all in the vignette text._
+![](figs/WWFig1.PNG){width="90%"}
 
-As the above diagram shows, infectious symptomatic and asymptomatic individuals ($I$ and $J$) contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals who are infectious and require hospitalization ($J$) do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized.
+In this diagram, individuals begin in the susceptible compartment ($S$). Once exposed to SARS-CoV-2, they move into the exposed compartment ($E$) where they can then move into 3 unique compartments: infectious symptomatic ($I$), infectious asymptomatic ($A$), and infectious symptomatic that requires hospitalization ($J$). Individuals in the $I$ and $A$ compartments contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals in the $J$ compartment do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized ($H$). See [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1) for more details on the compartment model.
 
 ### Fitting a distribution based on fecal shedding kinetics
 
-Within each of the 4 compartments lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
+Within each of the 4 compartments that contribute to fecal shedding lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
 
 ```{r, echo=FALSE}
 shed.i = data.frame(
@@ -59,7 +60,7 @@ shed.i = data.frame(
 plot(x = shed.i$x,
      y = shed.i$y,
      "b",
-     main = "Fecal shedding kinetics: I compartment. Mean days of shedding: 12",
+     main = "Fecal shedding kinetics: I compartment.\nMean days of shedding: 12",
      xlab = "days",
      ylab = "log viral load")
 
@@ -70,7 +71,7 @@ shed.a = data.frame(
 plot(x = shed.a$x,
      y = shed.a$y,
      "b",
-     main = "Fecal shedding kinetics: A compartment. Mean days of shedding: 10",
+     main = "Fecal shedding kinetics: A compartment.\nMean days of shedding: 10",
      xlab = "days",
      ylab = "log viral load")
 
@@ -81,7 +82,7 @@ shed.j = data.frame(
 plot(x = shed.j$x,
      y = shed.j$y,
      "b",
-     main = "Fecal shedding kinetics: J compartment. Mean days of shedding: 8",
+     main = "Fecal shedding kinetics: J compartment.\nMean days of shedding: 8",
      xlab = "days",
      ylab = "log viral load")
 
@@ -92,7 +93,7 @@ shed.z = data.frame(
 plot(x = shed.z$x,
      y = shed.z$y,
      "b",
-     main = "Fecal shedding kinetics: Z compartment. Mean days of shedding: 24",
+     main = "Fecal shedding kinetics: Z compartment.\nMean days of shedding: 24",
      xlab = "days",
      ylab = "log viral load")
 ```
