@@ -9,7 +9,7 @@ test_that("smooth_ww detects missing smoothing method",{
          method. Aborting!")
 })
 
-test_that("smooth_ww detects missing smoothing method",{
+test_that("smooth_ww detects invalid smoothing method",{
   load("../testdata/ww_test_params.RData")
   prm.smooth = list(
     span = 0.1,
