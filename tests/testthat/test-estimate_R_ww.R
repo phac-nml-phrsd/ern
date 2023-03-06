@@ -50,7 +50,8 @@ test_that("estimate_R_ww returns a list of four dataframes", {
       ww.conc = ww.conc,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      prm.smooth = prm.smooth
+      prm.smooth = prm.smooth,
+      iter = 1
     ),
     "list"
   )
@@ -59,7 +60,8 @@ test_that("estimate_R_ww returns a list of four dataframes", {
       ww.conc = ww.conc,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      prm.smooth = prm.smooth
+      prm.smooth = prm.smooth,
+      iter = 1
     ),
     4
   )
