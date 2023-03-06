@@ -69,7 +69,7 @@ test_that("smooth_ww returns an error when df is missing a date or val columns",
 
 test_that("smooth_ww returns a dataframe", {
   load("../testdata/ww_test_params.RData")
-  prm.smooth.rm = purrr:::list_modify(prm.smooth, method = "rollmean")
+  prm.smooth.rm = purrr::list_modify(prm.smooth, method = "rollmean")
   expect_s3_class(smooth_ww(ww.conc, prm.smooth), "data.frame")
   expect_s3_class(smooth_ww(ww.conc, prm.smooth.rm), "data.frame")
 })
