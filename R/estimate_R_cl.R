@@ -8,7 +8,7 @@
 #' @param dist.repfrac List. Parameters for the reporting fraction distribution from [`def_dist_reporting_fraction()`]
 #' @param dist.repdelay List. Parameters for the reporting delay distribution from [`def_dist_reporting_delay()`]
 #' @param dist.incub List. Parameters for the incubation period distribution from [`def_dist_incubation_period()`].
-#' @param dist.gi List. Parameters for generation interval from [`def_dist_generation_interval()`].
+#' @template param-dist.gi
 #' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
@@ -32,7 +32,7 @@
 #'  \item{`window`: }{length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.}
 #'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via [`EpiEstim::make_config()`]. if `NULL`, will use default config from `EpiEstim`.}
 #' }
-#' @param silent Logical. Should functions be run silently, i.e., without any messages and warnings to console?
+#' @template param-silent
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data

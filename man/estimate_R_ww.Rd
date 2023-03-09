@@ -11,8 +11,7 @@ estimate_R_ww(
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
   prm.R = list(CI = 0.95, window = 7, config.EpiEstim = NULL),
-  iter = 100,
-  silent = FALSE
+  iter = 100
 )
 }
 \arguments{
@@ -21,7 +20,7 @@ collection date and \code{val} for the pathogen concentration.}
 
 \item{dist.fec}{Numerical vector. Distribution of fecal shedding (time unit=day).}
 
-\item{dist.gi}{Numerical vector. Distribution of the generation interval (time unit=day).}
+\item{dist.gi}{List. Parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{scaling.factor}{Numeric. Scaling from wastewater concentration to prevalence.
 This value may be assumed or independently calibrated to data.}
@@ -36,16 +35,14 @@ This value may be assumed or independently calibrated to data.}
 }}
 
 \item{iter}{Integer. Number of samples for the (uncertain) generation interval distribution.}
-
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
 }
 \value{
 List. Elements include:
 \itemize{
-\item \code{ww.conc} original wastewater signal
-\item \code{ww.smooth} smoothed wastewater signal
-\item \code{inc} inferred incidence
-\item \code{R} the effective R estimate
+\item{\code{ww.conc}: }{original wastewater signal}
+\item{\code{ww.smooth}: }{smoothed wastewater signal}
+\item{\code{inc}: }{inferred incidence}
+\item{\code{R}: }{the effective reproduction number estimate}
 }
 }
 \description{
