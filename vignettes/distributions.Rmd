@@ -31,17 +31,19 @@ library(ggplot2)
 
 [Jump to estimated parameter values](#sec-params) 
 
-In order to calculate Rt from clinical reports or wastewater concentration, we need to assume a few quantities, including a generation interval distribution. The generation interval is the time between consecutive infections. Once we have a generation time distribution, we can take a daily incidence time series and use it to estimate a daily $\mathcal{R}_t$ time series by deconvolving incidence with the generation time distribution.
+In order to calculate Rt from clinical reports or wastewater concentration, we need to assume a few quantities, including a generation interval distribution. The generation interval is the time between consecutive infections. Once we have a generation interval distribution, we can take a daily incidence time series and use it to estimate a daily $\mathcal{R}_t$ time series by deconvolving incidence with the generation interval distribution using the R package `EpiEstim`.
 
 In order to estimate incidence, we need a few more pieces of information depending on the primary data source. For clinical case reports, we additionally need an incubation time distribution, which gives the time between infection and symptom onset, and a reporting delay distribution, which gives the time between symptom onset and a case report. For wastewater concentration, we need a fecal shedding distribution, which describes how individuals shed viral particles into wastewater over time during an infection.
 
-This article focuses on quantifying families of distributions for the generation interval, incubation period, and fecal shedding. The reporting delay distribution is estimated directly from PHAC linelist data.
+This vignette focuses on quantifying families of distributions for the generation interval, incubation period, and fecal shedding. 
 
 ## Generation interval and incubation period distributions
 
+Here, we give an example on estimating the different distributions for COVID-19 in Canada. The same approach may be used for other pathogens in different jurisdictions.
+
 ### Available data
 
-For COVID-19 in Canada, the most relevant distribution estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron. [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405) assume both the incubation period and generation interval are gamma distributed, and then they use Omicron infection data to estimate distribution parameters for each quantity, along with measures of uncertainty for each parameter.^[Note that Manica _et al._ estimate distributions for two different generation times but we will use the **intrinsic generation time**.]
+For COVID-19 in Canada, the most relevant distribution estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron. [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405) assume both the incubation period and generation interval are gamma distributed, and then they use Omicron infection data to estimate distribution parameters for each quantity, along with measures of uncertainty for each parameter. (Note that Manica _et al._ estimate distributions for two different generation intervals but we will use the **intrinsic generation interval**)
 
 ```{r manica-table, echo = FALSE, fig.align="center", fig.cap='**Table 2 from [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405)**. Original caption: "Estimates for the incubation period, diagnostic delay, intrinsic and realized generation time, and household serial intervals of the SARS-CoV-2 Omicron variant. Reported parameters of shape and scale for the incubation period and intrinsic generation time refer to a gamma distribution. Estimates of the incubation period are dervied from the analysis of 80 participants to a single superspreading event in Norway. Data taken from Brandal _et al_."'}
 knitr::include_graphics("figs/manica-table.png",
@@ -49,7 +51,7 @@ knitr::include_graphics("figs/manica-table.png",
 ```
 
 
-Manica _et al._ give estimates for the mean, shape, and scale parameters of each family of (gamma) distributions (Figure \@ref(fig:manica-table)). However, **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need each family of distributions to be specified in a _parameteric_ way, because of how we compute $\mathcal{R}_t$ with various sources of uncertainty: we generate an ensemble of simulations for the $\mathcal{R}_t$ time series, where for each individual simulation, we draw from the specified families of distributions (among other quantities) to select one distribution of each type to use for that specific calculation.
+Manica _et al._ give estimates for the mean, shape, and scale parameters of each family of (gamma) distributions (Figure \@ref(fig:manica-table)). However, **the uncertainty in each estimated parameter is reported in terms of a credible interval**, *i.e.* in a non-parametric way. We need each family of distributions to be specified in a _parameteric_ way, because of how the package `ern` computes $\mathcal{R}_t$ with various sources of uncertainty, in particular the distribution uncertainty (i.e., we are not fully certain of the distribution to use).  Hence, `ern` generates an ensemble of simulations for the $\mathcal{R}_t$ time series, where for each individual simulation, we draw from the specified families of distributions (among other quantities) to select one distribution of each type to use for that specific  $\mathcal{R}_t$ calculation.
 
 The following section describes how we generated parametric specifications for the families of generation interval and incubation period distributions from the non-parameteric uncertainties given by Manica _et al._
 
@@ -229,11 +231,11 @@ plot_mean_dist(summary.inc.per, max = 8,
 
 ## Fecal shedding distribution
 
-Viral concentration in wastewater has become a popular metric in tracking community transmission of respiratory illnesses. Infected individuals shed viral particles, which are then passed and collected at wastewater treatment facilities. Wastewater samples are then tested for viral concentration. Daily changes of viral concentration allow modellers to examine trends and estimate the effective reproductive number ($R_t$) over time.
+Viral concentration in wastewater has become a popular metric in tracking community transmission of respiratory illnesses. Infected individuals shed viral particles in their stools, which end up in wastewater. Wastewater samples are then tested for viral concentration. Daily changes of viral concentration allow modellers to examine trends and estimate the effective reproductive number ($R_t$) over time.
 
 ### Estimating $R_t$ from wastewater {#sec-est-Rt}
 
-The process we use to estimate $R_t$ from viral concentration in wastewater in `ern` is as follows:
+The process we use to estimate $R_t$ from viral concentration in wastewater in the package `ern` is as follows:
 
 1.  Pre-process the **time series of viral concentration in wastewater** to prepare for computing $R_t$. This step involves smoothing the rather noisy viral concentration data, as well as mapping from viral concentration to numbers of infections using a scaling factor.
 
@@ -243,7 +245,7 @@ The process we use to estimate $R_t$ from viral concentration in wastewater in `
 
 4.  Specify a **generation interval distribution**, which describes the time interval between an individual's infection and their transmission to another person. The way in which parameters for the family of generation intervals used in `ern` are estimated is described in the `distributions` vignette.
 
-5.  Perform a deconvolution of the daily incidence time series with the generation interval distribution to obtain the $R_t$ **time series.**
+5.  Perform a deconvolution of the daily incidence time series with the generation interval distribution to obtain the $R_t$ **time series** using the R package `EpiEstim`.
 
 ### Fecal shedding kinetics
 
