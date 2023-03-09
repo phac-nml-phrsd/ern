@@ -9,7 +9,7 @@ suppressMessages({
 
 devtools::load_all()
 
-fakedata = 0
+fakedata = 1
 
 if(!fakedata){
   source('../ern-dev/utils.R')
@@ -66,7 +66,8 @@ r.estim = ern::estimate_R_ww(
   scaling.factor = 1,
   prm.smooth     = prm.smooth,
   prm.R = prm.R,
-  iter = 20
+  iter = 20,
+  silent = TRUE
 )
 
 inc = r.estim$inc
