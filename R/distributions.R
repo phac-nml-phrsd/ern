@@ -4,20 +4,52 @@
 #'
 #' @template return-dist
 #' @export
-def_dist_incubation_period <- function(pathogen = c("sarscov2")){
+def_dist_incubation_period <- function(pathogen = 'sarscov2'){
 
-  if(pathogen == "sarscov2"){
-    list(
-      dist = "gamma",
-      mean = 3.49,
-      mean_sd = 0.1477,
-      shape = 8.5,
+  res = NULL
+  p = tolower(pathogen)
+
+  if(p %in% c('sarscov2', 'cov2', 'sars2')){
+    res = list(
+      dist     = "gamma",
+      mean     = 3.49,
+      mean_sd  = 0.1477,
+      shape    = 8.5,
       shape_sd = 1.8945,
-      max = 8
+      max      = 8
     )
-    # see vignette("distributions") for derivation/refs
+    # see docs/distribution-params.html for refs
   }
 
+  if(p %in% c('influenza', 'flua', 'flub')){
+    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
+    # https://doi.org/10.1016/S1473-3099(09)70069-6
+    res = list(
+      dist     = "gamma",
+      mean     = 2.5,
+      mean_sd  = 0.5,
+      sd       = 1.0,
+      sd_sd    = 0.2,
+      max      = 6
+    )
+  }
+
+  if(p %in% c('rsv', 'rsva', 'rsvb')){
+    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
+    # https://doi.org/10.1016/S1473-3099(09)70069-6
+    res = list(
+      dist     = "gamma",
+      mean     = 5.0,
+      mean_sd  = 1.0,
+      sd       = 1.0,
+      sd_sd    = 0.2,
+      max      = 6
+    )
+  }
+  if(is.null(res)){
+    stop(paste0("Unkown incubation period distribution for pathogen `", pathogen,"` not found. Aborting!"))
+  }
+  return(res)
 }
 
 #' Define the generation interval distribution
@@ -27,9 +59,8 @@ def_dist_incubation_period <- function(pathogen = c("sarscov2")){
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
-  # TODO: rewrite pathogen argument to only allow for the options defined below
-  x = NULL
 
+  x = NULL
   p = tolower(pathogen)
 
   if(p %in% c('sarscov2', 'cov2', 'sars2')){
@@ -40,8 +71,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
       mean_sd  = 0.7486,
       shape    = 2.39,
       shape_sd = 0.3573,
-      max = 15)
-    # see vignette("distributions") for derivation/refs
+      max      = 15)
   }
 
   if(p %in% c('influenza', 'flua', 'flub')){
@@ -129,10 +159,10 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
     fec = list(
       dist = "gamma",
-      mean = 12.9021,
-      mean_sd = 1.1368,
-      shape = 1.7599,
-      shape_sd = 0.2666,
+      mean = 12.90215,
+      mean_sd = 1.136829,
+      shape = 1.759937,
+      shape_sd = 0.2665988,
       max = 33
     )
 
@@ -143,8 +173,8 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
 
   if(p == 'influenza'){
-     # This is a dummy distribution
-     # TODO: look at the literature to inform those values
+    # This is a dummy distribution
+    # TODO: look at the literature to inform those values
     fec = list(
       dist    = "gamma",
       mean    = 9,
@@ -159,8 +189,8 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
   }
 
   if(p == 'rsv'){
-   # This is a dummy distribution
-   # TODO: look at the literature to inform those values
+    # This is a dummy distribution
+    # TODO: look at the literature to inform those values
     fec = list(
       dist    = "gamma",
       mean    = 12,
@@ -235,7 +265,6 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
-#' @export
 get_discrete_dist <- function(params){
 
   # --- check args
