@@ -26,7 +26,8 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
       dist.gi = dist.gi,
       wastewater = ww.smooth,
       scaling.factor = 1,
-      prm.R = prm.R
+      prm.R = prm.R,
+      silent = TRUE
     ),
     "list"
   )
@@ -37,7 +38,8 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
       dist.gi = dist.gi,
       wastewater = ww.smooth,
       scaling.factor = 1,
-      prm.R = prm.R
+      prm.R = prm.R,
+      silent = TRUE
     ),
     2
   )
