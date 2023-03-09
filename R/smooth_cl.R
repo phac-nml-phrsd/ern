@@ -1,7 +1,7 @@
 #' Smooth realizations from estimating daily reports
 #'
-#' @param cl.daily Dataframe resulting from [`agg_to_daily()`]
-#' @param prm.smooth smoothing parameters
+#' @param cl.daily Data frame. Output of [`agg_to_daily()`].
+#' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
 #'

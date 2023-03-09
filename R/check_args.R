@@ -1,13 +1,12 @@
 #' Check parameters for Rt calculation
 #'
-#' @param x List of parameters for Rt calculation
 #' @inheritParams estimate_R_cl
 #'
 #' @return NULL
-check_prm.R <- function(x, silent = FALSE){
+check_prm.R <- function(prm.R, silent = FALSE){
 
   # Check config.EpiEstim
-  if(!is.null(x$config.EpiEstim)){
+  if(!is.null(prm.R$config.EpiEstim)){
     if(!silent){
       message("-----
 You are passing your own config for EpiEstim::estimate_R().
@@ -86,14 +85,13 @@ check_for_deconv <- function(obs, dist){
 
 #' Check the dataframe of clinical data
 #'
-#' @param dat The dataframe of clinical data
 #' @inheritParams estimate_R_cl
 #'
 #' @return NULL
 #'
-check_data_clin <- function(dat, silent = FALSE) {
+check_data_clin <- function(cl.agg, silent = FALSE) {
 
-  n = names(dat)
+  n = names(cl.agg)
 
   if(!'count' %in% n)
     stop('The dataframe of observation must have a `count` column. ABORTING!')

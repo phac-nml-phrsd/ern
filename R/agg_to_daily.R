@@ -1,10 +1,5 @@
 #' Infer daily counts from aggregates
 #'
-#' @param cl.agg dataframe. must have variables \code{date} for the calendar
-#' date of the observation, \code{count} for the count of reported cases.
-#' @param popsize population size.
-#' @param prm.daily parameters for daily report inference (via MCMC).
-#' @inheritParams estimate_R_cl_single
 #' @inheritParams estimate_R_cl
 #'
 #' @return Dataframe with individual realizations of daily reported cases
@@ -38,19 +33,19 @@ agg_to_daily <- function(
 #' Exclude first day since we don't necessarily know over which period
 #' of time that data was aggregated
 #'
-#' @param x dataframe. must at least have a `date` column
-#' @param first.agg.period numeric. number of days over which reports were summed for the first observed report. if NULL, assumes same aggregation period as for second observation.
 #' @inheritParams estimate_R_cl
 #'
 #' @return dataframe.
-attach_t_agg <- function(x, first.agg.period = NULL, silent = FALSE){
+attach_t_agg <- function(cl.agg, prm.daily = NULL, silent = FALSE){
+
+  first.agg.period <- prm.daily$first.agg.period
 
   # Handling the first aggregation
   if(is.null(first.agg.period)){
-    fa = as.integer(x$date[2]-x$date[1])
+    fa = as.integer(cl.agg$date[2]-cl.agg$date[1])
     if(!silent){
       message(paste0("-----
-Assuming the first observed report (from ", x$date[1], ")
+Assuming the first observed report (from ", cl.agg$date[1], ")
 is aggregated over ", fa , " previous days
 (second observation's aggregation period).
 This can be changed in `estimate_R_cl()`, using the
@@ -67,9 +62,9 @@ in this parameter list)."))
     }
   }
 
-  date.min = min(x$date)
+  date.min = min(cl.agg$date)
 
-  res = x %>%
+  res = cl.agg %>%
     dplyr::mutate(t = as.numeric(date - date.min) + fa) %>%
     dplyr::arrange(t)
 

@@ -202,6 +202,20 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
   return(fec)
 }
 
+def_dist_reporting_delay <- function(){
+  # for SARS-CoV-2 in Canada
+  # TODO: this is just a dummy distribution, get real thing from linelist
+  list(
+    dist = 'gamma',
+    mean = 5,
+    mean_sd = 1,
+    sd = 1,
+    sd_sd = 0.1,
+    max = 10
+  )
+}
+
+# - - - - - - - - - - - - - - - - -
 
 #' Draw from gamma based on parameter name in distribution list.
 #'
@@ -219,7 +233,6 @@ draw_from_gamma <- function(par, dist){
 
   return( stats::rgamma(n = 1, shape = shape, scale = scale) )
 }
-
 
 #' Sample parameters for a single distribution assuming parameters
 #' come from a Gamma distribution

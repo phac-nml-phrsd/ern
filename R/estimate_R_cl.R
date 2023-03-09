@@ -1,11 +1,37 @@
 #' @title Estimate the effective reproduction from clinical report data
 #'
-#' @inheritParams agg_to_daily
-#' @inheritParams smooth_cl
-#' @inheritParams estimate_R_cl_rep
-#' @param prm.daily.check list. parameters for checking aggregated to daily report inference. set this parameter to `NULL` to use inferred daily reports as is. list elements include:
-#' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
-#' @param silent logical. should the functions be run silently, i.e., without any messages to console?
+#' @param cl.agg Data frame. Must have variables:
+#' \itemize{
+#'  \item{`date`: }{calendar date of report}
+#'  \item{`count`: }{count of reported cases}
+#' }
+#' @param dist.repfrac List. Parameters for the reporting fraction distribution from [`def_dist_reporting_fraction()`]
+#' @param dist.repdelay List. Parameters for the reporting delay distribution from [`def_dist_reporting_delay()`]
+#' @param dist.incub List. Parameters for the incubation period distribution from [`def_dist_incubation_period()`].
+#' @param dist.gi List. Parameters for generation interval from [`def_dist_generation_interval()`].
+#' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
+#' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
+#' \itemize{
+#'  \item{`burn`: }{length of burn-in period (number of days)}
+#'  \item{`iter`: }{number of iterations after burn-in period (number of days)}
+#'  \item{`chains`: }{number of chains to simulate}
+#'  \item{`first.agg.period`: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
+#' }
+#' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
+#' \itemize{
+#'  \item{`agg.reldiff.tol`: }{numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+#' Set this entire argument to `NULL` to use inferred daily reports as is.
+#' @param prm.smooth List. Smoothing parameters for input signal into Rt calculation. Elements include:
+#' \itemize{
+#'  \item{`window`: }{width of smoothing window (number of days)}
+#' }
+#' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
+#' \itemize{
+#'  \item{`iter`: }{number of iterations for ensemble}
+#'  \item{`window`: }{length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.}
+#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
+#' }
+#' @param silent Logical. Should functions be run silently, i.e., without any messages and warnings to console?
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
@@ -50,8 +76,8 @@ estimate_R_cl <- function(
 
   # attach time-index column to observed aggregated reports
   cl.agg <- attach_t_agg(
-    x = cl.agg,
-    first.agg.period = prm.daily$first.agg.period,
+    cl.agg = cl.agg,
+    prm.daily = prm.daily,
     silent = silent
   )
 
@@ -84,9 +110,10 @@ original reports...")
     }
 
     cl.use.dates = get_use_dates(
-      reports.daily   = cl.daily,
-      reports         = cl.agg,
-      agg.reldiff.tol = prm.daily.check$agg.reldiff.tol)
+      cl.daily = cl.daily,
+      cl.agg = cl.agg,
+      prm.daily.check = prm.daily.check
+    )
 
     if(!silent){
       message(paste0("- Filtering out any daily inferred reports associated

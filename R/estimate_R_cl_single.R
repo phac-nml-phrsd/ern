@@ -1,11 +1,5 @@
 #' A single realization of the Rt estimate
 #'
-#' @param cl.daily dataframe. realizations of daily report counts. must include at least `date` and `value` columns.
-#' @param dist.repfrac parameters for the reporting fraction distribution
-#' @param dist.repdelay parameters for the reporting delay distribution
-#' @param dist.incub parameters for the incubation period distribution
-#' @param dist.gi parameters for the generation interval distribution
-#' @inheritParams incidence_to_R
 #' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
