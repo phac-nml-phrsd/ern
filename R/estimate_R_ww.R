@@ -10,17 +10,19 @@
 #' @param scaling.factor Scaling from wastewater concentration to prevalence.
 #'  This value may be assumed or independently calibrated to data.
 #' @param prm.R List of configuration parameters for EpiEstim.
+#' @template param-silent
 #'
 #' @return a list with elements `inc` (incidence) and `rt` (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
-                         scaling.factor, prm.R) {
+                         scaling.factor, prm.R, silent) {
   set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
   sample.gi = sample_a_dist(dist = dist.gi)
 
   inc = deconv_ww_inc(d              = wastewater,
                       fec            = sample.fec,
-                      scaling.factor = scaling.factor)
+                      scaling.factor = scaling.factor,
+                      silent = silent)
 
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = .data$inc.deconvol) %>%
@@ -30,7 +32,8 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
 
   rt = incidence_to_R(incidence = i.df,
                        generation.interval = sample.gi,
-                       prm.R = prm.R) %>%
+                       prm.R = prm.R,
+                      silent = silent) %>%
     dplyr::mutate(iter = i)
 
   r = list(
@@ -82,11 +85,12 @@ estimate_R_ww <- function(
       window = 7,
       config.EpiEstim = NULL
     ),
-    iter = 100
+    iter = 100,
+    silent = FALSE
 ) {
 
   # Checking arguments
-  check_prm.R(prm.R)
+  check_prm.R(prm.R, silent = silent)
 
   # Checking if ww.conc df contains required variables
   if(!isTRUE("date" %in% names(ww.conc)) |
@@ -99,17 +103,21 @@ estimate_R_ww <- function(
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
-    ww.smooth = smooth_ww(df         = ww.conc,
-                          prm.smooth = prm.smooth)
+    output <- capture.output(ww.smooth <- smooth_ww(
+      df = ww.conc,
+      prm.smooth = prm.smooth))
+
+    if(!silent & length(output) > 0) print(output)
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
   r = lapply(X = 1:iter, FUN = inc2R_one_iter,
-             dist.gi = dist.gi, dist.fec = dist.fec,
-             wastewater = ww.smooth, scaling.factor = scaling.factor,
-             prm.R = prm.R)
+    dist.gi = dist.gi, dist.fec = dist.fec,
+    wastewater = ww.smooth, scaling.factor = scaling.factor,
+    prm.R = prm.R, silent = silent
+  )
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%

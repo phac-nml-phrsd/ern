@@ -1,6 +1,6 @@
 devtools::load_all()
-library(magrittr)
 suppressMessages({
+  library(magrittr)
   library(tidyr)
   library(dplyr)
   library(ggplot2)
@@ -9,14 +9,14 @@ suppressMessages({
   library(patchwork)
 })
 
-if(0){
+tmp.data <- TRUE
+
+if(tmp.data){
 dat = readRDS('dev/tmp.rds') %>% dplyr::mutate(count = round(count/20))
 dat = dat[1:6,]
 popsize = 1e7
 pathogen = 'sarscov2'
-}
-
-if(1){
+} else {
 
   pt = 'AB'
   vg = 'RSV'
@@ -113,7 +113,8 @@ r.estim = estimate_R_cl(
   prm.smooth    = prm.smooth,
   prm.daily     = prm.daily,
   prm.R         = prm.R,
-  prm.daily.check = prm.daily.check
+  prm.daily.check = prm.daily.check,
+  silent = FALSE
 )
 
 pd = plot_diagnostic_cl(r.estim)
