@@ -6,10 +6,10 @@ test_that("check_prm.R returns a warning message and a value of NULL
               config.EpiEstim = EpiEstim::make_config(seed = 15)
             )
             expect_warning(
-              check_prm.R(prm.R)
+              check_prm.R(prm.R, silent = FALSE)
             )
             expect_equal(
-              check_prm.R(prm.R),
+              check_prm.R(prm.R, silent = FALSE),
               NULL
             )
           }
