@@ -53,10 +53,12 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
 #' @param iter Integer. Number of samples for the (uncertain) generation
 #'  interval distribution.
 #' @return List. Elements include:
-#' - `ww.conc` original wastewater signal
-#' - `ww.smooth` smoothed wastewater signal
-#' - `inc` inferred incidence
-#' - `R` the effective R estimate
+#' \itemize{
+#'  \item{`ww.conc`: }{original wastewater signal}
+#'  \item{`ww.smooth`: }{smoothed wastewater signal}
+#'  \item{`inc`: }{inferred incidence}
+#'  \item{`R`: }{the effective reproduction number estimate}
+#' }
 #'
 #' @export
 #'
