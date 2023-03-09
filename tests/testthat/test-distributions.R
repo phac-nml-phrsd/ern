@@ -5,7 +5,30 @@ test_that("distributions are initialized correctly", {
   }
 })
 
-test_that("gamma distributions get specified correctly", {
+test_that("distributions that require pathogen are initialized correctly,
+          and return an error when an invalid pathogen is specified", {
+  pathogens = c("sarscov2", "influenza", "rsv")
+  for (p in pathogens) {
+    expect_type(
+      def_dist_incubation_period(pathogen = p), "list")
+    expect_type(
+      def_dist_generation_interval(pathogen = p), "list")
+    expect_type(
+      def_dist_fecal_shedding(pathogen = p), "list")
+  }
+  p.error = "sick"
+  expect_error(
+    def_dist_incubation_period(pathogen = p.error)
+  )
+  expect_error(
+    def_dist_generation_interval(pathogen = p.error)
+  )
+  expect_error(
+    def_dist_fecal_shedding(pathogen = p.error)
+  )
+})
+
+test_that("gamma and lnorm distributions get specified correctly", {
   mean = 1
   sd = 2
   max = 100
@@ -28,6 +51,13 @@ test_that("gamma distributions get specified correctly", {
     max = max
   )
 
+  pars.lnorm <- list(
+    dist = "lnorm",
+    mean = mean,
+    sd = sd,
+    max = max
+  )
+
   expect_equal(
     get_discrete_dist(
       pars.sd
@@ -36,11 +66,54 @@ test_that("gamma distributions get specified correctly", {
       pars.shape
     )
   )
+
+  expect_no_error(
+    get_discrete_dist(
+      pars.lnorm
+    )
+  )
 })
 
-test_that("def_dist_fecal_shedding detects incorrect pathogen",
+test_that("get_discrete_dist detects invalid distribution", {
+  mean = 1
+  sd = 2
+  max = 100
+
+  pars <- list(
+    dist = "gammanorm",
+    mean = mean,
+    sd = sd,
+    max = max
+  )
+
+  expect_error(
+    get_discrete_dist(
+      pars
+    )
+  )
+})
+
+test_that("sample_from_dist returns error when uniform distribution not defined,
+          and returns numeric vector when uniform distribution defined",
           {
-            p = "sick"
-            expect_error(def_dist_fecal_shedding(pathogen = p),
-                         "Pathogen not found. Aborting!")
+            param.error = list(
+              dist = "gamma",
+              min = 2,
+              max = 200
+            )
+            param.correct = purrr::list_modify(param.error,
+                                               dist = "unif")
+            expect_error(
+              sample_from_dist(
+                n = 200,
+                params = param.error
+              )
+            )
+
+            expect_vector(
+              sample_from_dist(
+                n = 200,
+                params = param.correct
+              )
+            )
           })
