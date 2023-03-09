@@ -62,7 +62,7 @@ incidence_to_R <- function(
     config = config.EpiEstim
   )$R)
 
-  if(!silent) print(output)
+  if(!silent & length(output) > 0) print(output)
 
   # ==== prep output ====
 

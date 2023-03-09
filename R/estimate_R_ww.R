@@ -107,16 +107,17 @@ estimate_R_ww <- function(
       df = ww.conc,
       prm.smooth = prm.smooth))
 
-    if(!silent) print(output)
+    if(!silent & length(output) > 0) print(output)
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
   r = lapply(X = 1:iter, FUN = inc2R_one_iter,
-             dist.gi = dist.gi, dist.fec = dist.fec,
-             wastewater = ww.smooth, scaling.factor = scaling.factor,
-             prm.R = prm.R)
+    dist.gi = dist.gi, dist.fec = dist.fec,
+    wastewater = ww.smooth, scaling.factor = scaling.factor,
+    prm.R = prm.R, silent = silent
+  )
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%

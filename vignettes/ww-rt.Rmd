@@ -91,7 +91,8 @@ r.estim = ern::estimate_R_ww(
   dist.gi        = dist.gi,
   prm.smooth     = prm.smooth,
   prm.R = prm.R,
-  iter = 20
+  iter = 20,
+  silent = TRUE
 )
 ```
 
