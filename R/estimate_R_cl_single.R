@@ -6,6 +6,7 @@
 #' @param dist.incub parameters for the incubation period distribution
 #' @param dist.gi parameters for the generation interval distribution
 #' @inheritParams incidence_to_R
+#' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
 #'
@@ -16,7 +17,8 @@ estimate_R_cl_single <- function(
     dist.repdelay,
     dist.incub,
     dist.gi,
-    prm.R
+    prm.R,
+    silent = FALSE
 ){
 
   # sample one realization of reports.daily (smoothed)
@@ -53,6 +55,7 @@ estimate_R_cl_single <- function(
     reports.daily.scaled,
     reporting.delay,
     incubation.period,
+    silent = silent
   )
     # attach time index to incidence
     %>% dplyr::mutate(
@@ -64,7 +67,8 @@ estimate_R_cl_single <- function(
   incidence_to_R(
     incidence,
     generation.interval,
-    prm.R
+    prm.R,
+    silent = silent
   )
 
 }
@@ -94,6 +98,7 @@ correct_underreporting <- function(
 #' @param reporting.delay list. parameters for reporting delay distribution (following same format as other `def_dist_*()` function.
 #' @param incubation.period list. parameters for incubation period from [`def_dist_incubation_period()`].
 #' @inheritParams deconv
+#' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
 #'
@@ -102,33 +107,40 @@ reports_to_incidence <- function(
     reports.daily,
     reporting.delay,
     incubation.period,
-    max.iter = 50
+    max.iter = 50,
+    silent = FALSE
 ){
 
   # reports -> onsets
   # -------------------------
 
   # deconv reports with reporting delay distribution
-  message("-----
+  if(!silent){
+    message("-----
 Deconvolving inferred daily reports with reporting delay
 distribution to get daily onsets...")
+  }
   onsets <- deconv(
     counts = reports.daily$value,
     dist = get_discrete_dist(reporting.delay),
-    max.iter = max.iter
+    max.iter = max.iter,
+    silent = silent
   )
 
   # onsets -> incidence
   # -------------------------
 
   # deconv onsets with incubation period distribution
-  message("-----
+  if(!silent){
+    message("-----
 Deconvolving daily onsets with incubation period
 distribution to get daily incidence...")
+  }
   incidence <- deconv(
     counts = onsets$y,
     dist = get_discrete_dist(incubation.period),
-    max.iter = max.iter
+    max.iter = max.iter,
+    silent = silent
   )
 
   # output
@@ -158,6 +170,7 @@ distribution to get daily incidence...")
 #' @param counts numeric. a vector of daily counts
 #' @param dist numeric. a vector of truncated daily discrete distribution (vector) with which we're deconvoluting the counts, _e.g._, produced by [`get_discrete_dist()`]
 #' @param max.iter numeric. maximum number of Richardson-Lucy iterations
+#' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
 #'
@@ -165,7 +178,8 @@ distribution to get daily incidence...")
 deconv <- function(
     counts,
     dist,
-    max.iter = 10
+    max.iter = 10,
+    silent = FALSE
 ){
   # check args
   # -------------------------
@@ -176,7 +190,8 @@ deconv <- function(
     observed = counts,
     times = 1:length(counts),
     p_delay = dist,
-    max_iter = max.iter
+    max_iter = max.iter,
+    verbose = !silent
   )
   %>% tidyr::drop_na()
   %>% dplyr::rename(

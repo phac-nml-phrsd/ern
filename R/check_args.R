@@ -1,19 +1,22 @@
 #' Check parameters for Rt calculation
 #'
 #' @param x List of parameters for Rt calculation
+#' @inheritParams estimate_R_cl
 #'
 #' @return NULL
-check_prm.R <- function(x){
+check_prm.R <- function(x, silent = FALSE){
 
   # Check config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
-    warning("-----
+    if(!silent){
+      message("-----
 You are passing your own config for EpiEstim::estimate_R().
 Please note that ern always uses method = 'non_parametric_si',
 and thus any method specified in your config will be ignored.
 Also, any config parameters that are specific to
 method = 'non_parametric_si' (like si_distr) cannot be modified and
 will also be ignored.")
+    }
   }
 
   return()
@@ -61,10 +64,11 @@ check_for_deconv <- function(obs, dist){
 #' Check the dataframe of clinical data
 #'
 #' @param dat The dataframe of clinical data
+#' @inheritParams estimate_R_cl
 #'
 #' @return NULL
 #'
-check_data_clin <- function(dat) {
+check_data_clin <- function(dat, silent = FALSE) {
 
   n = names(dat)
 

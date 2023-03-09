@@ -5,6 +5,7 @@
 #' @inheritParams estimate_R_cl_rep
 #' @param prm.daily.check list. parameters for checking aggregated to daily report inference. set this parameter to `NULL` to use inferred daily reports as is. list elements include:
 #' - `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
+#' @param silent logical. should the functions be run silently, i.e., without any messages to console?
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
@@ -37,25 +38,30 @@ estimate_R_cl <- function(
     iter = 10,
     window = 7,
     config.EpiEstim = NULL
-  )
+  ),
+  silent = FALSE
 ) {
 
   # Checking arguments
-  check_prm.R(prm.R)
-  check_data_clin(cl.agg)
+  check_prm.R(prm.R, silent = silent)
+  check_data_clin(cl.agg, silent = silent)
 
   # ==== Aggregated -> daily reports ====
 
   # attach time-index column to observed aggregated reports
-  cl.agg <- attach_t_agg(x = cl.agg,
-                         first.agg.period = prm.daily$first.agg.period)
+  cl.agg <- attach_t_agg(
+    x = cl.agg,
+    first.agg.period = prm.daily$first.agg.period,
+    silent = silent
+  )
 
   # estimate daily reports using JAGS model
   cl.daily.raw = agg_to_daily(
     cl.agg    = cl.agg,
     dist.gi   = dist.gi,
     popsize   = popsize,
-    prm.daily = prm.daily
+    prm.daily = prm.daily,
+    silent    = silent
   )
 
   # ==== Smooth daily reports =====
@@ -70,17 +76,20 @@ estimate_R_cl <- function(
 
   if(!is.null(prm.daily.check)){
     if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
-    message("-----
+    if(!silent){
+      message("-----
 - Aggregating inferred daily reports back using the original
 reporting schedule, and calculating relative difference with
 original reports...")
+    }
 
     cl.use.dates = get_use_dates(
       reports.daily   = cl.daily,
       reports         = cl.agg,
       agg.reldiff.tol = prm.daily.check$agg.reldiff.tol)
 
-    message(paste0("- Filtering out any daily inferred reports associated
+    if(!silent){
+      message(paste0("- Filtering out any daily inferred reports associated
 with inferred aggregates outside of the specified tolerance of ",
                    prm.daily.check$agg.reldiff.tol, "%..."
     ))
@@ -90,6 +99,7 @@ with inferred aggregates outside of the specified tolerance of ",
   - adjust MCMC parameters in prm.daily (burn, iter, chains) to
       improve chances of MCMC convergence,
   - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
+    }
     cl.daily = (cl.daily
        %>% dplyr::filter(date %in% cl.use.dates)
     )
@@ -103,7 +113,8 @@ with inferred aggregates outside of the specified tolerance of ",
     dist.repdelay = dist.repdelay,
     dist.incub    = dist.incub,
     dist.gi       = dist.gi,
-    prm.R         = prm.R
+    prm.R         = prm.R,
+    silent        = silent
   )
 
   # Calculate the aggregated reports from the inferred daily reports
