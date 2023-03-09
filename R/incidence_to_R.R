@@ -8,6 +8,7 @@
 #'  \item{`window`: }{length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.}
 #'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
 #' }
+#' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
 #'
@@ -16,7 +17,8 @@
 incidence_to_R <- function(
     incidence,
     generation.interval,
-    prm.R
+    prm.R,
+    silent = FALSE
 ){
   # === prep inputs ====
 
@@ -54,11 +56,13 @@ incidence_to_R <- function(
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function)
 
-  R <- EpiEstim::estimate_R(
+  output <- capture.output(R <- EpiEstim::estimate_R(
     incid = incid,
     method = method,
     config = config.EpiEstim
-  )$R
+  )$R)
+
+  if(!silent) print(output)
 
   # ==== prep output ====
 

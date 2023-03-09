@@ -1,6 +1,7 @@
 #' Ensemble estimate of Rt
 #'
 #' @inheritParams estimate_R_cl_single
+#' @inheritParams estimate_R_cl
 #'
 #' @return A summary of individual Rt realizations with 95% confidence intervals
 #' @export
@@ -11,10 +12,11 @@ estimate_R_cl_rep <- function(
     dist.repdelay,
     dist.incub,
     dist.gi,
-    prm.R
+    prm.R,
+    silent = FALSE
 ){
 
-  if(is.null(prm.R$config.EpiEstim)) message("Using default config in `EpiEstim::estimate_R()`.")
+  if(is.null(prm.R$config.EpiEstim) & !silent) message("Using default config in `EpiEstim::estimate_R()`.")
 
   # TODO: parallelize in a generic way (using a custom
   # iteration function that we use both on the clinical
@@ -29,7 +31,8 @@ estimate_R_cl_rep <- function(
         dist.repdelay,
         dist.incub,
         dist.gi,
-        prm.R
+        prm.R,
+        silent = silent
       )
     )
   }

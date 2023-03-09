@@ -1,6 +1,6 @@
 devtools::load_all()
-library(magrittr)
 suppressMessages({
+  library(magrittr)
   library(tidyr)
   library(dplyr)
   library(ggplot2)
@@ -113,7 +113,8 @@ r.estim = estimate_R_cl(
   prm.smooth    = prm.smooth,
   prm.daily     = prm.daily,
   prm.R         = prm.R,
-  prm.daily.check = prm.daily.check
+  prm.daily.check = prm.daily.check,
+  silent = TRUE
 )
 
 pd = plot_diagnostic_cl(r.estim)
