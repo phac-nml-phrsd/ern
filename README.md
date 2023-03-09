@@ -1,10 +1,9 @@
 # ern
+[![codecov](https://codecov.io/gh/phac-nml-phrsd/ern/branch/main/graph/badge.svg?token=SWXENVF9T4)](https://codecov.io/gh/phac-nml-phrsd/ern)
+
 R library to estimate the Effective Reproduction Number (Rt)
 
 `devtools::install_github('phac-nml-phrsd/ern')`
-
-
-
 
 ## Guidelines
 
