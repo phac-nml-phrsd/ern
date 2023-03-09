@@ -24,10 +24,10 @@ incidence_to_R <- function(
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
       incid    = incid,
       method   = method,
-      si_distr = c(0, get_discrete_dist(generation.interval))
+      si_distr = c(0, get_discrete_dist(dist.gi))
     ))
   } else {
-    prm.R$config.EpiEstim$si_distr = c(0, get_discrete_dist(generation.interval))
+    prm.R$config.EpiEstim$si_distr = c(0, get_discrete_dist(dist.gi))
     config.EpiEstim <- suppressMessages(EpiEstim::make_config(
       incid = incid,
       method = method,

@@ -4,12 +4,16 @@
 \alias{check_data_clin}
 \title{Check the dataframe of clinical data}
 \usage{
-check_data_clin(dat, silent = FALSE)
+check_data_clin(cl.agg, silent = FALSE)
 }
 \arguments{
-\item{dat}{The dataframe of clinical data}
+\item{cl.agg}{Data frame. Must have variables:
+\itemize{
+\item{\code{date}: }{calendar date of report}
+\item{\code{count}: }{count of reported cases}
+}}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
 }
 \description{
 Check the dataframe of clinical data

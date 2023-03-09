@@ -7,7 +7,7 @@
 summarise_by_date_iters(df)
 }
 \arguments{
-\item{df}{dataframe. Must have \code{date} and \code{value} columns.}
+\item{df}{Data frame. Must have \code{date} and \code{value} columns.}
 }
 \description{
 This function summarises raw iterations of data.

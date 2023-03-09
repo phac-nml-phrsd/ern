@@ -7,9 +7,12 @@
 smooth_cl(cl.daily, prm.smooth)
 }
 \arguments{
-\item{cl.daily}{Dataframe resulting from \code{\link[=agg_to_daily]{agg_to_daily()}}}
+\item{cl.daily}{Data frame. Output of \code{\link[=agg_to_daily]{agg_to_daily()}}.}
 
-\item{prm.smooth}{smoothing parameters}
+\item{prm.smooth}{List. Smoothing parameters for input signal into Rt calculation. Elements include:
+\itemize{
+\item{\code{window}: }{width of smoothing window (number of days)}
+}}
 }
 \value{
 Dataframe

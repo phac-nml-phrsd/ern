@@ -4,16 +4,24 @@
 \alias{get_use_dates}
 \title{Get dates for which to use (trust) inferred daily reports}
 \usage{
-get_use_dates(reports.daily, reports, agg.reldiff.tol, dates.only = TRUE)
+get_use_dates(cl.daily, cl.agg, prm.daily.check, dates.only = TRUE)
 }
 \arguments{
-\item{reports.daily}{dataframe of daily reported cases. must at least include \code{value} column with counts.}
+\item{cl.daily}{Data frame. Output of \code{\link[=agg_to_daily]{agg_to_daily()}}.}
 
-\item{reports}{dataframe. original aggregated reports. must at least have \code{date} column}
+\item{cl.agg}{Data frame. Must have variables:
+\itemize{
+\item{\code{date}: }{calendar date of report}
+\item{\code{count}: }{count of reported cases}
+}}
 
-\item{agg.reldiff.tol}{numeric scalar. numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.}
+\item{prm.daily.check}{List. Parameters for checking aggregated to daily report inference. Elements include:
+\itemize{
+\item{\code{agg.reldiff.tol}: }{numerical tolerance (\\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+}
+Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 
-\item{dates.only}{logical. return use dates only or all columns of \code{reports.daily}}
+\item{dates.only}{Logical. Return use dates only or all columns of \code{cl.daily}.}
 }
 \description{
 Get dates for which to use (trust) inferred daily reports

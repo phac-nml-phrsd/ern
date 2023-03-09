@@ -19,7 +19,8 @@
 #' }
 #' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
 #' \itemize{
-#'  \item{`agg.reldiff.tol`: }{numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+#'  \item{`agg.reldiff.tol`: }{numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+#' }
 #' Set this entire argument to `NULL` to use inferred daily reports as is.
 #' @param prm.smooth List. Smoothing parameters for input signal into Rt calculation. Elements include:
 #' \itemize{
@@ -29,7 +30,7 @@
 #' \itemize{
 #'  \item{`iter`: }{number of iterations for ensemble}
 #'  \item{`window`: }{length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.}
-#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
+#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via [`EpiEstim::make_config()`]. if `NULL`, will use default config from `EpiEstim`.}
 #' }
 #' @param silent Logical. Should functions be run silently, i.e., without any messages and warnings to console?
 #'
@@ -37,9 +38,11 @@
 #' @importFrom rlang .data
 #'
 #' @return List. Elements include:
-#' - `cl.agg` original aggregated reports signal
-#' - `cl.daily` reports as input for Rt calculation (inferred daily counts, smoothed)
-#' - `R` the effective R estimate (summary from ensemble)
+#' \itemize{
+#'  \item{`cl.agg`: }{original aggregated reports signal}
+#'  \item{`cl.daily`: }{reports as input for Rt calculation (inferred daily counts, smoothed)}
+#'  \item{`R`: }{the effective R estimate (summary from ensemble)}
+#' }
 #' @export
 estimate_R_cl <- function(
   cl.agg,

@@ -15,29 +15,22 @@ estimate_R_cl_rep(
 )
 }
 \arguments{
-\item{cl.daily}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution from \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}}
 
-\item{dist.repfrac}{parameters for the reporting fraction distribution}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution from \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}}
 
-\item{dist.repdelay}{parameters for the reporting delay distribution}
+\item{dist.incub}{List. Parameters for the incubation period distribution from \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
 
-\item{dist.incub}{parameters for the incubation period distribution}
+\item{dist.gi}{List. Parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{dist.gi}{parameters for the generation interval distribution}
-
-\item{prm.R}{List. Settings for the ensemble when calculating Rt.
-Elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
 \itemize{
-\item \code{window}: number of days defining the window of data used by
-\code{EpiEstim} to estimate Rt
-\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
-estimates after sampling uncertain distributions.
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
-\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
-\code{EpiEstim}.}
+\item{\code{iter}: }{number of iterations for ensemble}
+\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. if \code{NULL}, will use default config from \code{EpiEstim}.}
 }}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
 }
 \value{
 A summary of individual Rt realizations with 95\% confidence intervals

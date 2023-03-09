@@ -7,16 +7,25 @@
 agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 }
 \arguments{
-\item{cl.agg}{dataframe. must have variables \code{date} for the calendar
-date of the observation, \code{count} for the count of reported cases.}
+\item{cl.agg}{Data frame. Must have variables:
+\itemize{
+\item{\code{date}: }{calendar date of report}
+\item{\code{count}: }{count of reported cases}
+}}
 
-\item{dist.gi}{parameters for the generation interval distribution}
+\item{dist.gi}{List. Parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{popsize}{population size.}
+\item{popsize}{Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.}
 
-\item{prm.daily}{parameters for daily report inference (via MCMC).}
+\item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
+\itemize{
+\item{\code{burn}: }{length of burn-in period (number of days)}
+\item{\code{iter}: }{number of iterations after burn-in period (number of days)}
+\item{\code{chains}: }{number of chains to simulate}
+\item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
+}}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
 }
 \value{
 Dataframe with individual realizations of daily reported cases

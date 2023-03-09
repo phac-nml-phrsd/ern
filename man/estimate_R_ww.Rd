@@ -2,8 +2,7 @@
 % Please edit documentation in R/estimate_R_ww.R
 \name{estimate_R_ww}
 \alias{estimate_R_ww}
-\title{Estimate the effective reproduction from wastewater concentration
-data.}
+\title{Estimate the effective reproduction from wastewater concentration data.}
 \usage{
 estimate_R_ww(
   ww.conc,
@@ -17,40 +16,28 @@ estimate_R_ww(
 )
 }
 \arguments{
-\item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+\item{ww.conc}{Dataframe. Must have variables named \code{date} for the wastewater
+collection date and \code{val} for the pathogen concentration.}
 
-\item{dist.fec}{List. Fecal shedding distribution.}
+\item{dist.fec}{Numerical vector. Distribution of fecal shedding (time unit=day).}
 
-\item{dist.gi}{List. Generation interval distribution.}
+\item{dist.gi}{Numerical vector. Distribution of the generation interval (time unit=day).}
 
-\item{scaling.factor}{Numeric. Scaling from wastewater concentration to
-prevalence. This value may be assumed or independently calibrated to data.}
+\item{scaling.factor}{Numeric. Scaling from wastewater concentration to prevalence.
+This value may be assumed or independently calibrated to data.}
 
-\item{prm.smooth}{List. list of smoothing parameters. Parameters should be
-specified as followed:
-\enumerate{
-\item method - smoothing method (either 'rollmean' or 'loess')
-\item window - smoothing window (number of days for rollmean smoothing)
-\item align - smoothing alignment (for rollmean smoothing, either
-'center', 'left', 'right')
-\item span - smoothing span (for loess smoothing)
-}}
+\item{prm.smooth}{List. Parameters for the smoothing algorithm of the wastewater signal.}
 
-\item{prm.R}{List. Settings for the ensemble when calculating Rt.
-Elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
 \itemize{
-\item \code{window}: number of days defining the window of data used by
-\code{EpiEstim} to estimate Rt
-\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
-estimates after sampling uncertain distributions.
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
-\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
-\code{EpiEstim}.}
+\item \code{window}: number of days defining the window of data used by \code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt estimates after sampling uncertain distributions.
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
 }}
 
-\item{iter}{Integer. Number of samples for the (uncertain) generation
-interval distribution.}
+\item{iter}{Integer. Number of samples for the (uncertain) generation interval distribution.}
+
+\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
 }
 \value{
 List. Elements include:
@@ -62,6 +49,5 @@ List. Elements include:
 }
 }
 \description{
-Estimate the effective reproduction from wastewater concentration
-data.
+Estimate the effective reproduction from wastewater concentration data.
 }
