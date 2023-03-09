@@ -4,11 +4,12 @@
 #' @param d ww dataframe
 #' @param fec fecal shedding distribution
 #' @param scaling.factor scaling factor of ww data.
+#' @template param-silent
 #'
 #' @importFrom rlang .data
 #'
 #' @return Dataframe with deconvoluted incidence
-deconv_ww_inc <- function(d, fec, scaling.factor){
+deconv_ww_inc <- function(d, fec, scaling.factor, silent){
 
   d$obs_scal = d$obs * scaling.factor
 
@@ -18,7 +19,8 @@ deconv_ww_inc <- function(d, fec, scaling.factor){
 
   inc = deconvolution_RL(observed = d$obs_scal,
                          times = d$t,
-                         p_delay = f) %>%
+                         p_delay = f,
+                         verbose = !silent) %>%
     # Forces incidence to be a positive integer:
     dplyr::mutate(
       inc.deconvol = as.integer(ifelse(
