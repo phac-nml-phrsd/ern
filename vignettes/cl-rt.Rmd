@@ -1,0 +1,43 @@
+---
+title: "Estimating effective reproductive number using clinical report data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rt_clinical_data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+suppressMessages({
+  library(magrittr)
+  library(tidyr)
+  library(dplyr)
+  library(ggplot2) ; theme_set(theme_bw())
+  library(lubridate)
+  library(stringr)
+  library(patchwork)
+  library(ern)
+})
+```
+
+With the `ern` package, the effective reproduction number ($\mathcal{R}_t$) can be estimated using clinical reports, aggregated over time (_e.g._ weekly, biweekly). In this vignette, $\mathcal{R}_t$ will be estimated using a subset of weekly COVID-19 reports from the Government of Canada Health Infobase dataset. 
+
+## Loading data and necessary parameters
+
+In order to estimate $\mathcal{R}_t$ from aggregated clinical testing data in `ern`, the following items are required:
+
+- ...
+
+Sample weekly clinical reports are included in `ern`:
+
+```{r load-data}
+cl.agg <- ern::cl.agg
+```
+
