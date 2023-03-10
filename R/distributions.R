@@ -173,8 +173,8 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
 
   if(p == 'influenza'){
-     # This is a dummy distribution
-     # TODO: look at the literature to inform those values
+    # This is a dummy distribution
+    # TODO: look at the literature to inform those values
     fec = list(
       dist    = "gamma",
       mean    = 9,
@@ -189,8 +189,8 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
   }
 
   if(p == 'rsv'){
-   # This is a dummy distribution
-   # TODO: look at the literature to inform those values
+    # This is a dummy distribution
+    # TODO: look at the literature to inform those values
     fec = list(
       dist    = "gamma",
       mean    = 12,
