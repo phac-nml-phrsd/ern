@@ -68,3 +68,31 @@ test_that("estimate_R_ww returns a list of four dataframes", {
     4
   )
 })
+
+test_that("estimate_R_ww returns a message when silent mode is disabled", {
+  load("../testdata/ww_test_params.RData")
+  expect_message(
+    estimate_R_ww(
+      ww.conc = ww.conc,
+      dist.fec = dist.fec,
+      dist.gi = dist.gi,
+      prm.smooth = prm.smooth,
+      iter = 1,
+      silent = FALSE
+    )
+  )
+})
+
+test_that("estimate_R_ww executes silently when silent mode is enabled", {
+  load("../testdata/ww_test_params.RData")
+  expect_silent(
+    estimate_R_ww(
+      ww.conc = ww.conc,
+      dist.fec = dist.fec,
+      dist.gi = dist.gi,
+      prm.smooth = prm.smooth,
+      iter = 1,
+      silent = TRUE
+    )
+  )
+})
