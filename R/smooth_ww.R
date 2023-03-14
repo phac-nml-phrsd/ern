@@ -11,13 +11,14 @@
 #'    'center', 'left', 'right')
 #'   \item span - smoothing span (for loess smoothing)
 #'  }
+#' @template param-silent
 #'
 #' @importFrom rlang .data
 #'
 #' @return dataframe with smoothed ww data
 #'
 #' @export
-smooth_ww <- function(df, prm.smooth){
+smooth_ww <- function(df, prm.smooth, silent = FALSE){
 
   # Checking if prm.smooth contains smoothing method
   if(is.null(prm.smooth$method)){
@@ -70,6 +71,11 @@ smooth_ww <- function(df, prm.smooth){
       dplyr::rename(t = x, obs = .data$y)
 
     d[["date"]] = lubridate::ymd(min(t$date)) + d[["t"]]
+  }
+
+  if(!silent){
+    message(paste("Wastewater data smoothed using", prm.smooth$method,
+                  "method"))
   }
 
   return(d)

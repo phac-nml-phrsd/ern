@@ -82,7 +82,7 @@ prm.R = list(
 
 ## Estimating $R_t$
 
-Once the above items are loaded, $R_t$ can be estimated using `estimate_R_ww()`. In this example, the number of iterations will be set to 20 (the default is 100).
+Once the above items are loaded, $R_t$ can be estimated using `estimate_R_ww()`. In this example, the number of iterations will be set to 20 (the default is 100). Output messages are defaulted as `TRUE`; but in this example they will be suppressed.
 
 ```{r estimate rt}
 r.estim = ern::estimate_R_ww(
@@ -91,7 +91,8 @@ r.estim = ern::estimate_R_ww(
   dist.gi        = dist.gi,
   prm.smooth     = prm.smooth,
   prm.R = prm.R,
-  iter = 20
+  iter = 20,
+  silent = TRUE
 )
 ```
 

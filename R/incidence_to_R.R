@@ -17,8 +17,7 @@
 incidence_to_R <- function(
     incidence,
     generation.interval,
-    prm.R,
-    silent = FALSE
+    prm.R
 ){
   # === prep inputs ====
 
@@ -56,13 +55,11 @@ incidence_to_R <- function(
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function)
 
-  output <- capture.output(R <- EpiEstim::estimate_R(
+  R = EpiEstim::estimate_R(
     incid = incid,
     method = method,
     config = config.EpiEstim
-  )$R)
-
-  if(!silent & length(output) > 0) print(output)
+  )$R
 
   # ==== prep output ====
 

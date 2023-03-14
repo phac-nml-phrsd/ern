@@ -32,8 +32,7 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
 
   rt = incidence_to_R(incidence = i.df,
                        generation.interval = sample.gi,
-                       prm.R = prm.R,
-                      silent = silent) %>%
+                       prm.R = prm.R) %>%
     dplyr::mutate(iter = i)
 
   r = list(
@@ -103,11 +102,11 @@ estimate_R_ww <- function(
   # Smooth the wastewater signal, if requested
   ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
-    output <- capture.output(ww.smooth <- smooth_ww(
+    ww.smooth <- smooth_ww(
       df = ww.conc,
-      prm.smooth = prm.smooth))
-
-    if(!silent & length(output) > 0) print(output)
+      prm.smooth = prm.smooth,
+      silent = silent
+    )
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
