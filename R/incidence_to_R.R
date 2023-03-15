@@ -1,14 +1,10 @@
 #' Estimate Rt using EpiEstim
 #'
-#' @param incidence dataframe. estimated incidence. includes at least `date`, `I`, and `t` columns.
-#' @param generation.interval list. parameters for generation interval from [`def_dist_generation_interval()`].
-#' @param prm.R list. settings for the ensemble when calculating Rt. elements include:
-#' \itemize{
-#'  \item{`iter`: }{number of iterations for ensemble}
-#'  \item{`window`: }{length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.}
-#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
-#' }
-#' @inheritParams estimate_R_cl
+#' @param incidence Data frame. Estimated incidence. Must include at least
+#'  `date`, `I`, and `t` columns.
+#' @param generation.interval List. Parameters for generation interval from
+#' [`def_dist_generation_interval()`].
+#' @template prmR
 #'
 #' @importFrom rlang .data
 #'

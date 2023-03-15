@@ -10,7 +10,8 @@ estimate_R_cl_rep(
   dist.repdelay,
   dist.incub,
   dist.gi,
-  prm.R
+  prm.R,
+  silent = FALSE
 )
 }
 \arguments{
@@ -24,12 +25,19 @@ estimate_R_cl_rep(
 
 \item{dist.gi}{parameters for the generation interval distribution}
 
-\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
 \itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
+\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
+\code{EpiEstim}.}
 }}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \value{
 A summary of individual Rt realizations with 95\% confidence intervals

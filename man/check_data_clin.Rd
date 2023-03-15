@@ -4,10 +4,12 @@
 \alias{check_data_clin}
 \title{Check the dataframe of clinical data}
 \usage{
-check_data_clin(dat)
+check_data_clin(dat, silent = FALSE)
 }
 \arguments{
 \item{dat}{The dataframe of clinical data}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \description{
 Check the dataframe of clinical data

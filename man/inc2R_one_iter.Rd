@@ -6,24 +6,39 @@
 Converts wastewater to Rt after sampling one fecal shedding and
 one generation interval distribution.}
 \usage{
-inc2R_one_iter(i, dist.fec, dist.gi, wastewater, scaling.factor, prm.R)
+inc2R_one_iter(i, dist.fec, dist.gi, ww.conc, scaling.factor, prm.R, silent)
 }
 \arguments{
-\item{i}{Iteration index. (not used but required when using \code{lapply()})}
+\item{i}{Numeric. Iteration index. (not used but required when using
+\code{lapply()})}
 
-\item{dist.fec}{Fecal shedding distribution.}
+\item{dist.fec}{List. Fecal shedding distribution.}
 
-\item{dist.gi}{Generation interval distribution.}
+\item{dist.gi}{List. Generation interval distribution.}
 
-\item{wastewater}{Smoothed wastewater time-series.}
+\item{ww.conc}{Data frame. Must have variables named \code{date} for the
+wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{scaling.factor}{Scaling from wastewater concentration to prevalence.
-This value may be assumed or independently calibrated to data.}
+\item{scaling.factor}{Numeric. Scaling from wastewater concentration to
+prevalence. This value may be assumed or independently calibrated to data.}
 
-\item{prm.R}{List of configuration parameters for EpiEstim.}
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
+\itemize{
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
+\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
+\code{EpiEstim}.}
+}}
+
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \value{
-a list with elements \code{inc} (incidence) and \code{rt} (reproduction number)
+List. Elements include \code{inc} (incidence) and \code{rt}
+(reproduction number)
 }
 \description{
 Helper function.

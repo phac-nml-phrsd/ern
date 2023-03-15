@@ -10,7 +10,8 @@ fit_jags_aggreg(
   g,
   N,
   n.days = NULL,
-  mcmc.params = list(burn = 1000, iter = 3000, chains = 3)
+  mcmc.params = list(burn = 1000, iter = 3000, chains = 3),
+  silent = FALSE
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ fit_jags_aggreg(
 \item \code{iter}: iterations after burn-in (days)
 \item \code{chains}: number of chains
 }}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \description{
 Fit JAGS model to aggregated data

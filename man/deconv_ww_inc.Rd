@@ -4,14 +4,18 @@
 \alias{deconv_ww_inc}
 \title{Deconvoluting Wastewater Data to Incidence}
 \usage{
-deconv_ww_inc(d, fec, scaling.factor)
+deconv_ww_inc(d, fec, scaling.factor, silent)
 }
 \arguments{
-\item{d}{ww dataframe}
+\item{d}{Data frame. Wastewater dataframe. Must include at least \code{date} and
+\code{obs} columns.}
 
-\item{fec}{fecal shedding distribution}
+\item{fec}{List. Fecal shedding distribution}
 
-\item{scaling.factor}{scaling factor of ww data.}
+\item{scaling.factor}{Numeric. Scaling from wastewater concentration to
+prevalence. This value may be assumed or independently calibrated to data.}
+
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \value{
 Dataframe with deconvoluted incidence
