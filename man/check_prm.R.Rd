@@ -4,10 +4,12 @@
 \alias{check_prm.R}
 \title{Check parameters for Rt calculation}
 \usage{
-check_prm.R(x)
+check_prm.R(x, silent = FALSE)
 }
 \arguments{
 \item{x}{List of parameters for Rt calculation}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \description{
 Check parameters for Rt calculation

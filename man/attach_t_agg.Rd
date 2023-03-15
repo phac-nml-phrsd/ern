@@ -6,12 +6,14 @@
 Exclude first day since we don't necessarily know over which period
 of time that data was aggregated}
 \usage{
-attach_t_agg(x, first.agg.period = NULL)
+attach_t_agg(x, first.agg.period = NULL, silent = FALSE)
 }
 \arguments{
 \item{x}{dataframe. must at least have a \code{date} column}
 
 \item{first.agg.period}{numeric. number of days over which reports were summed for the first observed report. if NULL, assumes same aggregation period as for second observation.}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \value{
 dataframe.

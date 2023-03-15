@@ -8,7 +8,8 @@ reports_to_incidence(
   reports.daily,
   reporting.delay,
   incubation.period,
-  max.iter = 50
+  max.iter = 50,
+  silent = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ reports_to_incidence(
 \item{incubation.period}{list. parameters for incubation period from \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
 
 \item{max.iter}{numeric. maximum number of Richardson-Lucy iterations}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \description{
 Infer incidence from reports via deconvolutions

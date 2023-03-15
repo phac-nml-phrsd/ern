@@ -14,7 +14,8 @@ estimate_R_cl(
   prm.daily = list(burn = 500, iter = 2000, chains = 20, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
-  prm.R = list(iter = 10, window = 7, config.EpiEstim = NULL)
+  prm.R = list(iter = 10, window = 7, config.EpiEstim = NULL),
+  silent = FALSE
 )
 }
 \arguments{
@@ -40,12 +41,19 @@ date of the observation, \code{count} for the count of reported cases.}
 
 \item{prm.smooth}{smoothing parameters}
 
-\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
 \itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
+\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
+\code{EpiEstim}.}
 }}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \value{
 List. Elements include:

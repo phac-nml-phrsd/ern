@@ -7,15 +7,22 @@
 incidence_to_R(incidence, generation.interval, prm.R)
 }
 \arguments{
-\item{incidence}{dataframe. estimated incidence. includes at least \code{date}, \code{I}, and \code{t} columns.}
+\item{incidence}{Data frame. Estimated incidence. Must include at least
+\code{date}, \code{I}, and \code{t} columns.}
 
-\item{generation.interval}{list. parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{generation.interval}{List. Parameters for generation interval from
+\code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
 \itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
+\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
+\code{EpiEstim}.}
 }}
 }
 \description{

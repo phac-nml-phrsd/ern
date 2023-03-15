@@ -7,7 +7,7 @@
 def_dist_fecal_shedding(pathogen = "sarscov2", subtype = "")
 }
 \arguments{
-\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza', 'RSV')}
+\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
 
 \item{subtype}{String.}
 }

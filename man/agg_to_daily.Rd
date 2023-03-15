@@ -4,7 +4,7 @@
 \alias{agg_to_daily}
 \title{Infer daily counts from aggregates}
 \usage{
-agg_to_daily(cl.agg, dist.gi, popsize, prm.daily)
+agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 }
 \arguments{
 \item{cl.agg}{dataframe. must have variables \code{date} for the calendar
@@ -15,6 +15,8 @@ date of the observation, \code{count} for the count of reported cases.}
 \item{popsize}{population size.}
 
 \item{prm.daily}{parameters for daily report inference (via MCMC).}
+
+\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
 }
 \value{
 Dataframe with individual realizations of daily reported cases

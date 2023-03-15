@@ -4,12 +4,13 @@
 \alias{smooth_ww}
 \title{Smoothing ww data}
 \usage{
-smooth_ww(df, prm.smooth)
+smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
 \arguments{
-\item{df}{ww dataframe}
+\item{ww.conc}{Data frame. Must have variables named \code{date} for the
+wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{prm.smooth}{list of smoothing parameters. Parameters should be
+\item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:
 \enumerate{
 \item method - smoothing method (either 'rollmean' or 'loess')
