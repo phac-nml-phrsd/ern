@@ -3,23 +3,20 @@
 #' Converts wastewater to Rt after sampling one fecal shedding and
 #'  one generation interval distribution.
 #'
-#' @param i Iteration index. (not used but required when using `lapply()`)
-#' @param dist.fec Fecal shedding distribution.
-#' @param dist.gi Generation interval distribution.
-#' @param wastewater Smoothed wastewater time-series.
-#' @param scaling.factor Scaling from wastewater concentration to prevalence.
-#'  This value may be assumed or independently calibrated to data.
-#' @param prm.R List of configuration parameters for EpiEstim.
+#' @param i Numeric. Iteration index. (not used but required when using
+#'  `lapply()`)
+#' @inheritParams estimate_R_ww
 #' @template param-silent
 #'
-#' @return a list with elements `inc` (incidence) and `rt` (reproduction number)
-inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
+#' @return List. Elements include `inc` (incidence) and `rt`
+#'  (reproduction number)
+inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                          scaling.factor, prm.R, silent) {
   set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
   sample.gi = sample_a_dist(dist = dist.gi)
 
-  inc = deconv_ww_inc(d              = wastewater,
+  inc = deconv_ww_inc(d              = ww.conc,
                       fec            = sample.fec,
                       scaling.factor = scaling.factor,
                       silent = silent)
@@ -43,22 +40,18 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, wastewater,
 }
 
 
-#' @title Estimate the effective reproduction from wastewater concentration data.
+#' @title Estimate the effective reproduction from wastewater concentration
+#'  data.
 #'
-#' @param ww.conc Dataframe. Must have variables named \code{date} for the wastewater
-#' collection date and \code{val} for the pathogen concentration.
-#' @param dist.fec Numerical vector. Distribution of fecal shedding (time unit=day).
-#' @param dist.gi Numerical vector. Distribution of the generation interval (time unit=day).
-#' @param scaling.factor Numeric. Scaling from wastewater concentration to prevalence.
-#' This value may be assumed or independently calibrated to data.
-#' @param prm.smooth List. Parameters for the smoothing algorithm of the wastewater signal.
-#' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
-#' \itemize{
-#'  \item `window`: number of days defining the window of data used by `EpiEstim` to estimate Rt
-#'  \item `CI`: Numeric between 0 and 1. Confidence interval width for Rt estimates after sampling uncertain distributions.
-#'  \item{`config.EpiEstim`: }{configuration for `EpiEstim` defined via `EpiEstim::make_config()`. if `NULL`, will use default config from `EpiEstim`.}
-#' }
-#' @param iter Integer. Number of samples for the (uncertain) generation interval distribution.
+#' @param ww.conc Data frame. Must have variables named \code{date} for the
+#'  wastewater collection date and \code{val} for the pathogen concentration.
+#' @template param-ww-dist
+#' @param scaling.factor Numeric. Scaling from wastewater concentration to
+#'  prevalence. This value may be assumed or independently calibrated to data.
+#' @template prm-smooth
+#' @template prmR
+#' @param iter Integer. Number of samples for the (uncertain) generation
+#'  interval distribution.
 #' @return List. Elements include:
 #' - `ww.conc` original wastewater signal
 #' - `ww.smooth` smoothed wastewater signal
@@ -103,7 +96,7 @@ estimate_R_ww <- function(
   ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
     ww.smooth <- smooth_ww(
-      df = ww.conc,
+      ww.conc = ww.conc,
       prm.smooth = prm.smooth,
       silent = silent
     )
@@ -114,7 +107,7 @@ estimate_R_ww <- function(
   # Use the estimated incidence to calculate R:
   r = lapply(X = 1:iter, FUN = inc2R_one_iter,
     dist.gi = dist.gi, dist.fec = dist.fec,
-    wastewater = ww.smooth, scaling.factor = scaling.factor,
+    ww.conc = ww.smooth, scaling.factor = scaling.factor,
     prm.R = prm.R, silent = silent
   )
 

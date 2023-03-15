@@ -1,9 +1,10 @@
 #' @title Deconvoluting Wastewater Data to Incidence
 #' @description Function estimates incidence from smoothed data
 #'
-#' @param d ww dataframe
-#' @param fec fecal shedding distribution
-#' @param scaling.factor scaling factor of ww data.
+#' @param d Data frame. Wastewater dataframe. Must include at least `date` and
+#'  `obs` columns.
+#' @param fec List. Fecal shedding distribution
+#' @inheritParams estimate_R_ww
 #' @template param-silent
 #'
 #' @importFrom rlang .data

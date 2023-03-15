@@ -1,7 +1,6 @@
 #' Define the incubation period distribution
 #'
-#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
-#'
+#' @template pathogen
 #' @template return-dist
 #' @export
 def_dist_incubation_period <- function(pathogen = 'sarscov2'){
@@ -54,8 +53,7 @@ def_dist_incubation_period <- function(pathogen = 'sarscov2'){
 
 #' Define the generation interval distribution
 #'
-#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
-#'
+#' @template pathogen
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
@@ -109,12 +107,9 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
 #' Define the reporting fraction distribution
 #'
-#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza')
-#'
+#' @template pathogen
 #' @template return-dist
 #' @export
-#'
-#'
 def_dist_reporting_fraction <- function(){
 
   if(TRUE){
@@ -132,7 +127,7 @@ def_dist_reporting_fraction <- function(){
 
 #' @title Define fecal Shedding Distribution
 #'
-#' @param pathogen String. Name of the pathogen ('sarscov2', 'influenza', 'RSV')
+#' @template pathogen
 #' @param subtype String.
 #'
 #' @return A fecal shedding distribution stored as a list.
@@ -229,7 +224,8 @@ draw_from_gamma <- function(par, dist){
 #' Sample parameters for a single distribution assuming parameters
 #' come from a Gamma distribution
 #'
-#' @param dist a list of distribution parameters, as defined by the `def_dist_*()` functions
+#' @param dist List. A list of distribution parameters, as defined by the
+#'  `def_dist_*()` functions.
 sample_a_dist <- function(dist){
 
   # get parameter names that we're sampling
@@ -265,6 +261,7 @@ sample_a_dist <- function(dist){
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
 #' @return vector with discretized density
+#' @export
 get_discrete_dist <- function(params){
 
   # --- check args
