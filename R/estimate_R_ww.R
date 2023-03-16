@@ -1,45 +1,3 @@
-
-#' Helper function.
-#' Converts wastewater to Rt after sampling one fecal shedding and
-#'  one generation interval distribution.
-#'
-#' @param i Numeric. Iteration index. (not used but required when using
-#'  `lapply()`)
-#' @inheritParams estimate_R_ww
-#' @template param-silent
-#'
-#' @return List. Elements include `inc` (incidence) and `rt`
-#'  (reproduction number)
-inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
-                         scaling.factor, prm.R, silent) {
-  set.seed(i)
-  sample.fec = sample_a_dist(dist = dist.fec)
-  sample.gi = sample_a_dist(dist = dist.gi)
-
-  inc = deconv_ww_inc(d              = ww.conc,
-                      fec            = sample.fec,
-                      scaling.factor = scaling.factor,
-                      silent = silent)
-
-  i.df = inc[["inc"]] %>%
-    dplyr::mutate(I = .data$inc.deconvol) %>%
-    dplyr::select(date,I, t) %>%
-    tidyr::drop_na() %>%
-    dplyr::mutate(iter = i)
-
-  rt = incidence_to_R(incidence = i.df,
-                       generation.interval = sample.gi,
-                       prm.R = prm.R) %>%
-    dplyr::mutate(iter = i)
-
-  r = list(
-    inc = i.df,
-    rt = rt
-  )
-  return(r)
-}
-
-
 #' @title Estimate the effective reproduction from wastewater concentration
 #'  data.
 #'
@@ -130,4 +88,44 @@ estimate_R_ww <- function(
     R         = rt
   )
   )
+}
+
+#' Helper function.
+#' Converts wastewater to Rt after sampling one fecal shedding and
+#'  one generation interval distribution.
+#'
+#' @param i Numeric. Iteration index. (not used but required when using
+#'  `lapply()`)
+#' @inheritParams estimate_R_ww
+#' @template param-silent
+#'
+#' @return List. Elements include `inc` (incidence) and `rt`
+#'  (reproduction number)
+inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
+                           scaling.factor, prm.R, silent) {
+  set.seed(i)
+  sample.fec = sample_a_dist(dist = dist.fec)
+  sample.gi = sample_a_dist(dist = dist.gi)
+
+  inc = deconv_ww_inc(d              = ww.conc,
+                      fec            = sample.fec,
+                      scaling.factor = scaling.factor,
+                      silent = silent)
+
+  i.df = inc[["inc"]] %>%
+    dplyr::mutate(I = .data$inc.deconvol) %>%
+    dplyr::select(date,I, t) %>%
+    tidyr::drop_na() %>%
+    dplyr::mutate(iter = i)
+
+  rt = incidence_to_R(incidence = i.df,
+                      generation.interval = sample.gi,
+                      prm.R = prm.R) %>%
+    dplyr::mutate(iter = i)
+
+  r = list(
+    inc = i.df,
+    rt = rt
+  )
+  return(r)
 }
