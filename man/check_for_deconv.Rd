@@ -7,9 +7,9 @@
 check_for_deconv(obs, dist)
 }
 \arguments{
-\item{obs}{numeric vector. signal (\emph{e.g.}, case reports)}
+\item{obs}{Numeric. Vector with observed signal (\emph{e.g.}, case reports)}
 
-\item{dist}{numeric vector. deconvolution kernel (\emph{e.g.}, reporting delay distribution)}
+\item{dist}{Numeric. Vector of discretized distribution used as the deconvolution kernel (\emph{e.g.}, reporting delay distribution)}
 }
 \description{
 Check that deconvolution inputs are compatible

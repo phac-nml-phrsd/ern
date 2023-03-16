@@ -17,7 +17,7 @@ smooth_cl(cl.daily, prm.smooth)
 Set this entire argument to \code{NULL} to turn off smoothing.}
 }
 \value{
-Dataframe
+Data frame
 }
 \description{
 Smooth realizations from estimating daily reports

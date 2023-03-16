@@ -4,6 +4,8 @@
 #' @inheritParams estimate_R_cl
 #' @param dates.only Logical. Return use dates only or all columns of `cl.daily`.
 #'
+#' @return Data frame or vector, depending on `dates.only`
+#'
 #' @importFrom rlang .data
 get_use_dates <- function(
     cl.daily,
@@ -51,9 +53,7 @@ get_use_dates <- function(
 
 # helpers -----------------------------------------------------------------
 
-#' Summarise observations by date for iterated data
-#'
-#' @description This function summarises raw iterations of data.
+#' Summarise observations by date for raw iterations from an ensemble
 #'
 #' @param df Data frame. Must have `date` and `value` columns.
 #'
@@ -70,9 +70,7 @@ summarise_by_date_iters <- function(df){
   return(res)
 }
 
-#' Summarise observations by date for iterated ensemble data
-#'
-#' @description This function summarises iterations of ensemble data.
+#' Summarise observations by date for several ensembles
 #'
 #' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
 #' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
@@ -99,6 +97,8 @@ summarise_by_date_ens <- function(df, CI = 0.95){
 #'
 #' @param df Data frame. As output by [`get_use_dates()`].
 #' @inheritParams estimate_R_cl
+#'
+#' @return Data frame
 #'
 #' @importFrom rlang .data
 summarise_report_counts <- function(df, prm.daily.check){
@@ -137,7 +137,7 @@ summarise_report_counts <- function(df, prm.daily.check){
     %>% dplyr::pull(.data$date.report)
   )
 
-  # TODO: show use.dates here
+  # TODO: show use.dates here?
 
   # attach use flag to output data
   (df %>% dplyr::mutate(use = .data$date.report %in% use.dates))

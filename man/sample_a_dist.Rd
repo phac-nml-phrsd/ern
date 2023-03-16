@@ -2,8 +2,8 @@
 % Please edit documentation in R/distributions.R
 \name{sample_a_dist}
 \alias{sample_a_dist}
-\title{Sample parameters for a single distribution assuming parameters
-come from a Gamma distribution}
+\title{Sample parameters for a single distribution from
+a family of distributions, assuming parameters come from a Gamma distribution}
 \usage{
 sample_a_dist(dist)
 }
@@ -12,6 +12,6 @@ sample_a_dist(dist)
 \verb{def_dist_*()} functions.}
 }
 \description{
-Sample parameters for a single distribution assuming parameters
-come from a Gamma distribution
+Sample parameters for a single distribution from
+a family of distributions, assuming parameters come from a Gamma distribution
 }

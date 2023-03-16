@@ -25,10 +25,10 @@ agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 \item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 
-\item{silent}{Logical. Flag to suppress output messages.}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
-Dataframe with individual realizations of daily reported cases
+Data frame with individual realizations of daily reported cases
 }
 \description{
 Infer daily counts from aggregates

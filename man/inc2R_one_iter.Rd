@@ -34,7 +34,7 @@ estimates after sampling uncertain distributions.
 \code{EpiEstim}.
 }}
 
-\item{silent}{Logical. Flag to suppress output messages.}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
 List. Elements include \code{inc} (incidence) and \code{rt}

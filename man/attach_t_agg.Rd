@@ -23,10 +23,10 @@ attach_t_agg(cl.agg, prm.daily = NULL, silent = FALSE)
 \item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 
-\item{silent}{Logical. Flag to suppress output messages.}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
-dataframe.
+Data frame
 }
 \description{
 Attach time index (number of days) column

@@ -5,7 +5,7 @@
 #'
 #' @importFrom rlang .data
 #'
-#' @return Dataframe
+#' @return Data frame
 #' @export
 smooth_cl <- function(cl.daily, prm.smooth){
 

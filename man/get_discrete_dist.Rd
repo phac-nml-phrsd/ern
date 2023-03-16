@@ -10,7 +10,7 @@ get_discrete_dist(params)
 \item{params}{distribution params (output of \verb{def_dist_*()} function)}
 }
 \value{
-vector with discretized density
+Numeric. Vector with discretized density.
 }
 \description{
 Get a discretized, truncated version of a distribution

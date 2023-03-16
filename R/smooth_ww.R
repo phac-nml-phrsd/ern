@@ -1,11 +1,11 @@
-#' @title Smoothing ww data
-#' @description Function takes cleaned ww data and smooths data
+#' @title Smooth wastewater data
+#' @description Function takes pre-processed wastewater data and smooths it
 #'
 #' @inheritParams estimate_R_ww
 #'
 #' @importFrom rlang .data
 #'
-#' @return dataframe with smoothed ww data
+#' @return Data frame
 #'
 #' @export
 smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){

@@ -2,7 +2,7 @@
 % Please edit documentation in R/smooth_ww.R
 \name{smooth_ww}
 \alias{smooth_ww}
-\title{Smoothing ww data}
+\title{Smooth wastewater data}
 \usage{
 smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
@@ -21,8 +21,8 @@ specified as followed:
 }}
 }
 \value{
-dataframe with smoothed ww data
+Data frame
 }
 \description{
-Function takes cleaned ww data and smooths data
+Function takes pre-processed wastewater data and smooths it
 }

@@ -28,12 +28,7 @@
 #'  \item `window`: width of smoothing window (number of days)
 #' }
 #' Set this entire argument to `NULL` to turn off smoothing.
-#' @param prm.R List. Settings for the ensemble when calculating Rt. Elements include:
-#' \itemize{
-#'  \item `iter`: number of iterations for ensemble
-#'  \item `window`: length of time window to use for each Rt estimate. if `t_end` is specified in `config.EpiEstim`, this option will override it.
-#'  \item `config.EpiEstim`: configuration for `EpiEstim` defined via [`EpiEstim::make_config()`]. if `NULL`, will use default config from `EpiEstim`.
-#' }
+#' @template param-prm.R
 #' @template param-silent
 #'
 #' @importFrom magrittr %>%

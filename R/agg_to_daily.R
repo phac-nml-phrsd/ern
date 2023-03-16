@@ -2,7 +2,7 @@
 #'
 #' @inheritParams estimate_R_cl
 #'
-#' @return Dataframe with individual realizations of daily reported cases
+#' @return Data frame with individual realizations of daily reported cases
 #' @export
 agg_to_daily <- function(
   cl.agg,
@@ -35,7 +35,7 @@ agg_to_daily <- function(
 #'
 #' @inheritParams estimate_R_cl
 #'
-#' @return dataframe.
+#' @return Data frame
 attach_t_agg <- function(cl.agg, prm.daily = NULL, silent = FALSE){
 
   first.agg.period <- prm.daily$first.agg.period
@@ -83,9 +83,7 @@ fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
     n.days = NULL,
-    mcmc.params = list(burn = 1e3,
-                       iter = 3e3,
-                       chains = 3),
+    prm.daily,
     silent = FALSE
 ){
 
@@ -203,7 +201,7 @@ Running MCMC model to infer daily reports from aggregated reports...
 
 #' Reshape JAGS fit object
 #'
-#' @param x dataframe. JAGS output from [`fit_jags_aggreg()`].
+#' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
 #'
 #' @importFrom rlang .data
 #'
@@ -224,14 +222,16 @@ reshape_fit_jags <- function(x){
   )
 }
 
-#' Retrieve realizations for aggregated -> daily inference
+#' Retrieve realizations for aggregated to daily inference
 #'
-#' @param fit.reports.daily dataframe. realizations from daily report inference. must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
-#' @param reports dataframe. original aggregated reports. must at least have `date` column
+#' @param fit.reports.daily Data frame. Realizations from daily report inference. Must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
+#' @param reports Data frame. Original aggregated reports. Must at least have `date` column.
 #'
 #' @seealso [agg_to_daily()]
 #'
 #' @importFrom rlang .data
+#'
+#' @return Data frame
 get_realizations <- function(
     fit.reports.daily, reports
 ){

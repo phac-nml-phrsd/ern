@@ -23,6 +23,9 @@ Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 
 \item{dates.only}{Logical. Return use dates only or all columns of \code{cl.daily}.}
 }
+\value{
+Data frame or vector, depending on \code{dates.only}
+}
 \description{
 Get dates for which to use (trust) inferred daily reports
 }

@@ -2,17 +2,20 @@
 % Please edit documentation in R/agg_to_daily.R
 \name{get_realizations}
 \alias{get_realizations}
-\title{Retrieve realizations for aggregated -> daily inference}
+\title{Retrieve realizations for aggregated to daily inference}
 \usage{
 get_realizations(fit.reports.daily, reports)
 }
 \arguments{
-\item{fit.reports.daily}{dataframe. realizations from daily report inference. must at least have \code{t} (time index), \code{var} (variable name), \code{iteration} (realization number), and \code{value} (inferred count) columns.}
+\item{fit.reports.daily}{Data frame. Realizations from daily report inference. Must at least have \code{t} (time index), \code{var} (variable name), \code{iteration} (realization number), and \code{value} (inferred count) columns.}
 
-\item{reports}{dataframe. original aggregated reports. must at least have \code{date} column}
+\item{reports}{Data frame. Original aggregated reports. Must at least have \code{date} column.}
+}
+\value{
+Data frame
 }
 \description{
-Retrieve realizations for aggregated -> daily inference
+Retrieve realizations for aggregated to daily inference
 }
 \seealso{
 \code{\link[=agg_to_daily]{agg_to_daily()}}

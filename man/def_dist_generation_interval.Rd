@@ -2,7 +2,7 @@
 % Please edit documentation in R/distributions.R
 \name{def_dist_generation_interval}
 \alias{def_dist_generation_interval}
-\title{Define the generation interval distribution}
+\title{Define a family of generation interval distributions}
 \usage{
 def_dist_generation_interval(pathogen = "sarscov2")
 }
@@ -22,5 +22,5 @@ List with components
 }
 }
 \description{
-Define the generation interval distribution
+Define a family of generation interval distributions
 }

@@ -149,8 +149,6 @@ deconvolution_RL <- function(
   )
 }
 
-
-
 #' @title Replace NAs with 0s in vector
 #'
 #' @param vec Vector.

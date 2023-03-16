@@ -2,20 +2,20 @@
 % Please edit documentation in R/plot.R
 \name{plot_diagnostic_ww}
 \alias{plot_diagnostic_ww}
-\title{Diagnostic plot for R estimation from wastewater}
+\title{Diagnostic plot for R estimation from wastewater data}
 \usage{
 plot_diagnostic_ww(r.estim, caption = NULL)
 }
 \arguments{
-\item{r.estim}{Object as returned from \code{estimate_R_ww()}.}
+\item{r.estim}{List. Output of \code{\link[=estimate_R_ww]{estimate_R_ww()}}.}
 
-\item{caption}{String. Optional caption.}
+\item{caption}{Character. Optional plot caption.}
 }
 \value{
-A ggplot object.
+A \code{ggplot} object.
 }
 \description{
-Diagnostic plot for R estimation from wastewater
+Diagnostic plot for R estimation from wastewater data
 }
 \seealso{
 \code{\link[=estimate_R_ww]{estimate_R_ww()}}

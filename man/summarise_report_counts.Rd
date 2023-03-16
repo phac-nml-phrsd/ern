@@ -16,6 +16,9 @@ summarise_report_counts(df, prm.daily.check)
 }
 Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 }
+\value{
+Data frame
+}
 \description{
 Summarise daily inferred reports
 based on original reporting schedule and calculate error
