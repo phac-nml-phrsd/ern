@@ -76,7 +76,10 @@ prm.daily = list(
   iter = 300,
   chains = 2
 )
-prm.smooth = list(window = 7)
+prm.smooth = list(
+  method = "rollmean",
+  window = 3
+)
 prm.R = list(
   iter = 2,
   # window = 10, # if window isn't specified, assume 7 day est window for Rt
