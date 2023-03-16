@@ -55,10 +55,10 @@ interval distribution.}
 \value{
 List. Elements include:
 \itemize{
-\item{\code{ww.conc}: }{original wastewater signal}
-\item{\code{ww.smooth}: }{smoothed wastewater signal}
-\item{\code{inc}: }{inferred incidence}
-\item{\code{R}: }{the effective reproduction number estimate}
+\item \code{ww.conc}: original wastewater signal
+\item \code{ww.smooth}: smoothed wastewater signal
+\item \code{inc}: inferred incidence
+\item \code{R}: the effective reproduction number estimate
 }
 }
 \description{
