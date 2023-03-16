@@ -1,9 +1,9 @@
-#' Diagnostic plot for R estimation from wastewater
+#' Diagnostic plot for R estimation from wastewater data
 #'
-#' @param r.estim Object as returned from \code{estimate_R_ww()}.
-#' @param caption String. Optional caption.
+#' @param r.estim List. Output of [estimate_R_ww()].
+#' @param caption Character. Optional plot caption.
 #'
-#' @return A ggplot object.
+#' @return A `ggplot` object.
 #'
 #' @importFrom rlang .data
 #'
@@ -63,11 +63,11 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   return(g)
 }
 
-#' Diagnostic plot for R estimation from clinical data
+#' Diagnostic plot for R estimation from clinical report data
 #'
-#' @param r.estim Object as returned from \code{estimate_R_cl()}.
+#' @param r.estim List. Output of [estimate_R_cl()].
 #'
-#' @return A ggplot object.
+#' @return A `ggplot` object
 #' @export
 #'
 #' @importFrom patchwork plot_layout

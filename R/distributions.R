@@ -1,6 +1,10 @@
-#' Define the incubation period distribution
+# - - - - - - - - - - - - - - - - -
+# Distribution definitions
+# - - - - - - - - - - - - - - - - -
+
+#' Define a family of incubation period distributions
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_incubation_period <- function(pathogen = 'sarscov2'){
@@ -51,9 +55,9 @@ def_dist_incubation_period <- function(pathogen = 'sarscov2'){
   return(res)
 }
 
-#' Define the generation interval distribution
+#' Define a family of generation interval distributions
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
@@ -105,9 +109,9 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
   return(x)
 }
 
-#' Define the reporting fraction distribution
+#' Define a reporting fraction distribution
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_reporting_fraction <- function(){
@@ -125,12 +129,12 @@ def_dist_reporting_fraction <- function(){
   return(res)
 }
 
-#' @title Define fecal Shedding Distribution
+#' @title Define a family of fecal shedding distributions
 #'
-#' @template pathogen
-#' @param subtype String.
+#' @template param-pathogen
+#' @param subtype Character. Pathogen sub-type label.
 #'
-#' @return A fecal shedding distribution stored as a list.
+#' @template return-dist
 #' @export
 #'
 #' @examples
@@ -202,13 +206,34 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
   return(fec)
 }
 
+#' Define a family of reporting delay distributions
+#'
+#' @template return-dist
+#'
+#' @export
+def_dist_reporting_delay <- function(){
+  # for SARS-CoV-2 in Canada
+  # TODO: this is just a dummy distribution, get real thing from linelist
+  list(
+    dist = 'gamma',
+    mean = 5,
+    mean_sd = 1,
+    sd = 1,
+    sd_sd = 0.1,
+    max = 10
+  )
+}
 
-#' Draw from gamma based on parameter name in distribution list.
+# - - - - - - - - - - - - - - - - -
+# Distribution utilities
+# - - - - - - - - - - - - - - - - -
+
+#' Draw from gamma for a parameter specified in a distribution family list.
 #'
-#' @param par String. Name of the parameter to sample.
-#' @param dist List. Distribution definition.
+#' @param par Character. Name of the parameter to sample.
+#' @param dist List. Distribution definition, as output by a `def_dist_*()` function.
 #'
-#' @return Numeric. The sampled value.
+#' @return Numeric. The sampled parameter value.
 #'
 draw_from_gamma <- function(par, dist){
   mean = dist[[par]]
@@ -220,9 +245,8 @@ draw_from_gamma <- function(par, dist){
   return( stats::rgamma(n = 1, shape = shape, scale = scale) )
 }
 
-
-#' Sample parameters for a single distribution assuming parameters
-#' come from a Gamma distribution
+#' Sample parameters for a single distribution from
+#' a family of distributions, assuming parameters come from a Gamma distribution
 #'
 #' @param dist List. A list of distribution parameters, as defined by the
 #'  `def_dist_*()` functions.
@@ -260,7 +284,7 @@ sample_a_dist <- function(dist){
 #'
 #' @param params distribution params (output of `def_dist_*()` function)
 #'
-#' @return vector with discretized density
+#' @return Numeric. Vector with discretized density.
 #' @export
 get_discrete_dist <- function(params){
 

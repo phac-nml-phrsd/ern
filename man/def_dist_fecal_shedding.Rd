@@ -2,20 +2,29 @@
 % Please edit documentation in R/distributions.R
 \name{def_dist_fecal_shedding}
 \alias{def_dist_fecal_shedding}
-\title{Define fecal Shedding Distribution}
+\title{Define a family of fecal shedding distributions}
 \usage{
 def_dist_fecal_shedding(pathogen = "sarscov2", subtype = "")
 }
 \arguments{
 \item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
 
-\item{subtype}{String.}
+\item{subtype}{Character. Pathogen sub-type label.}
 }
 \value{
-A fecal shedding distribution stored as a list.
+List with components
+\itemize{
+\item \code{dist} distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform)
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma})
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma})
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
+\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
+\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif})
+\item \code{max} maximum value of the random variable modelled by this distribution
+}
 }
 \description{
-Define fecal Shedding Distribution
+Define a family of fecal shedding distributions
 }
 \examples{
 fec = def_dist_fecal_shedding('sarscov2')

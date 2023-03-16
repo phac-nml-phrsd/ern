@@ -1,7 +1,7 @@
 #' Check parameters for Rt calculation
 #'
 #' @param x List of parameters for Rt calculation
-#' @inheritParams estimate_R_cl
+#' @template param-silent
 #'
 #' @return NULL
 check_prm.R <- function(x, silent = FALSE){
@@ -26,10 +26,7 @@ will also be ignored.")
 #'
 #' @param x
 #'
-#' @return
-#' @export
-#'
-#' @examples
+#' @return NULL
 check_prm.smooth <- function(x){
 
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
@@ -70,8 +67,8 @@ Both sd and shape found: ", print(x)))
 
 #' Check that deconvolution inputs are compatible
 #'
-#' @param obs numeric vector. signal (_e.g._, case reports)
-#' @param dist numeric vector. deconvolution kernel (_e.g._, reporting delay distribution)
+#' @param obs Numeric. Vector with observed signal (_e.g._, case reports)
+#' @param dist Numeric. Vector of discretized distribution used as the deconvolution kernel (_e.g._, reporting delay distribution)
 #'
 #' @return NULL
 check_for_deconv <- function(obs, dist){
@@ -81,25 +78,24 @@ check_for_deconv <- function(obs, dist){
   return()
 }
 
-
-
-
-#' Check the dataframe of clinical data
+#' Check the data frame of clinical data
 #'
-#' @param dat The dataframe of clinical data
-#' @inheritParams estimate_R_cl
+#' @param dat Data frame. Timeseries of clinical reports.
+#' @template param-silent
 #'
 #' @return NULL
-#'
 check_data_clin <- function(dat, silent = FALSE) {
 
   n = names(dat)
 
-  if(!'count' %in% n)
-    stop('The dataframe of observation must have a `count` column. ABORTING!')
+  msg.template1 <- 'The input data frame of clinical reports must have a `'
+  msg.template2 <- '` column. ABORTING!'
 
-  if(!'date' %in% n)
-    stop('The dataframe of observation must have a `date` column. ABORTING!')
+  for(var in c("count", "date")){
+    if(!(var %in% n)){
+      stop(paste0(msg.template1, var, msg.template2))
+    }
+  }
 
   return()
 }

@@ -2,7 +2,7 @@
 title: "Estimating effective reproductive number using wastewater concentration data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{rt_wastewater_data}
+  %\VignetteIndexEntry{ww-rt}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

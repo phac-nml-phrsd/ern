@@ -2,18 +2,18 @@
 % Please edit documentation in R/plot.R
 \name{plot_diagnostic_cl}
 \alias{plot_diagnostic_cl}
-\title{Diagnostic plot for R estimation from clinical data}
+\title{Diagnostic plot for R estimation from clinical report data}
 \usage{
 plot_diagnostic_cl(r.estim)
 }
 \arguments{
-\item{r.estim}{Object as returned from \code{estimate_R_cl()}.}
+\item{r.estim}{List. Output of \code{\link[=estimate_R_cl]{estimate_R_cl()}}.}
 }
 \value{
-A ggplot object.
+A \code{ggplot} object
 }
 \description{
-Diagnostic plot for R estimation from clinical data
+Diagnostic plot for R estimation from clinical report data
 }
 \seealso{
 \code{\link[=estimate_R_cl]{estimate_R_cl()}}

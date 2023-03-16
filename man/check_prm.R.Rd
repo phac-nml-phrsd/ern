@@ -9,7 +9,7 @@ check_prm.R(x, silent = FALSE)
 \arguments{
 \item{x}{List of parameters for Rt calculation}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 Check parameters for Rt calculation

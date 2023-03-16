@@ -7,7 +7,7 @@
 reshape_fit_jags(x)
 }
 \arguments{
-\item{x}{dataframe. JAGS output from \code{\link[=fit_jags_aggreg]{fit_jags_aggreg()}}.}
+\item{x}{Data frame. JAGS output from \code{\link[=fit_jags_aggreg]{fit_jags_aggreg()}}.}
 }
 \description{
 Reshape JAGS fit object

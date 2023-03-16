@@ -2,13 +2,13 @@
 % Please edit documentation in R/get_use_dates.R
 \name{summarise_by_date_iters}
 \alias{summarise_by_date_iters}
-\title{Summarise observations by date for iterated data}
+\title{Summarise observations by date for raw iterations from an ensemble}
 \usage{
 summarise_by_date_iters(df)
 }
 \arguments{
-\item{df}{dataframe. Must have \code{date} and \code{value} columns.}
+\item{df}{Data frame. Must have \code{date} and \code{value} columns.}
 }
 \description{
-This function summarises raw iterations of data.
+Summarise observations by date for raw iterations from an ensemble
 }

@@ -15,15 +15,13 @@ estimate_R_cl_single(
 )
 }
 \arguments{
-\item{cl.daily}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
 
-\item{dist.repfrac}{parameters for the reporting fraction distribution}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}
 
-\item{dist.repdelay}{parameters for the reporting delay distribution}
+\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
 
-\item{dist.incub}{parameters for the incubation period distribution}
-
-\item{dist.gi}{parameters for the generation interval distribution}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:
@@ -32,12 +30,12 @@ Elements include:
 \code{EpiEstim} to estimate Rt
 \item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
 estimates after sampling uncertain distributions.
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
-\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
-\code{EpiEstim}.}
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
+\code{EpiEstim}.
 }}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 A single realization of the Rt estimate

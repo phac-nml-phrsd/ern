@@ -2,7 +2,7 @@
 % Please edit documentation in R/distributions.R
 \name{def_dist_reporting_fraction}
 \alias{def_dist_reporting_fraction}
-\title{Define the reporting fraction distribution}
+\title{Define a reporting fraction distribution}
 \usage{
 def_dist_reporting_fraction()
 }
@@ -22,5 +22,5 @@ List with components
 }
 }
 \description{
-Define the reporting fraction distribution
+Define a reporting fraction distribution
 }

@@ -1,6 +1,5 @@
 #' Ensemble estimate of Rt
 #'
-#' @inheritParams estimate_R_cl_single
 #' @inheritParams estimate_R_cl
 #'
 #' @return A summary of individual Rt realizations with 95% confidence intervals

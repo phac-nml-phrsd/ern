@@ -7,13 +7,13 @@
 deconv(counts, dist, max.iter = 10, silent = FALSE)
 }
 \arguments{
-\item{counts}{numeric. a vector of daily counts}
+\item{counts}{Numeric. Vector of daily counts.}
 
-\item{dist}{numeric. a vector of truncated daily discrete distribution (vector) with which we're deconvoluting the counts, \emph{e.g.}, produced by \code{\link[=get_discrete_dist]{get_discrete_dist()}}}
+\item{dist}{Numeric. Vector of discrete distributions (daily, truncated) with which we're deconvoluting counts, \emph{e.g.}, produced by \code{\link[=get_discrete_dist]{get_discrete_dist()}}}
 
-\item{max.iter}{numeric. maximum number of Richardson-Lucy iterations}
+\item{max.iter}{Numeric. Maximum number of Richardson-Lucy iterations.}
 
-\item{silent}{logical. should the functions be run silently, i.e., without any messages to console?}
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 Wrapper for deconvolution with a given distribution

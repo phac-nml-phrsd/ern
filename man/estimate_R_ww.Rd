@@ -20,9 +20,9 @@ estimate_R_ww(
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
 wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{dist.fec}{List. Fecal shedding distribution.}
+\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
 
-\item{dist.gi}{List. Generation interval distribution.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{scaling.factor}{Numeric. Scaling from wastewater concentration to
 prevalence. This value may be assumed or independently calibrated to data.}
@@ -44,9 +44,9 @@ Elements include:
 \code{EpiEstim} to estimate Rt
 \item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
 estimates after sampling uncertain distributions.
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via
-\code{EpiEstim::make_config()}. If \code{NULL}, will use default config from
-\code{EpiEstim}.}
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
+\code{EpiEstim}.
 }}
 
 \item{iter}{Integer. Number of samples for the (uncertain) generation
@@ -55,10 +55,10 @@ interval distribution.}
 \value{
 List. Elements include:
 \itemize{
-\item \code{ww.conc} original wastewater signal
-\item \code{ww.smooth} smoothed wastewater signal
-\item \code{inc} inferred incidence
-\item \code{R} the effective R estimate
+\item \code{ww.conc}: original wastewater signal
+\item \code{ww.smooth}: smoothed wastewater signal
+\item \code{inc}: inferred incidence
+\item \code{R}: the effective reproduction number estimate
 }
 }
 \description{

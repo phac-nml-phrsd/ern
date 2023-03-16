@@ -1,66 +1,25 @@
-
-#' Helper function.
-#' Converts wastewater to Rt after sampling one fecal shedding and
-#'  one generation interval distribution.
-#'
-#' @param i Numeric. Iteration index. (not used but required when using
-#'  `lapply()`)
-#' @inheritParams estimate_R_ww
-#' @template param-silent
-#'
-#' @return List. Elements include `inc` (incidence) and `rt`
-#'  (reproduction number)
-inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
-                         scaling.factor, prm.R, silent) {
-  set.seed(i)
-  sample.fec = sample_a_dist(dist = dist.fec)
-  sample.gi = sample_a_dist(dist = dist.gi)
-
-  inc = deconv_ww_inc(d              = ww.conc,
-                      fec            = sample.fec,
-                      scaling.factor = scaling.factor,
-                      silent = silent)
-
-  i.df = inc[["inc"]] %>%
-    dplyr::mutate(I = .data$inc.deconvol) %>%
-    dplyr::select(date,I, t) %>%
-    tidyr::drop_na() %>%
-    dplyr::mutate(iter = i)
-
-  rt = incidence_to_R(incidence = i.df,
-                       generation.interval = sample.gi,
-                       prm.R = prm.R) %>%
-    dplyr::mutate(iter = i)
-
-  r = list(
-    inc = i.df,
-    rt = rt
-  )
-  return(r)
-}
-
-
 #' @title Estimate the effective reproduction from wastewater concentration
 #'  data.
 #'
 #' @param ww.conc Data frame. Must have variables named \code{date} for the
 #'  wastewater collection date and \code{val} for the pathogen concentration.
-#' @template param-ww-dist
+#' @param dist.fec List. Parameters for the fecal shedding distribution in the same format as returned by [`def_dist_fecal_shedding()`].
+#' @template param-dist.gi
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
 #'  prevalence. This value may be assumed or independently calibrated to data.
-#' @template prm-smooth
-#' @template prmR
+#' @template param-prm.smooth
+#' @template param-prm.R
 #' @param iter Integer. Number of samples for the (uncertain) generation
 #'  interval distribution.
 #' @return List. Elements include:
-#' - `ww.conc` original wastewater signal
-#' - `ww.smooth` smoothed wastewater signal
-#' - `inc` inferred incidence
-#' - `R` the effective R estimate
+#' \itemize{
+#'  \item `ww.conc`: original wastewater signal
+#'  \item `ww.smooth`: smoothed wastewater signal
+#'  \item `inc`: inferred incidence
+#'  \item `R`: the effective reproduction number estimate
+#' }
 #'
 #' @export
-#'
-#'
 estimate_R_ww <- function(
     ww.conc,
     dist.fec,
@@ -128,4 +87,44 @@ estimate_R_ww <- function(
     R         = rt
   )
   )
+}
+
+#' Helper function.
+#' Converts wastewater to Rt after sampling one fecal shedding and
+#'  one generation interval distribution.
+#'
+#' @param i Numeric. Iteration index. (not used but required when using
+#'  `lapply()`)
+#' @inheritParams estimate_R_ww
+#' @template param-silent
+#'
+#' @return List. Elements include `inc` (incidence) and `rt`
+#'  (reproduction number)
+inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
+                           scaling.factor, prm.R, silent) {
+  set.seed(i)
+  sample.fec = sample_a_dist(dist = dist.fec)
+  sample.gi = sample_a_dist(dist = dist.gi)
+
+  inc = deconv_ww_inc(d              = ww.conc,
+                      fec            = sample.fec,
+                      scaling.factor = scaling.factor,
+                      silent = silent)
+
+  i.df = inc[["inc"]] %>%
+    dplyr::mutate(I = .data$inc.deconvol) %>%
+    dplyr::select(date,I, t) %>%
+    tidyr::drop_na() %>%
+    dplyr::mutate(iter = i)
+
+  rt = incidence_to_R(incidence = i.df,
+                      generation.interval = sample.gi,
+                      prm.R = prm.R) %>%
+    dplyr::mutate(iter = i)
+
+  r = list(
+    inc = i.df,
+    rt = rt
+  )
+  return(r)
 }
