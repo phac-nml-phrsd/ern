@@ -67,7 +67,9 @@ estimate_R_cl_single <- function(
   incidence_to_R(
     incidence,
     generation.interval,
-    prm.R)
+    prm.R,
+    silent = silent
+  )
 
 }
 
