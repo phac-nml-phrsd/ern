@@ -172,7 +172,7 @@ fit_jags_aggreg <- function(
 
     # === priors ===
 
-    R0 ~ dgamma(2,1)
+    R0 ~ dgamma(2,0.6)
     alpha ~ dgamma(1,1)
   }"
 
