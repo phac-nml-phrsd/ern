@@ -10,7 +10,7 @@
 smooth_cl <- function(cl.daily, prm.smooth){
 
   if(is.null(prm.smooth)) return(cl.daily)
-  # browser()
+
   if(!is.null(prm.smooth)){
     check_prm.smooth(prm.smooth)
     df <- (cl.daily
