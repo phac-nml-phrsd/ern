@@ -151,13 +151,15 @@ with inferred aggregates outside of the specified tolerance of ",
 
   # Calculate the aggregated reports from the inferred daily reports
 
-  inferred.agg = get_use_dates(
-    reports.daily   = cl.daily,
-    reports         = cl.agg,
-    agg.reldiff.tol = Inf,
-    dates.only      = FALSE ) %>%
-    dplyr::filter(!is.na(.data$obs)) %>%
-    dplyr::select(date, .data$obs, dplyr::matches('agg$'))
+  inferred.agg = (get_use_dates(
+      cl.daily        = cl.daily,
+      cl.agg          = cl.agg,
+      prm.daily.check = list(agg.reldiff.tol = Inf),
+      dates.only      = FALSE
+  )
+    %>% dplyr::filter(!is.na(.data$obs))
+    %>% dplyr::select(date, .data$obs, dplyr::matches('agg$'))
+  )
 
   # Return results
 

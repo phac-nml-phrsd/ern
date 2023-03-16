@@ -12,8 +12,6 @@ get_use_dates <- function(
     dates.only = TRUE
 ){
 
-  agg.reldiff.tol = prm.daily.check$agg.reldiff.tol
-
   cl.daily <- cl.daily %>%
     summarise_by_date_iters()
 
@@ -38,7 +36,7 @@ get_use_dates <- function(
   # unified data with aggregates and relative differences
   res = (cl.daily
     %>% dplyr::full_join(cl.agg, by = "date")
-    %>% summarise_report_counts(agg.reldiff.tol = agg.reldiff.tol)
+    %>% summarise_report_counts(prm.daily.check = prm.daily.check)
   )
 
   if(dates.only) {

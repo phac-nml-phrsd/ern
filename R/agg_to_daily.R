@@ -19,7 +19,7 @@ agg_to_daily <- function(
     N = popsize,
     obs.times = cl.agg$t,
     Y = cl.agg$count,
-    mcmc.params = prm.daily,
+    prm.daily = prm.daily,
     silent = silent) %>%
     reshape_fit_jags() %>%
     get_realizations(cl.agg)
@@ -73,15 +73,11 @@ in this parameter list)."))
 
 #' Fit JAGS model to aggregated data
 #'
-#' @param obs.times numeric. vector of observation times
-#' @param Y numeric. vector of aggregated counts
-#' @param g numeric. vector of discretized generation interval density.
-#' @param N numeric. scalar population size.
-#' @param n.days numeric. total number of days. if `NULL`, use `max(obs.times)`
-#' @param mcmc.params list. MCMC parameters:
-#' * `burn`: burn-in period (days)
-#' * `iter`: iterations after burn-in (days)
-#' * `chains`: number of chains
+#' @param obs.times Numeric. Vector of observation times.
+#' @param Y Numeric. Vector of aggregated counts.
+#' @param g Numeric. Vector of discretized generation interval density.
+#' @param N Numeric. Scalar population size.
+#' @param n.days Numeric. Total number of days. if `NULL`, use `max(obs.times)`
 #' @inheritParams estimate_R_cl
 fit_jags_aggreg <- function(
     obs.times,
@@ -181,7 +177,7 @@ Running MCMC model to infer daily reports from aggregated reports...
     file = textConnection(model.text),
     data = data_jags,
     inits = inits,
-    n.chains = mcmc.params$chains,
+    n.chains = prm.daily$chains,
     quiet = silent
   )
 
@@ -189,7 +185,7 @@ Running MCMC model to infer daily reports from aggregated reports...
   # --- MCMC run
 
   # Burn-in period:
-  output <- capture.output(stats::update(mod, n.iter = mcmc.params$burn))
+  output <- capture.output(stats::update(mod, n.iter = prm.daily$burn))
 
   if(!silent) print(output)
 
@@ -197,7 +193,7 @@ Running MCMC model to infer daily reports from aggregated reports...
   output <- capture.output(mod_sim <- rjags::coda.samples(
     model = mod,
     variable.names = params,
-    n.iter = mcmc.params$iter
+    n.iter = prm.daily$iter
   ))
 
   if(!silent) print(output)
