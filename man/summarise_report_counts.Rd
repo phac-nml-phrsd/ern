@@ -12,7 +12,7 @@ summarise_report_counts(df, prm.daily.check)
 
 \item{prm.daily.check}{List. Parameters for checking aggregated to daily report inference. Elements include:
 \itemize{
-\item{\code{agg.reldiff.tol}: }{numerical tolerance (\\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+\item \code{agg.reldiff.tol}: numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).
 }
 Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 }

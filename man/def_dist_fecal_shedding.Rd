@@ -2,7 +2,7 @@
 % Please edit documentation in R/distributions.R
 \name{def_dist_fecal_shedding}
 \alias{def_dist_fecal_shedding}
-\title{Define fecal Shedding Distribution}
+\title{Define the fecal shedding distribution}
 \usage{
 def_dist_fecal_shedding(pathogen = "sarscov2", subtype = "")
 }
@@ -15,7 +15,7 @@ def_dist_fecal_shedding(pathogen = "sarscov2", subtype = "")
 A fecal shedding distribution stored as a list.
 }
 \description{
-Define fecal Shedding Distribution
+Define the fecal shedding distribution
 }
 \examples{
 fec = def_dist_fecal_shedding('sarscov2')

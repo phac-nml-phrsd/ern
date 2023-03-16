@@ -9,20 +9,20 @@ agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 \arguments{
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
-\item{\code{date}: }{calendar date of report}
-\item{\code{count}: }{count of reported cases}
+\item \code{date}: calendar date of report
+\item \code{count}: count of reported cases
 }}
 
-\item{dist.gi}{List. Parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{popsize}{Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.}
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
-\item{\code{burn}: }{length of burn-in period (number of days)}
-\item{\code{iter}: }{number of iterations after burn-in period (number of days)}
-\item{\code{chains}: }{number of chains to simulate}
-\item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
+\item \code{burn}: length of burn-in period (number of days)
+\item \code{iter}: number of iterations after burn-in period (number of days)
+\item \code{chains}: number of chains to simulate
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 
 \item{silent}{Logical. Flag to suppress output messages.}

@@ -11,16 +11,16 @@ attach_t_agg(cl.agg, prm.daily = NULL, silent = FALSE)
 \arguments{
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
-\item{\code{date}: }{calendar date of report}
-\item{\code{count}: }{count of reported cases}
+\item \code{date}: calendar date of report
+\item \code{count}: count of reported cases
 }}
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
-\item{\code{burn}: }{length of burn-in period (number of days)}
-\item{\code{iter}: }{number of iterations after burn-in period (number of days)}
-\item{\code{chains}: }{number of chains to simulate}
-\item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
+\item \code{burn}: length of burn-in period (number of days)
+\item \code{iter}: number of iterations after burn-in period (number of days)
+\item \code{chains}: number of chains to simulate
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 
 \item{silent}{Logical. Flag to suppress output messages.}

@@ -3,7 +3,8 @@
 #'
 #' @param ww.conc Data frame. Must have variables named \code{date} for the
 #'  wastewater collection date and \code{val} for the pathogen concentration.
-#' @template param-ww-dist
+#' @param dist.fec List. Parameters for the fecal shedding distribution in the same format as returned by [`def_dist_fecal_shedding()`].
+#' @template param-dist.gi
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
 #'  prevalence. This value may be assumed or independently calibrated to data.
 #' @template param-prm.smooth
@@ -12,15 +13,13 @@
 #'  interval distribution.
 #' @return List. Elements include:
 #' \itemize{
-#'  \item{`ww.conc`: }{original wastewater signal}
-#'  \item{`ww.smooth`: }{smoothed wastewater signal}
-#'  \item{`inc`: }{inferred incidence}
-#'  \item{`R`: }{the effective reproduction number estimate}
+#'  \item `ww.conc`: original wastewater signal
+#'  \item `ww.smooth`: smoothed wastewater signal
+#'  \item `inc`: inferred incidence
+#'  \item `R`: the effective reproduction number estimate
 #' }
 #'
 #' @export
-#'
-#'
 estimate_R_ww <- function(
     ww.conc,
     dist.fec,

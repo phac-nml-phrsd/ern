@@ -21,44 +21,46 @@ estimate_R_cl(
 \arguments{
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
-\item{\code{date}: }{calendar date of report}
-\item{\code{count}: }{count of reported cases}
+\item \code{date}: calendar date of report
+\item \code{count}: count of reported cases
 }}
 
-\item{dist.repdelay}{List. Parameters for the reporting delay distribution from \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}
 
-\item{dist.repfrac}{List. Parameters for the reporting fraction distribution from \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
 
-\item{dist.incub}{List. Parameters for the incubation period distribution from \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
+\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
 
-\item{dist.gi}{List. Parameters for generation interval from \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{popsize}{Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.}
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
-\item{\code{burn}: }{length of burn-in period (number of days)}
-\item{\code{iter}: }{number of iterations after burn-in period (number of days)}
-\item{\code{chains}: }{number of chains to simulate}
-\item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
+\item \code{burn}: length of burn-in period (number of days)
+\item \code{iter}: number of iterations after burn-in period (number of days)
+\item \code{chains}: number of chains to simulate
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 
 \item{prm.daily.check}{List. Parameters for checking aggregated to daily report inference. Elements include:
 \itemize{
-\item{\code{agg.reldiff.tol}: }{numerical tolerance (\\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).}
+\item \code{agg.reldiff.tol}: numerical tolerance (\%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).
 }
 Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 
-\item{prm.smooth}{List. Smoothing parameters for input signal into Rt calculation. Elements include:
+\item{prm.smooth}{List. Smoothing parameters for input signal (daily reports) into Rt calculation. Elements include:
 \itemize{
-\item{\code{window}: }{width of smoothing window (number of days)}
-}}
+\item \code{method}: smoothing method to use; currently only \code{rollmean} (centred rolling average) is implemented
+\item \code{window}: width of smoothing window (number of days)
+}
+Set this entire argument to \code{NULL} to turn off smoothing.}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
 \itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item \code{iter}: number of iterations for ensemble
+\item \code{window}: length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. if \code{NULL}, will use default config from \code{EpiEstim}.
 }}
 
 \item{silent}{Logical. Flag to suppress output messages.}
@@ -66,9 +68,9 @@ Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 \value{
 List. Elements include:
 \itemize{
-\item{\code{cl.agg}: }{original aggregated reports signal}
-\item{\code{cl.daily}: }{reports as input for Rt calculation (inferred daily counts, smoothed)}
-\item{\code{R}: }{the effective R estimate (summary from ensemble)}
+\item \code{cl.agg}: original aggregated reports signal
+\item \code{cl.daily}: reports as input for Rt calculation (inferred daily counts, smoothed)
+\item \code{R}: the effective R estimate (summary from ensemble)
 }
 }
 \description{

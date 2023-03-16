@@ -9,10 +9,12 @@ smooth_cl(cl.daily, prm.smooth)
 \arguments{
 \item{cl.daily}{Data frame. Output of \code{\link[=agg_to_daily]{agg_to_daily()}}.}
 
-\item{prm.smooth}{List. Smoothing parameters for input signal into Rt calculation. Elements include:
+\item{prm.smooth}{List. Smoothing parameters for input signal (daily reports) into Rt calculation. Elements include:
 \itemize{
-\item{\code{window}: }{width of smoothing window (number of days)}
-}}
+\item \code{method}: smoothing method to use; currently only \code{rollmean} (centred rolling average) is implemented
+\item \code{window}: width of smoothing window (number of days)
+}
+Set this entire argument to \code{NULL} to turn off smoothing.}
 }
 \value{
 Dataframe

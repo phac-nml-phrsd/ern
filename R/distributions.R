@@ -1,3 +1,7 @@
+# - - - - - - - - - - - - - - - - -
+# Distribution definitions
+# - - - - - - - - - - - - - - - - -
+
 #' Define the incubation period distribution
 #'
 #' @template param-pathogen
@@ -125,7 +129,7 @@ def_dist_reporting_fraction <- function(){
   return(res)
 }
 
-#' @title Define fecal Shedding Distribution
+#' @title Define the fecal shedding distribution
 #'
 #' @template param-pathogen
 #' @param subtype String.
@@ -215,6 +219,8 @@ def_dist_reporting_delay <- function(){
   )
 }
 
+# - - - - - - - - - - - - - - - - -
+# Distribution utilities
 # - - - - - - - - - - - - - - - - -
 
 #' Draw from gamma based on parameter name in distribution list.
