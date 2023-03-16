@@ -38,6 +38,77 @@ In order to estimate $\mathcal{R}_t$ from aggregated clinical testing data in `e
 Sample weekly clinical reports are included in `ern`:
 
 ```{r load-data}
-cl.agg <- ern::cl.agg
+dat <- ern::cl.agg %>% filter(pt == "bc")
 ```
 
+The $\mathcal{R}_t$ calculation is as follows:
+
+```{r calculate-Rt}
+
+# define distributions
+# - - - - - - - - - - - - - - - - -
+
+pathogen = 'sarscov2'
+max.dists = 10 # need to truncate distributions if you're using a very short timeseries
+
+dist.repdelay = list(
+  dist = 'gamma',
+  mean = 5,
+  mean_sd = 1,
+  sd = 1,
+  sd_sd = 0.1,
+  max = 10
+)
+dist.repfrac = list(
+  dist = "unif",
+  min = 0.1,
+  max = 0.3
+)
+dist.incub   = def_dist_incubation_period(pathogen)
+dist.incub$max = max.dists # need if we're talking fewer data points
+dist.gi      = def_dist_generation_interval(pathogen)
+dist.gi$max = max.dists
+
+# set various parameters
+# - - - - - - - - - - - - - - - - -
+popsize = 1e7
+
+prm.daily = list(
+  burn = 300,
+  iter = 300,
+  chains = 2
+)
+prm.smooth = list(
+  method = "rollmean",
+  window = 3
+)
+prm.R = list(
+  iter = 2,
+  # window = 10, # if window isn't specified, assume 7 day est window for Rt
+  config.EpiEstim = EpiEstim::make_config(
+    seed = 14
+  )
+)
+prm.daily.check = list(agg.reldiff.tol = 200)
+
+# calculate Rt
+# - - - - - - - - - - - - - - - - - 
+
+r.estim = estimate_R_cl(
+  cl.agg        = dat,
+  dist.repdelay = dist.repdelay,
+  dist.repfrac  = dist.repfrac,
+  dist.incub    = dist.incub,
+  dist.gi       = dist.gi,
+  popsize       = popsize,
+  prm.smooth    = prm.smooth,
+  prm.daily     = prm.daily,
+  prm.R         = prm.R,
+  prm.daily.check = prm.daily.check,
+  silent = TRUE
+)
+```
+
+```{r plot-Rt}
+plot_diagnostic_cl(r.estim)
+```
