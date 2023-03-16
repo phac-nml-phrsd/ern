@@ -48,8 +48,8 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
 #' @template param-ww-dist
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
 #'  prevalence. This value may be assumed or independently calibrated to data.
-#' @template prm-smooth
-#' @template prmR
+#' @template param-prm.smooth
+#' @template param-prm.R
 #' @param iter Integer. Number of samples for the (uncertain) generation
 #'  interval distribution.
 #' @return List. Elements include:

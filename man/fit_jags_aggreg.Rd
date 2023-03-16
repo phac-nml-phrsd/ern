@@ -32,7 +32,7 @@ fit_jags_aggreg(
 \item \code{chains}: number of chains
 }}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \description{
 Fit JAGS model to aggregated data

@@ -23,7 +23,7 @@ attach_t_agg(cl.agg, prm.daily = NULL, silent = FALSE)
 \item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
 }}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \value{
 dataframe.

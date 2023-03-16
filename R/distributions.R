@@ -1,6 +1,6 @@
 #' Define the incubation period distribution
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_incubation_period <- function(pathogen = 'sarscov2'){
@@ -53,7 +53,7 @@ def_dist_incubation_period <- function(pathogen = 'sarscov2'){
 
 #' Define the generation interval distribution
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
@@ -107,7 +107,7 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
 #' Define the reporting fraction distribution
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_reporting_fraction <- function(){
@@ -127,7 +127,7 @@ def_dist_reporting_fraction <- function(){
 
 #' @title Define fecal Shedding Distribution
 #'
-#' @template pathogen
+#' @template param-pathogen
 #' @param subtype String.
 #'
 #' @return A fecal shedding distribution stored as a list.

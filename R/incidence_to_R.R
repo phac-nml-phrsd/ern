@@ -4,7 +4,7 @@
 #'  `date`, `I`, and `t` columns.
 #' @param generation.interval List. Parameters for generation interval from
 #' [`def_dist_generation_interval()`].
-#' @template prmR
+#' @template param-prm.R
 #'
 #' @importFrom rlang .data
 #'

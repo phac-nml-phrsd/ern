@@ -4,17 +4,12 @@
 \alias{check_prm.R}
 \title{Check parameters for Rt calculation}
 \usage{
-check_prm.R(prm.R, silent = FALSE)
+check_prm.R(x, silent = FALSE)
 }
 \arguments{
-\item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
-\itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. if \code{NULL}, will use default config from \code{EpiEstim}.}
-}}
+\item{x}{List of parameters for Rt calculation}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \description{
 Check parameters for Rt calculation

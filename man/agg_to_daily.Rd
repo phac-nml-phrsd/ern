@@ -25,7 +25,7 @@ agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 \item{\code{first.agg.period}: }{length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)}
 }}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \value{
 Dataframe with individual realizations of daily reported cases

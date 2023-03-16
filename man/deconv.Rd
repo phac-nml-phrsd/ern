@@ -13,7 +13,7 @@ deconv(counts, dist, max.iter = 10, silent = FALSE)
 
 \item{max.iter}{numeric. maximum number of Richardson-Lucy iterations}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \description{
 Wrapper for deconvolution with a given distribution

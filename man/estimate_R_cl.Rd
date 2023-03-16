@@ -61,7 +61,7 @@ Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 \item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. if \code{NULL}, will use default config from \code{EpiEstim}.}
 }}
 
-\item{silent}{Logical. Should functions be run silently, i.e., without any messages and warnings to console?}
+\item{silent}{Logical. Flag to suppress output messages.}
 }
 \value{
 List. Elements include:
