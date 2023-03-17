@@ -2,13 +2,15 @@
 % Please edit documentation in R/check_args.R
 \name{check_data_clin}
 \alias{check_data_clin}
-\title{Check the dataframe of clinical data}
+\title{Check the data frame of clinical data}
 \usage{
-check_data_clin(dat)
+check_data_clin(dat, silent = FALSE)
 }
 \arguments{
-\item{dat}{The dataframe of clinical data}
+\item{dat}{Data frame. Timeseries of clinical reports.}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
-Check the dataframe of clinical data
+Check the data frame of clinical data
 }

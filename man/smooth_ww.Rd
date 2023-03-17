@@ -2,14 +2,15 @@
 % Please edit documentation in R/smooth_ww.R
 \name{smooth_ww}
 \alias{smooth_ww}
-\title{Smoothing ww data}
+\title{Smooth wastewater data}
 \usage{
-smooth_ww(df, prm.smooth)
+smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
 \arguments{
-\item{df}{ww dataframe}
+\item{ww.conc}{Data frame. Must have variables named \code{date} for the
+wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{prm.smooth}{list of smoothing parameters. Parameters should be
+\item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:
 \enumerate{
 \item method - smoothing method (either 'rollmean' or 'loess')
@@ -20,8 +21,8 @@ specified as followed:
 }}
 }
 \value{
-dataframe with smoothed ww data
+Data frame
 }
 \description{
-Function takes cleaned ww data and smooths data
+Function takes pre-processed wastewater data and smooths it
 }

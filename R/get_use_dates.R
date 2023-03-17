@@ -1,21 +1,24 @@
 #' Get dates for which to use (trust) inferred daily reports
 #'
-#' @inheritParams correct_underreporting
-#' @inheritParams get_realizations
-#' @param agg.reldiff.tol numeric scalar. numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports. observations outside of this tolerance are dropped.
-#' @param dates.only logical. return use dates only or all columns of `reports.daily`
+#' @inheritParams smooth_cl
+#' @inheritParams estimate_R_cl
+#' @param dates.only Logical. Return use dates only or all columns of `cl.daily`.
+#'
+#' @return Data frame or vector, depending on `dates.only`
 #'
 #' @importFrom rlang .data
 get_use_dates <- function(
-    reports.daily, reports,
-    agg.reldiff.tol,
+    cl.daily,
+    cl.agg,
+    prm.daily.check,
     dates.only = TRUE
 ){
-  reports.daily <- reports.daily %>%
+
+  cl.daily <- cl.daily %>%
     summarise_by_date_iters()
 
   # make unified df with observed data
-  reports <- (reports
+  cl.agg <- (cl.agg
     # make date of report column to track aggregation periods
     %>% dplyr::mutate(date.report = date)
     # attach start date based on time index column
@@ -33,9 +36,9 @@ get_use_dates <- function(
   )
 
   # unified data with aggregates and relative differences
-  res = (reports.daily
-    %>% dplyr::full_join(reports, by = "date")
-    %>% summarise_report_counts(agg.reldiff.tol = agg.reldiff.tol)
+  res = (cl.daily
+    %>% dplyr::full_join(cl.agg, by = "date")
+    %>% summarise_report_counts(prm.daily.check = prm.daily.check)
   )
 
   if(dates.only) {
@@ -50,11 +53,9 @@ get_use_dates <- function(
 
 # helpers -----------------------------------------------------------------
 
-#' Summarise observations by date for iterated data
+#' Summarise observations by date for raw iterations from an ensemble
 #'
-#' @description This function summarises raw iterations of data.
-#'
-#' @param df dataframe. Must have `date` and `value` columns.
+#' @param df Data frame. Must have `date` and `value` columns.
 #'
 #' @importFrom rlang .data
 summarise_by_date_iters <- function(df){
@@ -69,12 +70,10 @@ summarise_by_date_iters <- function(df){
   return(res)
 }
 
-#' Summarise observations by date for iterated ensemble data
+#' Summarise observations by date for several ensembles
 #'
-#' @description This function summarises iterations of ensemble data.
-#'
-#' @param df dataframe. Must have `date`, `mean`, `lo`, and `hi` columns.
-#' @param CI numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
+#' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
+#' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
 #'
 #' @importFrom rlang .data
 summarise_by_date_ens <- function(df, CI = 0.95){
@@ -96,11 +95,15 @@ summarise_by_date_ens <- function(df, CI = 0.95){
 #' Summarise daily inferred reports
 #' based on original reporting schedule and calculate error
 #'
-#' @param df dataframe. as prepared in [`get_use_dates()`].
-#' @inheritParams get_use_dates
+#' @param df Data frame. As output by [`get_use_dates()`].
+#' @inheritParams estimate_R_cl
+#'
+#' @return Data frame
 #'
 #' @importFrom rlang .data
-summarise_report_counts <- function(df, agg.reldiff.tol = 10){
+summarise_report_counts <- function(df, prm.daily.check){
+  agg.reldiff.tol <- prm.daily.check$agg.reldiff.tol
+
   df <- (df
    # aggregated fitted reports
    %>% dplyr::group_by(.data$date.report)
@@ -134,7 +137,7 @@ summarise_report_counts <- function(df, agg.reldiff.tol = 10){
     %>% dplyr::pull(.data$date.report)
   )
 
-  # TODO: show use.dates here
+  # TODO: show use.dates here?
 
   # attach use flag to output data
   (df %>% dplyr::mutate(use = .data$date.report %in% use.dates))

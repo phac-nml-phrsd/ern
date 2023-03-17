@@ -18,8 +18,8 @@ deconvolution_RL(
 \item{observed}{A vector of the number of observed cases, deaths,
 hospitalizations, etc. per day}
 
-\item{times}{A numeric vector of times corresponding to the entries in observed.
-Must be the same length as observed.}
+\item{times}{A numeric vector of times corresponding to the entries in
+observed. Must be the same length as observed.}
 
 \item{p_delay}{A numeric vector whose entries give the probability that
 the delay from infection to observation is exactly 0, 1, ... N days.
@@ -51,6 +51,6 @@ This function inputs observed incidence
 (numbers of cases, deaths, hospitalizations, etc. per day),
 and uses an adaptation of  Richardson-Lucy deconvolution
 to recover the underlying incidence curve.
-This implementation is taken from the R package EpiNow2 and follows methods in
-Goldstein et al. (https://www.pnas.org/content/pnas/106/51/21825.full.pdf)
+This implementation is taken from the R package EpiNow2 and follows methods
+in Goldstein et al.(https://www.pnas.org/content/pnas/106/51/21825.full.pdf)
 }

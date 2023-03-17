@@ -2,7 +2,8 @@
 % Please edit documentation in R/estimate_R_ww.R
 \name{estimate_R_ww}
 \alias{estimate_R_ww}
-\title{Estimate the effective reproduction from wastewater concentration data.}
+\title{Estimate the effective reproduction from wastewater concentration
+data.}
 \usage{
 estimate_R_ww(
   ww.conc,
@@ -11,40 +12,56 @@ estimate_R_ww(
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
   prm.R = list(CI = 0.95, window = 7, config.EpiEstim = NULL),
-  iter = 100
+  iter = 100,
+  silent = FALSE
 )
 }
 \arguments{
-\item{ww.conc}{Dataframe. Must have variables named \code{date} for the wastewater
-collection date and \code{val} for the pathogen concentration.}
+\item{ww.conc}{Data frame. Must have variables named \code{date} for the
+wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{dist.fec}{Numerical vector. Distribution of fecal shedding (time unit=day).}
+\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
 
-\item{dist.gi}{Numerical vector. Distribution of the generation interval (time unit=day).}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{scaling.factor}{Numeric. Scaling from wastewater concentration to prevalence.
-This value may be assumed or independently calibrated to data.}
+\item{scaling.factor}{Numeric. Scaling from wastewater concentration to
+prevalence. This value may be assumed or independently calibrated to data.}
 
-\item{prm.smooth}{List. Parameters for the smoothing algorithm of the wastewater signal.}
-
-\item{prm.R}{List. Settings for the ensemble when calculating Rt. Elements include:
-\itemize{
-\item \code{window}: number of days defining the window of data used by \code{EpiEstim} to estimate Rt
-\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt estimates after sampling uncertain distributions.
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item{prm.smooth}{List. list of smoothing parameters. Parameters should be
+specified as followed:
+\enumerate{
+\item method - smoothing method (either 'rollmean' or 'loess')
+\item window - smoothing window (number of days for rollmean smoothing)
+\item align - smoothing alignment (for rollmean smoothing, either
+'center', 'left', 'right')
+\item span - smoothing span (for loess smoothing)
 }}
 
-\item{iter}{Integer. Number of samples for the (uncertain) generation interval distribution.}
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
+\itemize{
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
+\code{EpiEstim}.
+}}
+
+\item{iter}{Integer. Number of samples for the (uncertain) generation
+interval distribution.}
 }
 \value{
 List. Elements include:
 \itemize{
-\item \code{ww.conc} original wastewater signal
-\item \code{ww.smooth} smoothed wastewater signal
-\item \code{inc} inferred incidence
-\item \code{R} the effective R estimate
+\item \code{ww.conc}: original wastewater signal
+\item \code{ww.smooth}: smoothed wastewater signal
+\item \code{inc}: inferred incidence
+\item \code{R}: the effective reproduction number estimate
 }
 }
 \description{
-Estimate the effective reproduction from wastewater concentration data.
+Estimate the effective reproduction from wastewater concentration
+data.
 }

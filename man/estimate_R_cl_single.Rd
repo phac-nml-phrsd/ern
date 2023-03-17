@@ -10,26 +10,34 @@ estimate_R_cl_single(
   dist.repdelay,
   dist.incub,
   dist.gi,
-  prm.R
+  prm.R,
+  silent = FALSE
 )
 }
 \arguments{
-\item{cl.daily}{dataframe. realizations of daily report counts. must include at least \code{date} and \code{value} columns.}
+\item{cl.daily}{Dataframe of inferred daily incidence.}
 
-\item{dist.repfrac}{parameters for the reporting fraction distribution}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
 
-\item{dist.repdelay}{parameters for the reporting delay distribution}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}
 
-\item{dist.incub}{parameters for the incubation period distribution}
+\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
 
-\item{dist.gi}{parameters for the generation interval distribution}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{prm.R}{list. settings for the ensemble when calculating Rt. elements include:
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
 \itemize{
-\item{\code{iter}: }{number of iterations for ensemble}
-\item{\code{window}: }{length of time window to use for each Rt estimate. if \code{t_end} is specified in \code{config.EpiEstim}, this option will override it.}
-\item{\code{config.EpiEstim}: }{configuration for \code{EpiEstim} defined via \code{EpiEstim::make_config()}. if \code{NULL}, will use default config from \code{EpiEstim}.}
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
+\code{EpiEstim}.
 }}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 A single realization of the Rt estimate

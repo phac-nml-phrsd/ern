@@ -1,0 +1,106 @@
+---
+title: "Estimating effective reproductive number using wastewater concentration data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ww-rt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE, warning=FALSE}
+suppressMessages({
+  library(tidyr)
+  library(dplyr)
+  library(ggplot2) ; theme_set(theme_bw())
+  library(lubridate)
+  library(stringr)
+  library(patchwork)
+  library(ern)
+})
+```
+
+With the `ern` package, the effective reproductive number ($\mathcal{R}_t$) can be estimated using viral concentration data found in wastewater. In this vignette, $\mathcal{R}_t$ will be estimated using a sample dataset of SARS-CoV-2 wastewater concentration data.
+
+## Loading data and necessary parameters
+
+In order to estimate $\mathcal{R}_t$ from wastewater data in `ern`, the following items are required:
+
+-   Viral concentration dataframe containing the following columns: `date` and `val` (concentration value).
+
+-   Fecal shedding distribution (included in `ern`).
+
+-   Generation interval distribution (included in `ern` ).
+
+-   Wastewater data smoothing parameters. See `smooth_ww()` for more details.
+
+-   Settings for $\mathcal{R}_t$ estimation.
+
+```{r create sample data}
+# Creating sample SARS-CoV-2 wastewater data
+set.seed(1234)
+n=60
+x=1:n
+
+val = x * (40 - x) * rnorm(n, mean=1, sd=0.02)
+val = val[val>0]
+
+dd = ymd('2022-11-01') + 1:length(val)
+
+ww.conc = data.frame(date = dd, val=val)
+
+head(ww.conc)
+```
+
+```{r loading fec shed and gi}
+# Loading SARS-CoV-2 fecal shedding and generation interval distributions from ern
+dist.fec = ern::def_dist_fecal_shedding('sarscov2')
+dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
+```
+
+```{r initializing smoothing and Rt params }
+# Initializing smoothing parameters
+prm.smooth = list(
+  align  = 'center', # smoothing alignment
+  method = 'loess', # smoothing method
+  span   = 0.29 # smoothing span (used for loess smoothing only)
+)
+
+# Initialzing Rt settings
+prm.R = list(
+  CI = 0.95, # confidence interval
+  window = 10, # Time window for Rt calculations
+  config.EpiEstim = EpiEstim::make_config(seed = 15) # EpiEstim configuration for Rt calculations
+)
+```
+
+## Estimating $\mathcal{R}_t$
+
+Once the above items are loaded, $\mathcal{R}_t$ can be estimated using `estimate_R_ww()`. In this example, the number of iterations will be set to 20 (the default is 100).
+
+```{r estimate rt}
+r.estim = ern::estimate_R_ww(
+  ww.conc        = ww.conc,
+  dist.fec       = dist.fec,
+  dist.gi        = dist.gi,
+  prm.smooth     = prm.smooth,
+  prm.R = prm.R,
+  iter = 20,
+  silent = TRUE
+)
+```
+
+## Visualizing $R_t$ estimates
+
+Using `plot_diagnostic_ww()`, $\mathcal{R}_t$ estimates can be visualized in a time-series graph along with wastewater concentration, and deconvoluted incidence (an intermediate between wastewater data and $\mathcal{R}_t$).
+
+```{r plot rt, fig.width = 6, fig.height = 4, warning = FALSE}
+g = ern::plot_diagnostic_ww(r.estim)
+plot(g)
+```

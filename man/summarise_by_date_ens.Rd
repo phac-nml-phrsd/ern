@@ -2,15 +2,15 @@
 % Please edit documentation in R/get_use_dates.R
 \name{summarise_by_date_ens}
 \alias{summarise_by_date_ens}
-\title{Summarise observations by date for iterated ensemble data}
+\title{Summarise observations by date for several ensembles}
 \usage{
 summarise_by_date_ens(df, CI = 0.95)
 }
 \arguments{
-\item{df}{dataframe. Must have \code{date}, \code{mean}, \code{lo}, and \code{hi} columns.}
+\item{df}{Data frame. Must have \code{date}, \code{mean}, \code{lo}, and \code{hi} columns.}
 
-\item{CI}{numeric. Confidence interval width for the summary, as a proportion (\code{CI = 0.95} uses the 95\% confidence interval)}
+\item{CI}{Numeric. Confidence interval width for the summary, as a proportion (\code{CI = 0.95} uses the 95\% confidence interval)}
 }
 \description{
-This function summarises iterations of ensemble data.
+Summarise observations by date for several ensembles
 }

@@ -1,19 +1,42 @@
 #' Check parameters for Rt calculation
 #'
 #' @param x List of parameters for Rt calculation
+#' @template param-silent
 #'
 #' @return NULL
-check_prm.R <- function(x){
+check_prm.R <- function(x, silent = FALSE){
 
   # Check config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
-    warning("-----
+    if(!silent){
+      message("-----
 You are passing your own config for EpiEstim::estimate_R().
 Please note that ern always uses method = 'non_parametric_si',
 and thus any method specified in your config will be ignored.
 Also, any config parameters that are specific to
 method = 'non_parametric_si' (like si_distr) cannot be modified and
 will also be ignored.")
+    }
+  }
+
+  return()
+}
+
+#' Check parameters for smoothing
+#'
+#' @param x List that specifies the type of smoothing and the parameters associated with the smoothing method.
+#'
+#' @return NULL
+check_prm.smooth <- function(x){
+
+  if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
+
+  if(x$method == "rollmean"){
+    err.msg <- "For the rolling mean smoothing method, a `window` value must be specified in `prm.smooth`"
+    if(!("window" %in% names(x))) stop(err.msg)
+    if(!is.numeric(x$window)) stop(err.msg)
+  } else {
+    stop(paste0("Smoothing method of ", x$method, " not recognized"))
   }
 
   return()
@@ -44,8 +67,8 @@ Both sd and shape found: ", print(x)))
 
 #' Check that deconvolution inputs are compatible
 #'
-#' @param obs numeric vector. signal (_e.g._, case reports)
-#' @param dist numeric vector. deconvolution kernel (_e.g._, reporting delay distribution)
+#' @param obs Numeric. Vector with observed signal (_e.g._, case reports)
+#' @param dist Numeric. Vector of discretized distribution used as the deconvolution kernel (_e.g._, reporting delay distribution)
 #'
 #' @return NULL
 check_for_deconv <- function(obs, dist){
@@ -55,24 +78,24 @@ check_for_deconv <- function(obs, dist){
   return()
 }
 
-
-
-
-#' Check the dataframe of clinical data
+#' Check the data frame of clinical data
 #'
-#' @param dat The dataframe of clinical data
+#' @param dat Data frame. Timeseries of clinical reports.
+#' @template param-silent
 #'
 #' @return NULL
-#'
-check_data_clin <- function(dat) {
+check_data_clin <- function(dat, silent = FALSE) {
 
   n = names(dat)
 
-  if(!'count' %in% n)
-    stop('The dataframe of observation must have a `count` column. ABORTING!')
+  msg.template1 <- 'The input data frame of clinical reports must have a `'
+  msg.template2 <- '` column. ABORTING!'
 
-  if(!'date' %in% n)
-    stop('The dataframe of observation must have a `date` column. ABORTING!')
+  for(var in c("count", "date")){
+    if(!(var %in% n)){
+      stop(paste0(msg.template1, var, msg.template2))
+    }
+  }
 
   return()
 }

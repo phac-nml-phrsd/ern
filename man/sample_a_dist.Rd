@@ -2,15 +2,16 @@
 % Please edit documentation in R/distributions.R
 \name{sample_a_dist}
 \alias{sample_a_dist}
-\title{Sample parameters for a single distribution assuming parameters
-come from a Gamma distribution}
+\title{Sample parameters for a single distribution from
+a family of distributions, assuming parameters come from a Gamma distribution}
 \usage{
 sample_a_dist(dist)
 }
 \arguments{
-\item{dist}{a list of distribution parameters, as defined by the \verb{def_dist_*()} functions}
+\item{dist}{List. A list of distribution parameters, as defined by the
+\verb{def_dist_*()} functions.}
 }
 \description{
-Sample parameters for a single distribution assuming parameters
-come from a Gamma distribution
+Sample parameters for a single distribution from
+a family of distributions, assuming parameters come from a Gamma distribution
 }

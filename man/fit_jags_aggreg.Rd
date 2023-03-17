@@ -4,32 +4,28 @@
 \alias{fit_jags_aggreg}
 \title{Fit JAGS model to aggregated data}
 \usage{
-fit_jags_aggreg(
-  obs.times,
-  Y,
-  g,
-  N,
-  n.days = NULL,
-  mcmc.params = list(burn = 1000, iter = 3000, chains = 3)
-)
+fit_jags_aggreg(obs.times, Y, g, N, n.days = NULL, prm.daily, silent = FALSE)
 }
 \arguments{
-\item{obs.times}{numeric. vector of observation times}
+\item{obs.times}{Numeric. Vector of observation times.}
 
-\item{Y}{numeric. vector of aggregated counts}
+\item{Y}{Numeric. Vector of aggregated counts.}
 
-\item{g}{numeric. vector of discretized generation interval density.}
+\item{g}{Numeric. Vector of discretized generation interval density.}
 
-\item{N}{numeric. scalar population size.}
+\item{N}{Numeric. Scalar population size.}
 
-\item{n.days}{numeric. total number of days. if \code{NULL}, use \code{max(obs.times)}}
+\item{n.days}{Numeric. Total number of days. if \code{NULL}, use \code{max(obs.times)}}
 
-\item{mcmc.params}{list. MCMC parameters:
+\item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
-\item \code{burn}: burn-in period (days)
-\item \code{iter}: iterations after burn-in (days)
-\item \code{chains}: number of chains
+\item \code{burn}: length of burn-in period (number of days)
+\item \code{iter}: number of iterations after burn-in period (number of days)
+\item \code{chains}: number of chains to simulate
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 Fit JAGS model to aggregated data

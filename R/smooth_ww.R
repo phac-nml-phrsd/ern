@@ -1,23 +1,14 @@
-#' @title Smoothing ww data
-#' @description Function takes cleaned ww data and smooths data
+#' @title Smooth wastewater data
+#' @description Function takes pre-processed wastewater data and smooths it
 #'
-#' @param df ww dataframe
-#' @param prm.smooth list of smoothing parameters. Parameters should be
-#'  specified as followed:
-#'  \enumerate{
-#'   \item method - smoothing method (either 'rollmean' or 'loess')
-#'   \item window - smoothing window (number of days for rollmean smoothing)
-#'   \item align - smoothing alignment (for rollmean smoothing, either
-#'    'center', 'left', 'right')
-#'   \item span - smoothing span (for loess smoothing)
-#'  }
+#' @inheritParams estimate_R_ww
 #'
 #' @importFrom rlang .data
 #'
-#' @return dataframe with smoothed ww data
+#' @return Data frame
 #'
 #' @export
-smooth_ww <- function(df, prm.smooth){
+smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
 
   # Checking if prm.smooth contains smoothing method
   if(is.null(prm.smooth$method)){
@@ -39,7 +30,7 @@ smooth_ww <- function(df, prm.smooth){
       stop("Missing or invalid rollmean alignment. Please specify a valid
            alignment in prm.smooth. Aborting!")
     }
-    d = df %>%
+    d = ww.conc %>%
       tidyr::complete(date = seq.Date(dplyr::first(date),
                                       dplyr::last(date), by = "day")) %>%
       dplyr::mutate(val_smooth =
@@ -58,7 +49,7 @@ smooth_ww <- function(df, prm.smooth){
       stop("Missing or invalid loess span. Please specify a loess span that is
            greater than 0 in prm.smooth. Aborting!")
     }
-    t = df %>%
+    t = ww.conc %>%
       dplyr::mutate(x = as.numeric(date - min(date, na.rm = TRUE)+1))
 
     z = stats::loess(formula = 'val ~ x', data = t, span = prm.smooth$span)
@@ -70,6 +61,11 @@ smooth_ww <- function(df, prm.smooth){
       dplyr::rename(t = x, obs = .data$y)
 
     d[["date"]] = lubridate::ymd(min(t$date)) + d[["t"]]
+  }
+
+  if(!silent){
+    message(paste("Wastewater data smoothed using", prm.smooth$method,
+                  "method"))
   }
 
   return(d)

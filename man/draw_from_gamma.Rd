@@ -2,18 +2,18 @@
 % Please edit documentation in R/distributions.R
 \name{draw_from_gamma}
 \alias{draw_from_gamma}
-\title{Draw from gamma based on parameter name in distribution list.}
+\title{Draw from gamma for a parameter specified in a distribution family list.}
 \usage{
 draw_from_gamma(par, dist)
 }
 \arguments{
-\item{par}{String. Name of the parameter to sample.}
+\item{par}{Character. Name of the parameter to sample.}
 
-\item{dist}{List. Distribution definition.}
+\item{dist}{List. Distribution definition, as output by a \verb{def_dist_*()} function.}
 }
 \value{
-Numeric. The sampled value.
+Numeric. The sampled parameter value.
 }
 \description{
-Draw from gamma based on parameter name in distribution list.
+Draw from gamma for a parameter specified in a distribution family list.
 }

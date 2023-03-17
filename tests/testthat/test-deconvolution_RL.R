@@ -2,7 +2,7 @@ test_that("deconvolution_RL returns a message when verbose = TRUE,
           returns a warning when p_delay > 1, returns a dataframe for default
           parameters and with right_censor = FALSE", {
   load("../testdata/ww_test_params.RData")
-  ww.smooth = smooth_ww(df = ww.conc,
+  ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
   f = get_discrete_dist(def_dist_fecal_shedding())
   f.warn = f + 0.01

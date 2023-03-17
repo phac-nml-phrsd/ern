@@ -6,24 +6,39 @@
 Converts wastewater to Rt after sampling one fecal shedding and
 one generation interval distribution.}
 \usage{
-inc2R_one_iter(i, dist.fec, dist.gi, wastewater, scaling.factor, prm.R)
+inc2R_one_iter(i, dist.fec, dist.gi, ww.conc, scaling.factor, prm.R, silent)
 }
 \arguments{
-\item{i}{Iteration index. (not used but required when using \code{lapply()})}
+\item{i}{Numeric. Iteration index. (not used but required when using
+\code{lapply()})}
 
-\item{dist.fec}{Fecal shedding distribution.}
+\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
 
-\item{dist.gi}{Generation interval distribution.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
-\item{wastewater}{Smoothed wastewater time-series.}
+\item{ww.conc}{Data frame. Must have variables named \code{date} for the
+wastewater collection date and \code{val} for the pathogen concentration.}
 
-\item{scaling.factor}{Scaling from wastewater concentration to prevalence.
-This value may be assumed or independently calibrated to data.}
+\item{scaling.factor}{Numeric. Scaling from wastewater concentration to
+prevalence. This value may be assumed or independently calibrated to data.}
 
-\item{prm.R}{List of configuration parameters for EpiEstim.}
+\item{prm.R}{List. Settings for the ensemble when calculating Rt.
+Elements include:
+\itemize{
+\item \code{window}: number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt
+\item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
+estimates after sampling uncertain distributions.
+\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
+\code{EpiEstim}.
+}}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
-a list with elements \code{inc} (incidence) and \code{rt} (reproduction number)
+List. Elements include \code{inc} (incidence) and \code{rt}
+(reproduction number)
 }
 \description{
 Helper function.

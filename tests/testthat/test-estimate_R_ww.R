@@ -17,16 +17,17 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
     window = 10,
     config.EpiEstim = EpiEstim::make_config(seed = 15)
   )
-  ww.smooth = smooth_ww(df = ww.conc,
+  ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
   expect_type(
     inc2R_one_iter(
       i = 1,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      wastewater = ww.smooth,
+      ww.conc = ww.smooth,
       scaling.factor = 1,
-      prm.R = prm.R
+      prm.R = prm.R,
+      silent = TRUE
     ),
     "list"
   )
@@ -35,9 +36,10 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
       i = 1,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      wastewater = ww.smooth,
+      ww.conc = ww.smooth,
       scaling.factor = 1,
-      prm.R = prm.R
+      prm.R = prm.R,
+      silent = TRUE
     ),
     2
   )
@@ -64,5 +66,33 @@ test_that("estimate_R_ww returns a list of four dataframes", {
       iter = 1
     ),
     4
+  )
+})
+
+test_that("estimate_R_ww returns a message when silent mode is disabled", {
+  load("../testdata/ww_test_params.RData")
+  expect_message(
+    estimate_R_ww(
+      ww.conc = ww.conc,
+      dist.fec = dist.fec,
+      dist.gi = dist.gi,
+      prm.smooth = prm.smooth,
+      iter = 1,
+      silent = FALSE
+    )
+  )
+})
+
+test_that("estimate_R_ww executes silently when silent mode is enabled", {
+  load("../testdata/ww_test_params.RData")
+  expect_silent(
+    estimate_R_ww(
+      ww.conc = ww.conc,
+      dist.fec = dist.fec,
+      dist.gi = dist.gi,
+      prm.smooth = prm.smooth,
+      iter = 1,
+      silent = TRUE
+    )
   )
 })

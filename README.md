@@ -1,23 +1,41 @@
 # ern
-[![codecov](https://codecov.io/gh/phac-nml-phrsd/ern/branch/main/graph/badge.svg?token=SWXENVF9T4)](https://codecov.io/gh/phac-nml-phrsd/ern)
 
-R library to estimate the Effective Reproduction Number (Rt)
+<!-- badges: start -->
 
-`devtools::install_github('phac-nml-phrsd/ern')`
+[![codecov](https://codecov.io/gh/phac-nml-phrsd/ern/branch/main/graph/badge.svg?token=SWXENVF9T4)](https://codecov.io/gh/phac-nml-phrsd/ern) [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
-## Guidelines
+<!-- badges: end -->
 
- * Reference book for R packages development: https://r-pkgs.org/
- * Try to limit the number of other libraries `ern` depends on (or imports, see below). The goal of the `ern` package is to estimate $R_t$ -- nothing more, nothing less. 
- * `Imports` vs. `Depends`: **prefer `Imports`**
-   * Hadley Wickham [recommends](https://r-pkgs.org/dependencies-mindset-background.html#sec-dependencies-namespace)
-    * If a package is installed,
-      * _Loading_ will load code, data, and any DLLs; register S3 and S4 methods; and run the `.onLoad()` function. After loading, the package is available in memory, but because it’s not in the search path, you won’t be able to access its components without using `::`. Confusingly, `::` will also load a package automatically if it isn’t already loaded.
-      * _Attaching_ puts the package in the search path (Section 11.4.1). You can’t attach a package without first loading it, so both `library()` (or `require()`) load then attach the package. This also runs the `.onAttach() ` function.
-    * Listing a package in either `Depends` or `Imports` ensures that it’s installed when needed. The main difference is that a package you list in `Imports` will just be loaded when you use it, whereas a package you list in `Depends` will be attached when your package is attached. Unless there is a good reason otherwise, **you should always list packages in `Imports` not `Depends`**. That’s because a good package is self-contained, and minimises changes to the global landscape, including the search path.
-   * an in-depth explanation: [Suraj Gupta's blog](https://blog.thatbuthow.com/how-r-searches-and-finds-stuff/)
-    * "`Depends` is less safe. `Depends` makes a package vulnerable to whatever other packages are loaded by the user."
-    * `Imports` adds a secondary package’s tools directly into `imports:primary_package`, which gets searched immediately after `namespace:primary_package`. `Depends` is like using `library()` so pkg attachement order will matter and cannot necessarily be controlled by the developer (we won't know what other pkgs the user may have loaded into their session and when).
+This repository stores the code used in `ern`, an R package to estimate the effective reproduction number ($R_t$) of pathogens using clinical or wastewater data.
 
+This package is developed at the Public Health Agency of Canada / National Microbiology Laboratory. Please note this software is provivded "as is", without warranty of any kind; see the [license](LICENSE).
 
+## Installation
 
+To install the latest version of this package:
+
+```r
+devtools::install_github('phac-nml-phrsd/ern')
+```
+
+## Vignettes
+
+This package contains vignettes on how `ern` can be used to estimate $R_t$. 
+
+To estimate $R_t$ using _clinical_ data:
+
+```r
+vignette("clin-rt", package = "ern") # TODO: replace "clin-rt" with filename of cl vignette
+```
+
+To estimate $R_t$ using _wastewater_ data:
+
+```r
+vignette("ww-rt", package = "ern")
+```
+
+To learn more about how distribution parameters were estimated in `ern`:
+
+```r
+vignette("distributions", package = "ern")
+```

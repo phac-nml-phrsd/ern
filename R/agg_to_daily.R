@@ -1,18 +1,15 @@
 #' Infer daily counts from aggregates
 #'
-#' @param cl.agg dataframe. must have variables \code{date} for the calendar
-#' date of the observation, \code{count} for the count of reported cases.
-#' @param popsize population size.
-#' @param prm.daily parameters for daily report inference (via MCMC).
-#' @inheritParams estimate_R_cl_single
+#' @inheritParams estimate_R_cl
 #'
-#' @return Dataframe with individual realizations of daily reported cases
+#' @return Data frame with individual realizations of daily reported cases
 #' @export
 agg_to_daily <- function(
   cl.agg,
   dist.gi,
   popsize,
-  prm.daily
+  prm.daily,
+  silent = FALSE
 ) {
 
   gi = get_discrete_dist(dist.gi)
@@ -22,7 +19,8 @@ agg_to_daily <- function(
     N = popsize,
     obs.times = cl.agg$t,
     Y = cl.agg$count,
-    mcmc.params = prm.daily ) %>%
+    prm.daily = prm.daily,
+    silent = silent) %>%
     reshape_fit_jags() %>%
     get_realizations(cl.agg)
 
@@ -35,33 +33,38 @@ agg_to_daily <- function(
 #' Exclude first day since we don't necessarily know over which period
 #' of time that data was aggregated
 #'
-#' @param x dataframe. must at least have a `date` column
-#' @param first.agg.period numeric. number of days over which reports were summed for the first observed report. if NULL, assumes same aggregation period as for second observation.
+#' @inheritParams estimate_R_cl
 #'
-#' @return dataframe.
-attach_t_agg <- function(x, first.agg.period = NULL){
+#' @return Data frame
+attach_t_agg <- function(cl.agg, prm.daily = NULL, silent = FALSE){
+
+  first.agg.period <- prm.daily$first.agg.period
 
   # Handling the first aggregation
   if(is.null(first.agg.period)){
-    fa = as.integer(x$date[2]-x$date[1])
-    message(paste0("-----
-Assuming the first observed report (from ", x$date[1], ")
+    fa = as.integer(cl.agg$date[2]-cl.agg$date[1])
+    if(!silent){
+      message(paste0("-----
+Assuming the first observed report (from ", cl.agg$date[1], ")
 is aggregated over ", fa , " previous days
 (second observation's aggregation period).
 This can be changed in `estimate_R_cl()`, using the
 `prm.daily` argument (set a value for `first.agg.period`
 in this parameter list)."))
+    }
   }
   if(!is.null(first.agg.period)){
     fa = first.agg.period
-    message(paste('
+    if(!silent){
+      message(paste('
     Aggregation period for first observed report
     is set to', fa, 'days.'))
+    }
   }
 
-  date.min = min(x$date)
+  date.min = min(cl.agg$date)
 
-  res = x %>%
+  res = cl.agg %>%
     dplyr::mutate(t = as.numeric(date - date.min) + fa) %>%
     dplyr::arrange(t)
 
@@ -70,22 +73,18 @@ in this parameter list)."))
 
 #' Fit JAGS model to aggregated data
 #'
-#' @param obs.times numeric. vector of observation times
-#' @param Y numeric. vector of aggregated counts
-#' @param g numeric. vector of discretized generation interval density.
-#' @param N numeric. scalar population size.
-#' @param n.days numeric. total number of days. if `NULL`, use `max(obs.times)`
-#' @param mcmc.params list. MCMC parameters:
-#' * `burn`: burn-in period (days)
-#' * `iter`: iterations after burn-in (days)
-#' * `chains`: number of chains
+#' @param obs.times Numeric. Vector of observation times.
+#' @param Y Numeric. Vector of aggregated counts.
+#' @param g Numeric. Vector of discretized generation interval density.
+#' @param N Numeric. Scalar population size.
+#' @param n.days Numeric. Total number of days. if `NULL`, use `max(obs.times)`
+#' @inheritParams estimate_R_cl
 fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
     n.days = NULL,
-    mcmc.params = list(burn = 1e3,
-                       iter = 3e3,
-                       chains = 3)
+    prm.daily,
+    silent = FALSE
 ){
 
   if(is.null(n.days)) n.days = max(obs.times)
@@ -162,37 +161,47 @@ fit_jags_aggreg <- function(
 
     # === priors ===
 
-    R0 ~ dgamma(2,1)
+    R0 ~ dgamma(2,0.6)
     alpha ~ dgamma(1,1)
   }"
 
-  message("-----
+  if(!silent){
+    message("-----
 Running MCMC model to infer daily reports from aggregated reports...
 ")
+  }
 
   mod <- rjags::jags.model(
     file = textConnection(model.text),
     data = data_jags,
     inits = inits,
-    n.chains = mcmc.params$chains
+    n.chains = prm.daily$chains,
+    quiet = silent
   )
+
 
   # --- MCMC run
 
   # Burn-in period:
-  stats::update(mod, n.iter = mcmc.params$burn)
+  output <- capture.output(stats::update(mod, n.iter = prm.daily$burn))
+
+  if(!silent) print(output)
 
   # Posterior iterations:
-  mod_sim <- rjags::coda.samples(model = mod,
-                                 variable.names = params,
-                                 n.iter = mcmc.params$iter)
+  output <- capture.output(mod_sim <- rjags::coda.samples(
+    model = mod,
+    variable.names = params,
+    n.iter = prm.daily$iter
+  ))
+
+  if(!silent) print(output)
 
   return(mod_sim)
 }
 
 #' Reshape JAGS fit object
 #'
-#' @param x dataframe. JAGS output from [`fit_jags_aggreg()`].
+#' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
 #'
 #' @importFrom rlang .data
 #'
@@ -213,14 +222,16 @@ reshape_fit_jags <- function(x){
   )
 }
 
-#' Retrieve realizations for aggregated -> daily inference
+#' Retrieve realizations for aggregated to daily inference
 #'
-#' @param fit.reports.daily dataframe. realizations from daily report inference. must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
-#' @param reports dataframe. original aggregated reports. must at least have `date` column
+#' @param fit.reports.daily Data frame. Realizations from daily report inference. Must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
+#' @param reports Data frame. Original aggregated reports. Must at least have `date` column.
 #'
 #' @seealso [agg_to_daily()]
 #'
 #' @importFrom rlang .data
+#'
+#' @return Data frame
 get_realizations <- function(
     fit.reports.daily, reports
 ){

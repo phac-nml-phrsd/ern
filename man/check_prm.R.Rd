@@ -4,10 +4,12 @@
 \alias{check_prm.R}
 \title{Check parameters for Rt calculation}
 \usage{
-check_prm.R(x)
+check_prm.R(x, silent = FALSE)
 }
 \arguments{
 \item{x}{List of parameters for Rt calculation}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 Check parameters for Rt calculation
