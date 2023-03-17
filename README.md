@@ -20,19 +20,21 @@ devtools::install_github('phac-nml-phrsd/ern')
 
 ## Vignettes
 
-This package contains vignettes on how `ern` can be used to estimate $R_t$. To estimate $R_t$ using clinical data:
+This package contains vignettes on how `ern` can be used to estimate $R_t$. 
+
+To estimate $R_t$ using _clinical_ data:
 
 ```r
 vignette("clin-rt", package = "ern") # TODO: replace "clin-rt" with filename of cl vignette
 ```
 
-To estimate $R_t$ using wastewater data:
+To estimate $R_t$ using _wastewater_ data:
 
 ```r
 vignette("ww-rt", package = "ern")
 ```
 
-To learn more about how parameters were estimated in `ern`:
+To learn more about how distribution parameters were estimated in `ern`:
 
 ```r
 vignette("distributions", package = "ern")
