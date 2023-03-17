@@ -1,5 +1,6 @@
 #' Ensemble estimate of Rt
 #'
+#' @param cl.daily Dataframe of inferred daily incidence.
 #' @inheritParams estimate_R_cl
 #'
 #' @return A summary of individual Rt realizations with 95% confidence intervals

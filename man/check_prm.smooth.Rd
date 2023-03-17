@@ -7,7 +7,7 @@
 check_prm.smooth(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{List that specifies the type of smoothing and the parameters associated with the smoothing method.}
 }
 \description{
 Check parameters for smoothing

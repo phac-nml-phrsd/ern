@@ -15,6 +15,8 @@ estimate_R_cl_rep(
 )
 }
 \arguments{
+\item{cl.daily}{Dataframe of inferred daily incidence.}
+
 \item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
 
 \item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}

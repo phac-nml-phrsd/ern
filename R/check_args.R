@@ -24,7 +24,7 @@ will also be ignored.")
 
 #' Check parameters for smoothing
 #'
-#' @param x
+#' @param x List that specifies the type of smoothing and the parameters associated with the smoothing method.
 #'
 #' @return NULL
 check_prm.smooth <- function(x){

@@ -1,5 +1,6 @@
 #' A single realization of the Rt estimate
 #'
+#' @param cl.daily Dataframe of inferred daily incidence.
 #' @inheritParams estimate_R_cl
 #'
 #' @importFrom rlang .data
