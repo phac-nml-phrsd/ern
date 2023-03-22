@@ -51,6 +51,8 @@ estimates after sampling uncertain distributions.
 
 \item{iter}{Integer. Number of samples for the (uncertain) generation
 interval distribution.}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
 List. Elements include:

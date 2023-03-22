@@ -9,6 +9,7 @@
 #'  prevalence. This value may be assumed or independently calibrated to data.
 #' @template param-prm.smooth
 #' @template param-prm.R
+#' @template param-silent
 #' @param iter Integer. Number of samples for the (uncertain) generation
 #'  interval distribution.
 #' @return List. Elements include:
