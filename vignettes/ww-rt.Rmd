@@ -20,7 +20,6 @@ suppressMessages({
   library(dplyr)
   library(ggplot2) ; theme_set(theme_bw())
   library(lubridate)
-  library(stringr)
   library(patchwork)
   library(ern)
 })

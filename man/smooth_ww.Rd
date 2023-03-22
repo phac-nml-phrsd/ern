@@ -19,6 +19,8 @@ specified as followed:
 'center', 'left', 'right')
 \item span - smoothing span (for loess smoothing)
 }}
+
+\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
 Data frame

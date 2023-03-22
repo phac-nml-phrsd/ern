@@ -111,7 +111,6 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
 #' Define a reporting fraction distribution
 #'
-#' @template param-pathogen
 #' @template return-dist
 #' @export
 def_dist_reporting_fraction <- function(){
