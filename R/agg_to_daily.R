@@ -2,6 +2,8 @@
 #'
 #' @inheritParams estimate_R_cl
 #'
+#' @importFrom utils capture.output
+#'
 #' @return Data frame with individual realizations of daily reported cases
 #' @export
 agg_to_daily <- function(

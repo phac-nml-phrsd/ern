@@ -6,9 +6,6 @@
 \usage{
 def_dist_reporting_fraction()
 }
-\arguments{
-\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
-}
 \value{
 List with components
 \itemize{
