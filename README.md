@@ -25,7 +25,7 @@ This package contains vignettes on how `ern` can be used to estimate $R_t$.
 To estimate $R_t$ using _clinical_ data:
 
 ```r
-vignette("clin-rt", package = "ern") # TODO: replace "clin-rt" with filename of cl vignette
+vignette("clin-rt", package = "ern")
 ```
 
 To estimate $R_t$ using _wastewater_ data:

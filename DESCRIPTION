@@ -26,6 +26,8 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
+    bookdown,
+    purrr,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
