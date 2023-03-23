@@ -9,7 +9,7 @@ check_prm.R <- function(x, silent = FALSE){
   # Check config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
     if(!silent){
-      message("-----
+      warning("-----
 You are passing your own config for EpiEstim::estimate_R().
 Please note that ern always uses method = 'non_parametric_si',
 and thus any method specified in your config will be ignored.
@@ -32,10 +32,16 @@ check_prm.smooth <- function(x){
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
 
   if(x$method == "rollmean"){
-    err.msg <- "For the rolling mean smoothing method, a `window` value must be specified in `prm.smooth`"
+    err.msg <- "For the rolling mean smoothing method, a numeric `window` value must be specified in `prm.smooth`"
     if(!("window" %in% names(x))) stop(err.msg)
     if(!is.numeric(x$window)) stop(err.msg)
-  } else {
+  }
+  else if(x$method == "loess"){
+    err.msg <- "For the loess smoothing method, a numeric `span` value must be specified in `prm.smooth`"
+    if(!("span" %in% names(x))) stop(err.msg)
+    if(!is.numeric(x$span)) stop(err.msg)
+  }
+  else {
     stop(paste0("Smoothing method of ", x$method, " not recognized"))
   }
 
