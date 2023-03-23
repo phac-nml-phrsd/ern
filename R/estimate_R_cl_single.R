@@ -3,7 +3,6 @@
 #' @param cl.daily Dataframe of inferred daily incidence.
 #' @inheritParams estimate_R_cl
 #'
-#' @importFrom rlang .data
 #'
 #' @export
 estimate_R_cl_single <- function(
@@ -20,7 +19,7 @@ estimate_R_cl_single <- function(
   id.list <- unique(cl.daily$id)
   the_id <- sample(id.list, size = 1)
   df.draw <- (cl.daily
-     %>% dplyr::filter(.data$id == the_id)
+     %>% dplyr::filter(id == the_id)
   )
 
   # sample reporting fraction
@@ -75,14 +74,12 @@ estimate_R_cl_single <- function(
 #' @param reports.daily dataframe of daily reported cases. must at least include `value` column with counts.
 #' @param reporting.fraction numeric. proportion of incidence that is reported.
 #'
-#' @importFrom rlang .data
-# to avoid "no visible binding" notes
 correct_underreporting <- function(
     reports.daily,
     reporting.fraction
 ){
   (reports.daily
-   %>% dplyr::mutate(value = .data$value/reporting.fraction)
+   %>% dplyr::mutate(value = value/reporting.fraction)
   )
 }
 
@@ -94,7 +91,6 @@ correct_underreporting <- function(
 #' @inheritParams deconv
 #' @inheritParams estimate_R_cl
 #'
-#' @importFrom rlang .data
 #'
 #' @seealso [`def_dist_incubation_period()`]
 reports_to_incidence <- function(
@@ -153,7 +149,7 @@ distribution to get daily incidence...")
     %>% dplyr::left_join(date.lookup, by = "t")
     %>% dplyr::transmute(
       date,
-      I = .data$y
+      I = y
     )
     %>% tibble::as_tibble()
   )
@@ -165,8 +161,6 @@ distribution to get daily incidence...")
 #' @param dist Numeric. Vector of discrete distributions (daily, truncated) with which we're deconvoluting counts, _e.g._, produced by [`get_discrete_dist()`]
 #' @param max.iter Numeric. Maximum number of Richardson-Lucy iterations.
 #' @inheritParams estimate_R_cl
-#'
-#' @importFrom rlang .data
 #'
 #' @seealso [`get_discrete_dist()`]
 deconv <- function(
@@ -189,7 +183,7 @@ deconv <- function(
   )
   %>% tidyr::drop_na()
   %>% dplyr::rename(
-    t = .data$time,
-    y = .data$RL_result)
+    t = time,
+    y = RL_result)
   )
 }

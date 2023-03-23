@@ -5,8 +5,6 @@
 #'
 #' @return A `ggplot` object.
 #'
-#' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @seealso [estimate_R_ww()]
@@ -24,11 +22,11 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = .data$val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
-      ggplot2::aes(y = .data$obs),
+      ggplot2::aes(y = obs),
       color = 'steelblue4',
       linewidth = 1,
       alpha = 0.5
@@ -41,7 +39,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.inc = r.estim$inc %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line()+
     ggplot2::labs(title ='Deconvoluted incidence',
                   x = 'infection date', y='cases')+
@@ -50,7 +48,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
   g.r = r.estim$R %>%
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr), alpha=0.2)+
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line() +
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
@@ -72,7 +70,6 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #'
 #' @importFrom patchwork plot_layout
 # need this to get the S3 method "/"
-#' @importFrom rlang .data
 #'
 #' @seealso [estimate_R_cl()]
 plot_diagnostic_cl <- function(
@@ -100,18 +97,18 @@ plot_diagnostic_cl <- function(
   # ==== Rt plot ====
 
   ylim <- (r.estim$R
-   %>% dplyr::filter(.data$use)
-   %>% tidyr::pivot_longer(c(.data$lwr, .data$upr))
-   %>% dplyr::pull(.data$value)
+   %>% dplyr::filter(use)
+   %>% tidyr::pivot_longer(c(lwr, upr))
+   %>% dplyr::pull(value)
    %>% range()
   )
 
   p1 <- (ggplot2::ggplot(r.estim$R, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
-   + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr,
-                          alpha = .data$use),
+   + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
+                          alpha = use),
                           na.rm = TRUE)
-   + ggplot2::geom_line(ggplot2::aes(y = .data$mean, linetype = .data$use),
+   + ggplot2::geom_line(ggplot2::aes(y = mean, linetype = use),
                         linewidth = 1, na.rm = TRUE)
    + ggplot2::scale_alpha_manual(values = alpha_scale)
    + ggplot2::scale_linetype_manual(values = linetype_scale)
@@ -126,7 +123,7 @@ plot_diagnostic_cl <- function(
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.agg
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
-     ggplot2::aes(x = date, y = .data$count))
+     ggplot2::aes(x = date, y = count))
      + ggplot2::geom_col(na.rm = TRUE)
      + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
      + ggplot2::labs(subtitle = "Original signal: aggregated case reports")
@@ -142,9 +139,9 @@ plot_diagnostic_cl <- function(
                                  max(r.estim$R$date, na.rm = TRUE)))
 
   p3 <- ggplot2::ggplot(tmp, ggplot2::aes(x = date)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$lwr, ymax = .data$upr),
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
                          alpha = alpha_scale[2]) +
-    ggplot2::geom_line(ggplot2::aes(y = .data$mean), linewidth = 1) +
+    ggplot2::geom_line(ggplot2::aes(y = mean), linewidth = 1) +
     ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)") +
     th
 
@@ -153,11 +150,11 @@ plot_diagnostic_cl <- function(
 
   p4 <- r.estim$inferred.agg %>%
     ggplot2::ggplot(ggplot2::aes(x=date)) +
-    ggplot2::geom_point(ggplot2::aes(y=.data$obs), size=2) +
-    ggplot2::geom_line(ggplot2::aes(y=.data$obs)) +
-    ggplot2::geom_line(ggplot2::aes(y=.data$mean.agg), color= 'red2', alpha=0.3) +
+    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
+    ggplot2::geom_line(ggplot2::aes(y=obs)) +
+    ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
     ggplot2::geom_pointrange(
-      ggplot2::aes(y=.data$mean.agg, ymin=.data$lwr.agg, ymax=.data$upr.agg),
+      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
       color= 'red2', alpha=0.6) +
     ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
     th

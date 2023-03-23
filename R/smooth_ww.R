@@ -3,8 +3,6 @@
 #'
 #' @inheritParams estimate_R_ww
 #'
-#' @importFrom rlang .data
-#'
 #' @return Data frame
 #'
 #' @export
@@ -34,14 +32,14 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
       tidyr::complete(date = seq.Date(dplyr::first(date),
                                       dplyr::last(date), by = "day")) %>%
       dplyr::mutate(val_smooth =
-                      zoo::rollmean(x = .data$val,
+                      zoo::rollmean(x = val,
                                     k = prm.smooth$window,
                                     align = prm.smooth$align,
                                     fill  = NA,
                                     na.rm = TRUE)) %>%
-      tidyr::drop_na(.data$val_smooth) %>%
+      tidyr::drop_na(val_smooth) %>%
       dplyr::mutate(t = as.numeric(date - dplyr::first(date)),
-                    obs = .data$val_smooth)
+                    obs = val_smooth)
   }
 
   if(prm.smooth$method == 'loess'){
@@ -58,7 +56,7 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
 
     d = stats::approx(x=x, y = v, xout = 1:max(x)) %>%
       as.data.frame() %>%
-      dplyr::rename(t = x, obs = .data$y)
+      dplyr::rename(t = x, obs = y)
 
     d[["date"]] = lubridate::ymd(min(t$date)) + d[["t"]]
   }

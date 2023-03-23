@@ -74,7 +74,7 @@ estimate_R_ww <- function(
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%
-    dplyr::transmute(value = .data$I,
+    dplyr::transmute(value = I,
               date) %>%
     summarise_by_date_iters()
 
@@ -114,7 +114,7 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                       silent = silent)
 
   i.df = inc[["inc"]] %>%
-    dplyr::mutate(I = .data$inc.deconvol) %>%
+    dplyr::mutate(I = inc.deconvol) %>%
     dplyr::select(date,I, t) %>%
     tidyr::drop_na() %>%
     dplyr::mutate(iter = i)

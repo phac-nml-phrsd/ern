@@ -7,8 +7,6 @@
 #' @inheritParams estimate_R_ww
 #' @template param-silent
 #'
-#' @importFrom rlang .data
-#'
 #' @return Data frame with deconvoluted incidence
 deconv_ww_inc <- function(d, fec, scaling.factor, silent){
 
@@ -25,9 +23,9 @@ deconv_ww_inc <- function(d, fec, scaling.factor, silent){
     # Forces incidence to be a positive integer:
     dplyr::mutate(
       inc.deconvol = as.integer(ifelse(
-        .data$RL_result>0, .data$RL_result, 0))) %>%
+        RL_result>0, RL_result, 0))) %>%
     # Retreive corresponding dates:
-    dplyr::rename(t = .data$time) %>%
+    dplyr::rename(t = time) %>%
     dplyr::filter(t > 0) %>%
     dplyr::mutate(date = start_date + t)
 

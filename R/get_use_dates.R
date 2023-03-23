@@ -6,7 +6,6 @@
 #'
 #' @return Data frame or vector, depending on `dates.only`
 #'
-#' @importFrom rlang .data
 get_use_dates <- function(
     cl.daily,
     cl.agg,
@@ -30,9 +29,9 @@ get_use_dates <- function(
     )
     # fill report date up to make grouping variable to aggregate
     # inferred daily reports
-    %>% tidyr::fill(.data$date.report, .direction = "up")
+    %>% tidyr::fill(date.report, .direction = "up")
     # rename count as obs to make col clearer in unified data below
-    %>% dplyr::rename(obs = .data$count)
+    %>% dplyr::rename(obs = count)
   )
 
   # unified data with aggregates and relative differences
@@ -43,7 +42,7 @@ get_use_dates <- function(
 
   if(dates.only) {
     res = res  %>%
-      dplyr::filter(.data$use) %>%
+      dplyr::filter(use) %>%
       dplyr::pull(date)
   }
 
@@ -57,14 +56,13 @@ get_use_dates <- function(
 #'
 #' @param df Data frame. Must have `date` and `value` columns.
 #'
-#' @importFrom rlang .data
 summarise_by_date_iters <- function(df){
   res = df %>%
     dplyr::group_by(date) %>%
     dplyr::summarise(
-      mean = mean(.data$value),
-      lwr  = stats::quantile(.data$value, probs = 0.025),
-      upr  = stats::quantile(.data$value, probs = 0.975),
+      mean = mean(value),
+      lwr  = stats::quantile(value, probs = 0.025),
+      upr  = stats::quantile(value, probs = 0.975),
       .groups = "drop" )
 
   return(res)
@@ -75,18 +73,17 @@ summarise_by_date_iters <- function(df){
 #' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
 #' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
 #'
-#' @importFrom rlang .data
 summarise_by_date_ens <- function(df, CI = 0.95){
   res = df %>%
     dplyr::group_by(date) %>%
     dplyr::summarise(
-      mean = mean(.data$mean),
+      mean = mean(mean),
       #
       # what we do below for 'lwr' and 'upr' is not statistically correct,
       # but likely "good enough" for now.
       #
-      lwr = stats::quantile(.data$lo, probs = 0.5 - CI/2),
-      upr = stats::quantile(.data$hi, probs = 0.5 + CI/2),
+      lwr = stats::quantile(lo, probs = 0.5 - CI/2),
+      upr = stats::quantile(hi, probs = 0.5 + CI/2),
       .groups = "drop" )
 
   return(res)
@@ -100,15 +97,14 @@ summarise_by_date_ens <- function(df, CI = 0.95){
 #'
 #' @return Data frame
 #'
-#' @importFrom rlang .data
 summarise_report_counts <- function(df, prm.daily.check){
   agg.reldiff.tol <- prm.daily.check$agg.reldiff.tol
 
   df <- (df
    # aggregated fitted reports
-   %>% dplyr::group_by(.data$date.report)
+   %>% dplyr::group_by(date.report)
    %>% dplyr::mutate(
-     dplyr::across(c(.data$mean, .data$lwr,.data$ upr), sum,
+     dplyr::across(c(mean, lwr, upr), sum,
                    .names = "{.col}.agg"))
    %>% dplyr::ungroup()
    %>% dplyr::mutate(
@@ -122,23 +118,23 @@ summarise_report_counts <- function(df, prm.daily.check){
   # we want to filter out start of inferred daily reports until
   # estimates have converged to below a specified tolerance
   use.dates <- (df
-    %>% dplyr::select(.data$date.report, .data$mean.agg.reldiff)
+    %>% dplyr::select(date.report, mean.agg.reldiff)
     %>% tidyr::drop_na()
     %>% dplyr::mutate(
       # set "use" flag for fitted aggregated reports within a
       # 10% tolerance
-      use = abs(.data$mean.agg.reldiff) < agg.reldiff.tol
+      use = abs(mean.agg.reldiff) < agg.reldiff.tol
     )
     # figure out first date where fitted aggregated reports fall
     # within above threshold for relative error
     # drop values before that point in time
-    %>% dplyr::mutate(use.cumm = cumsum(.data$use))
-    %>% dplyr::filter(.data$use.cumm > 0)
-    %>% dplyr::pull(.data$date.report)
+    %>% dplyr::mutate(use.cumm = cumsum(use))
+    %>% dplyr::filter(use.cumm > 0)
+    %>% dplyr::pull(date.report)
   )
 
   # TODO: show use.dates here?
 
   # attach use flag to output data
-  (df %>% dplyr::mutate(use = .data$date.report %in% use.dates))
+  (df %>% dplyr::mutate(use = date.report %in% use.dates))
 }

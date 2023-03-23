@@ -205,21 +205,20 @@ Running MCMC model to infer daily reports from aggregated reports...
 #'
 #' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
 #'
-#' @importFrom rlang .data
 #'
 #' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    %>% dplyr::bind_rows()
    %>% dplyr::mutate(iteration = 1:nrow(.))
-   %>% tidyr::pivot_longer(-.data$iteration)
+   %>% tidyr::pivot_longer(-iteration)
    %>% tidyr::separate(
-     .data$name,
+     name,
      into = c("var", "t", "trash"),
      sep = "\\[|\\]",
      fill = "right"
    )
-   %>% dplyr::select(-.data$trash)
+   %>% dplyr::select(-trash)
    %>% dplyr::mutate(t = as.integer(t))
   )
 }
@@ -231,7 +230,6 @@ reshape_fit_jags <- function(x){
 #'
 #' @seealso [agg_to_daily()]
 #'
-#' @importFrom rlang .data
 #'
 #' @return Data frame
 get_realizations <- function(
@@ -249,15 +247,15 @@ get_realizations <- function(
   # and mark each iteration (across iter #, batch #, rep #)
   # with unique id variable
   (fit.reports.daily
-    %>% dplyr::filter(.data$var == "I")
+    %>% dplyr::filter(var == "I")
     %>% dplyr::left_join(date_lookup, by = "t")
-    %>% dplyr::group_by(.data$iteration)
+    %>% dplyr::group_by(iteration)
     %>% dplyr::mutate(
       id = dplyr::cur_group_id(),
     )
     %>% dplyr::ungroup()
     %>% dplyr::select(
-      .data$id, .data$date, .data$t, .data$value
+      id, date, t, value
     )
   )
 }
