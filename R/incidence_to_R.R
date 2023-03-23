@@ -6,6 +6,7 @@
 #' @template param-prm.R
 #'
 #' @importFrom rlang .data
+#' @importFrom stats time var
 #'
 #' @seealso [def_dist_generation_interval()]
 #' @seealso [EpiEstim::make_config()]
