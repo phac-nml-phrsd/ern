@@ -20,7 +20,7 @@ estimate_R_cl_single <- function(
   id.list <- unique(cl.daily$id)
   the_id <- sample(id.list, size = 1)
   df.draw <- (cl.daily
-     %>% dplyr::filter(.data$id == the_id)
+     %>% dplyr::filter(id == the_id)
   )
 
   # sample reporting fraction
@@ -82,7 +82,7 @@ correct_underreporting <- function(
     reporting.fraction
 ){
   (reports.daily
-   %>% dplyr::mutate(value = .data$value/reporting.fraction)
+   %>% dplyr::mutate(value = value/reporting.fraction)
   )
 }
 
@@ -153,7 +153,7 @@ distribution to get daily incidence...")
     %>% dplyr::left_join(date.lookup, by = "t")
     %>% dplyr::transmute(
       date,
-      I = .data$y
+      I = y
     )
     %>% tibble::as_tibble()
   )
@@ -189,7 +189,7 @@ deconv <- function(
   )
   %>% tidyr::drop_na()
   %>% dplyr::rename(
-    t = .data$time,
-    y = .data$RL_result)
+    t = time,
+    y = RL_result)
   )
 }

@@ -152,8 +152,8 @@ with inferred aggregates outside of the specified tolerance of ",
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
   )
-    %>% dplyr::filter(!is.na(.data$obs))
-    %>% dplyr::select(date, .data$obs, dplyr::matches('agg$'))
+    %>% dplyr::filter(!is.na(obs))
+    %>% dplyr::select(date, obs, dplyr::matches('agg$'))
   )
 
   # Return results

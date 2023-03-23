@@ -63,9 +63,9 @@ incidence_to_R <- function(
     %>% dplyr::select(-dplyr::starts_with("t_"))
     %>% dplyr::transmute(
       date,
-      mean = .data$`Mean(R)`,
-      lo   = .data$`Quantile.0.025(R)`,
-      hi   = .data$`Quantile.0.975(R)`,
+      mean = `Mean(R)`,
+      lo   = `Quantile.0.025(R)`,
+      hi   = `Quantile.0.975(R)`,
       I )
   )
   return(res)
