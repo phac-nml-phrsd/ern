@@ -32,7 +32,6 @@
 #' @template param-silent
 #'
 #' @importFrom magrittr %>%
-#' @importFrom rlang .data
 #'
 #' @return List. Elements include:
 #' \itemize{

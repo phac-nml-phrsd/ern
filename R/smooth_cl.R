@@ -3,8 +3,6 @@
 #' @param cl.daily Data frame. Output of [`agg_to_daily()`].
 #' @inheritParams estimate_R_cl
 #'
-#' @importFrom rlang .data
-#'
 #' @return Data frame
 #' @export
 smooth_cl <- function(cl.daily, prm.smooth){

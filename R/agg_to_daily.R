@@ -205,7 +205,6 @@ Running MCMC model to infer daily reports from aggregated reports...
 #'
 #' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
 #'
-#' @importFrom rlang .data
 #'
 #' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
@@ -231,7 +230,6 @@ reshape_fit_jags <- function(x){
 #'
 #' @seealso [agg_to_daily()]
 #'
-#' @importFrom rlang .data
 #'
 #' @return Data frame
 get_realizations <- function(

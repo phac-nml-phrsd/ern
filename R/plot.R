@@ -5,8 +5,6 @@
 #'
 #' @return A `ggplot` object.
 #'
-#' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @seealso [estimate_R_ww()]
@@ -72,7 +70,6 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #'
 #' @importFrom patchwork plot_layout
 # need this to get the S3 method "/"
-#' @importFrom rlang .data
 #'
 #' @seealso [estimate_R_cl()]
 plot_diagnostic_cl <- function(

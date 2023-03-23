@@ -3,8 +3,6 @@
 #'
 #' @inheritParams estimate_R_ww
 #'
-#' @importFrom rlang .data
-#'
 #' @return Data frame
 #'
 #' @export

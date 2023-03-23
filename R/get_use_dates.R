@@ -6,7 +6,6 @@
 #'
 #' @return Data frame or vector, depending on `dates.only`
 #'
-#' @importFrom rlang .data
 get_use_dates <- function(
     cl.daily,
     cl.agg,
@@ -57,7 +56,6 @@ get_use_dates <- function(
 #'
 #' @param df Data frame. Must have `date` and `value` columns.
 #'
-#' @importFrom rlang .data
 summarise_by_date_iters <- function(df){
   res = df %>%
     dplyr::group_by(date) %>%
@@ -75,7 +73,6 @@ summarise_by_date_iters <- function(df){
 #' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
 #' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
 #'
-#' @importFrom rlang .data
 summarise_by_date_ens <- function(df, CI = 0.95){
   res = df %>%
     dplyr::group_by(date) %>%
@@ -100,7 +97,6 @@ summarise_by_date_ens <- function(df, CI = 0.95){
 #'
 #' @return Data frame
 #'
-#' @importFrom rlang .data
 summarise_report_counts <- function(df, prm.daily.check){
   agg.reldiff.tol <- prm.daily.check$agg.reldiff.tol
 

@@ -7,8 +7,6 @@
 #' @inheritParams estimate_R_ww
 #' @template param-silent
 #'
-#' @importFrom rlang .data
-#'
 #' @return Data frame with deconvoluted incidence
 deconv_ww_inc <- function(d, fec, scaling.factor, silent){
 
