@@ -12,15 +12,67 @@ test_that("check_prm.R returns a warning message and a value of NULL
               window = 10,
               config.EpiEstim = EpiEstim::make_config(seed = 15)
             )
-            expect_message(
+            expect_warning(
               check_prm.R(prm.R, silent = FALSE)
             )
-            expect_message(
+            expect_warning(
               check_prm.R(prm.R, silent = FALSE),
               NULL
             )
           }
 )
+
+test_that("check_prm.smooth returns an error when method is not specified or
+          valid, returns an error when window or span is not specified or valid,
+          and returns NULL when valid prm.smooth parameters are passed", {
+            prm.smooth.valid.rm = list(
+              window = 14,
+              align = "center",
+              method = "rollmean"
+            )
+            prm.smooth.valid.loess = list(
+              method = "loess",
+              span = 1
+            )
+            expect_equal(
+              check_prm.smooth(prm.smooth.valid.rm),
+              NULL
+            )
+            expect_equal(
+              check_prm.smooth(prm.smooth.valid.loess),
+              NULL
+            )
+            prm.smooth.missing.method =
+              purrr::discard_at(prm.smooth.valid.loess, "method")
+            expect_error(
+              check_prm.smooth(prm.smooth.missing.method)
+            )
+            prm.smooth.invalid.method =
+              purrr::list_modify(prm.smooth.valid.loess, method = "rollloess")
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.method)
+            )
+            prm.smooth.missing.window = purrr::discard_at(prm.smooth.valid.rm,
+                                                          "window")
+            expect_error(
+              check_prm.smooth(prm.smooth.missing.window)
+            )
+            prm.smooth.invalid.window = purrr::list_modify(prm.smooth.valid.rm,
+                                                           window = "14")
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.window)
+            )
+            prm.smooth.missing.span = purrr::discard_at(prm.smooth.valid.loess,
+                                                        "span")
+            expect_error(
+              check_prm.smooth(prm.smooth.missing.span)
+            )
+            prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
+                                                         span = "1")
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.span)
+            )
+          })
 
 test_that("check_dist returns an error when invalid distributions are
           passed, and returns NULL when valid distribution is passed", {
