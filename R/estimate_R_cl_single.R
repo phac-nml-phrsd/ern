@@ -17,7 +17,7 @@ estimate_R_cl_single <- function(
 
   # sample one realization of reports.daily (smoothed)
   id.list <- unique(cl.daily$id)
-  the_id <- sample(id.list, size = 1)
+  the_id  <- sample(id.list, size = 1)
   df.draw <- (cl.daily
      %>% dplyr::filter(id == the_id)
   )
@@ -45,25 +45,21 @@ estimate_R_cl_single <- function(
 
   # reports deconvoluted with reporting delay distribution
   # and then with incubation period distribution
-  incidence <- (reports_to_incidence(
+  incidence <- reports_to_incidence(
     reports.daily.scaled,
     reporting.delay,
     incubation.period,
-    silent = silent
-  )
+    silent = silent  ) %>%
     # attach time index to incidence
-    %>% dplyr::mutate(
-      t = 1:nrow(.)
-    )
-  )
+    dplyr::mutate(t = 1:nrow(.))
 
   # estimate Rt
-  incidence_to_R(
+  res = incidence_to_R(
     incidence,
     generation.interval,
-    prm.R
-  )
+    prm.R)
 
+  return(res)
 }
 
 

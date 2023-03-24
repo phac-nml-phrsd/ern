@@ -9,6 +9,7 @@
 #'
 #' @seealso [def_dist_generation_interval()]
 #' @seealso [EpiEstim::make_config()]
+#'
 incidence_to_R <- function(
     incidence,
     generation.interval,
@@ -16,34 +17,37 @@ incidence_to_R <- function(
 ){
   # === prep inputs ====
 
-  # make config
+  # Prepare the configuration for EpiEstim's function
   incid  <- incidence$I
-  method <- "non_parametric_si"
+  tmp    <- prm.R[['method.EpiEstim']]
+  method <- ifelse(is.null(tmp), "non_parametric_si", tmp)
+
   if(is.null(prm.R$config.EpiEstim)){
-    config.EpiEstim <- suppressMessages(EpiEstim::make_config(
-      incid    = incid,
-      method   = method,
-      si_distr = c(0, get_discrete_dist(generation.interval))
-    ))
+    # If the configuration for EpiEstim's function
+    # is not specified, we create a default one:
+    config.EpiEstim <- suppressMessages(
+      EpiEstim::make_config(
+        incid    = incid,
+        # method   = method,  # EpiEstim "bug"
+        si_distr = c(0, get_discrete_dist(generation.interval))
+      )
+    )
   } else {
-    prm.R$config.EpiEstim$si_distr = c(0, get_discrete_dist(generation.interval))
-    config.EpiEstim <- suppressMessages(EpiEstim::make_config(
-      incid = incid,
-      method = method,
-      config = prm.R$config.EpiEstim
-    ))
+    # If the configuration for EpiEstim's function
+    # is not specified, we use it directly `as is`:
+    config.EpiEstim <- prm.R$config.EpiEstim
   }
 
   # update t_end in config if window is specified in prm.R
   # NOTE: this overrides specification of t_end in config.EpiEstim
   if(!is.null(prm.R$window)){
     t_start <- config.EpiEstim$t_start
-    t_end <- as.integer(t_start + (prm.R$window - 1)) # -1 because window includes endpoints
+    t_end   <- as.integer(t_start + (prm.R$window - 1)) # -1 because window includes endpoints
     # trim off start/end dates where end date exceeds
     # number of incidence observations
     valid <- t_end <= length(incid)
     config.EpiEstim$t_start <- t_start[valid]
-    config.EpiEstim$t_end <- t_end[valid]
+    config.EpiEstim$t_end   <- t_end[valid]
   }
 
   # ==== Calculate Rt ====
@@ -51,7 +55,7 @@ incidence_to_R <- function(
   # (handle GI sampling outside of this function)
 
   R = EpiEstim::estimate_R(
-    incid = incid,
+    incid  = incid,
     method = method,
     config = config.EpiEstim
   )$R
@@ -59,14 +63,14 @@ incidence_to_R <- function(
   # ==== prep output ====
 
   res = (R
-    %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
-    %>% dplyr::select(-dplyr::starts_with("t_"))
-    %>% dplyr::transmute(
-      date,
-      mean = `Mean(R)`,
-      lo   = `Quantile.0.025(R)`,
-      hi   = `Quantile.0.975(R)`,
-      I )
+         %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
+         %>% dplyr::select(-dplyr::starts_with("t_"))
+         %>% dplyr::transmute(
+           date,
+           mean = `Mean(R)`,
+           lo   = `Quantile.0.025(R)`,
+           hi   = `Quantile.0.975(R)`,
+           I )
   )
   return(res)
 }
