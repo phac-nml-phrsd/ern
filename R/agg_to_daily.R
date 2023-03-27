@@ -185,18 +185,20 @@ Running MCMC model to infer daily reports from aggregated reports...
   # --- MCMC run
 
   # Burn-in period:
-  output <- capture.output(stats::update(mod, n.iter = prm.daily$burn))
-
-  if(!silent) print(output)
+  n.iter = prm.daily$burn
+  if(!silent) stats::update(mod, n.iter = n.iter)
+  if(silent) capture.output(stats::update(mod, n.iter = n.iter))
 
   # Posterior iterations:
-  output <- capture.output(mod_sim <- rjags::coda.samples(
+  n.iter = prm.daily$iter
+  if(silent) capture.output(mod_sim <- rjags::coda.samples(
     model = mod,
     variable.names = params,
-    n.iter = prm.daily$iter
-  ))
+    n.iter = n.iter))
 
-  if(!silent) print(output)
+  if(!silent) mod_sim <- rjags::coda.samples(model = mod,
+                                             variable.names = params,
+                                             n.iter = n.iter)
 
   return(mod_sim)
 }
