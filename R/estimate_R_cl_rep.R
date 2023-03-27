@@ -13,7 +13,8 @@ estimate_R_cl_rep <- function(
     dist.incub,
     dist.gi,
     prm.R,
-    silent = FALSE
+    silent = FALSE,
+    RL.max.iter = 10
 ){
 
   if(is.null(prm.R$config.EpiEstim) & !silent) message("Using default config in `EpiEstim::estimate_R()`.")
@@ -31,7 +32,8 @@ estimate_R_cl_rep <- function(
       dist.incub    = dist.incub,
       dist.gi       = dist.gi,
       prm.R         = prm.R,
-      silent        = silent
+      silent        = silent,
+      RL.max.iter   = RL.max.iter
     )
   }
   R = dplyr::bind_rows(tmp)

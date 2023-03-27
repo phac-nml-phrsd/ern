@@ -28,6 +28,7 @@
 #'  \item `window`: width of smoothing window (number of days)
 #' }
 #' Set this entire argument to `NULL` to turn off smoothing.
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #' @template param-prm.R
 #' @template param-silent
 #'
@@ -64,6 +65,7 @@ estimate_R_cl <- function(
     window = 7,
     config.EpiEstim = NULL
   ),
+  RL.max.iter = 10,
   silent = FALSE
 ) {
 
@@ -141,6 +143,7 @@ with inferred aggregates outside of the specified tolerance of ",
     dist.incub    = dist.incub,
     dist.gi       = dist.gi,
     prm.R         = prm.R,
+    RL.max.iter   = RL.max.iter,
     silent        = silent
   )
 
