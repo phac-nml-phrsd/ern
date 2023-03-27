@@ -290,16 +290,27 @@ get_discrete_dist <- function(params){
   # --- check args
   check_dist(params)
 
-  if(!(params$dist %in% c("lnorm", "gamma"))) stop(paste0("Distribution recipe has not
-been defined for specified distribution type (dist = ", params$dist, ")"))
+  if(!(params$dist %in% c("lnorm", "gamma", "norm"))) {
+    stop(paste0("Distribution recipe has not been defined
+                for specified distribution type (dist = ",
+                params$dist, ")"))
+  }
 
   # --- get discrete dist
 
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
-      1:params$max,
+      x       = 1:params$max,
       meanlog = params$mean,
-      sdlog = params$sd
+      sdlog   = params$sd
+    )
+  }
+
+  if(params$dist == "norm"){
+    x <- stats::dnorm(
+      x    = 1:params$max,
+      mean = params$mean,
+      sd   = params$sd
     )
   }
 
