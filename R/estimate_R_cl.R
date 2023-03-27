@@ -50,7 +50,7 @@ estimate_R_cl <- function(
   prm.daily = list(
     burn = 500,
     iter = 2e3,
-    chains = 20,
+    chains = 3,
     first.agg.period = NULL
   ),
   prm.daily.check = list(
@@ -97,7 +97,7 @@ estimate_R_cl <- function(
     prm.smooth = prm.smooth
   )
 
-  # trim smoothed reports based on relative error criterion
+  # Trim smoothed reports based on relative error criterion
 
   if(!is.null(prm.daily.check)){
     if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
@@ -119,8 +119,9 @@ original reports...")
 with inferred aggregates outside of the specified tolerance of ",
                    prm.daily.check$agg.reldiff.tol, "%..."
     ))
-    message(paste0("Before filtering: ", nrow(cl.daily), " daily reports"))
-    message(paste0("After filtering: ", length(cl.use.dates), " daily reports"))
+      dates.before = unique(cl.daily$date)
+    message(paste0("Before filtering: ", length(dates.before), " daily reports"))
+    message(paste0("After filtering:  ", length(cl.use.dates), " daily reports"))
     message("To reduce the number of observations dropped in filtering, either:
   - adjust MCMC parameters in prm.daily (burn, iter, chains) to
       improve chances of MCMC convergence,
