@@ -18,6 +18,12 @@ To install the latest version of this package:
 devtools::install_github('phac-nml-phrsd/ern')
 ```
 
+### Note on JAGS
+
+`rjags` is a dependency for `ern`. `rjags` is the R interface for the [`JAGS` Bayesian modelling library](https://mcmc-jags.sourceforge.io/). Installation of `JAGS` is required and the latest version can be found [here](https://sourceforge.net/projects/mcmc-jags/files/). It is recommended that you are using the latest version of R and `JAGS` for optimal usage of `ern`.
+
+* For users who are only able to install older versions of `JAGS`, we recommend downgrading to R version 4.1.
+
 ## Vignettes
 
 This package contains vignettes on how `ern` can be used to estimate $R_t$. 
