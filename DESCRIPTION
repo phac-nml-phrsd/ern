@@ -11,6 +11,7 @@ Description: Estimate the effective reproduction number from wastewater
     and clinical data sources.
 License: MIT + file LICENSE
 Imports: 
+    assertthat,
     dplyr,
     EpiEstim,
     ggplot2,

@@ -6,10 +6,19 @@
 #' @return NULL
 check_prm.R <- function(x, silent = FALSE){
 
+  # Check that mandatory elements are present and of the right type
+  assertthat::has_name(x, "iter")
+  assertthat::assert_that(assertthat::is.count(x$iter))
+  assertthat::has_name(x, "CI")
+  assertthat::assert_that(is.numeric(x$CI))
+  ## TODO: check that CI is between 0 and 1 (not inclusive)
+  assertthat::has_name(x, "window")
+  assertthat::assert_that(is.numeric(x$window))
+
   # Check config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
     if(!silent){
-      warning("-----
+      message("-----
 You are passing your own config for EpiEstim::estimate_R().
 Please note that ern always uses method = 'non_parametric_si',
 and thus any method specified in your config will be ignored.

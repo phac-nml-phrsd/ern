@@ -1,23 +1,44 @@
-test_that("specifying a custom EpiEstim config in `prm.R` triggers a warning", {
-  prm.R.1 <- list(
-    config.EpiEstim = EpiEstim::make_config(t_start = c(6))
+x <- list(
+  iter = 2,
+  CI = 0.95,
+  window = 10
+)
+
+test_that("specifying a custom EpiEstim config in `prm.R` triggers a message", {
+  x.message <- append(
+    x,
+    list(config.EpiEstim = EpiEstim::make_config(t_start = c(6)))
   )
-  expect_warning(check_prm.R(prm.R.1))
+  expect_message(check_prm.R(x.message))
 })
 
-test_that("check_prm.R returns a warning message and a value of NULL
+test_that("check_prm.R fails when mandatory elements are missing", {
+  for(i in 1:length(x)){
+    expect_error(check_prm.R(x[-i]))
+  }
+})
+
+test_that("check_prm.R fails when list items are of wrong type", {
+  expect_error(check_prm.R(purrr::list_modify(x, iter = "2")))
+  expect_error(check_prm.R(purrr::list_modify(x, CI = "2")))
+  ## TODO: uncomment this once CI we have an error if CI is not strictly between 0 and 1
+  # expect_error(check_prm.R(purrr::list_modify(x, CI = 2)))
+  expect_error(check_prm.R(purrr::list_modify(x, window = "2")))
+})
+
+test_that("check_prm.R returns a message and a value of NULL
           when users passes their own config for R calculations", {
             prm.R = list(
+              iter = 2,
               CI = 0.95,
               window = 10,
               config.EpiEstim = EpiEstim::make_config(seed = 15)
             )
-            expect_warning(
+            expect_message(
               check_prm.R(prm.R, silent = FALSE)
             )
-            expect_warning(
-              check_prm.R(prm.R, silent = FALSE),
-              NULL
+            expect_null(
+              check_prm.R(prm.R, silent = FALSE)
             )
           }
 )
