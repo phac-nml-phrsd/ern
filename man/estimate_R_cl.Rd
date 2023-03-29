@@ -11,10 +11,11 @@ estimate_R_cl(
   dist.incub,
   dist.gi,
   popsize,
-  prm.daily = list(burn = 500, iter = 2000, chains = 20, first.agg.period = NULL),
+  prm.daily = list(burn = 500, iter = 2000, chains = 3, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
   prm.R = list(iter = 10, window = 7, config.EpiEstim = NULL),
+  RL.max.iter = 10,
   silent = FALSE
 )
 }
@@ -67,6 +68,8 @@ estimates after sampling uncertain distributions.
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
 \code{EpiEstim}.
 }}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }

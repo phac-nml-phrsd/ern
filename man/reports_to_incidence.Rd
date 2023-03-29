@@ -8,7 +8,7 @@ reports_to_incidence(
   reports.daily,
   reporting.delay,
   incubation.period,
-  max.iter = 50,
+  max.iter = 9,
   silent = FALSE
 )
 }

@@ -11,7 +11,8 @@ estimate_R_cl_rep(
   dist.incub,
   dist.gi,
   prm.R,
-  silent = FALSE
+  silent = FALSE,
+  RL.max.iter = 10
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ estimates after sampling uncertain distributions.
 }}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 }
 \value{
 A summary of individual Rt realizations with 95\% confidence intervals
