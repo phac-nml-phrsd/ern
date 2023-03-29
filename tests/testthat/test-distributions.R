@@ -1,7 +1,7 @@
 test_that("distributions are initialized correctly", {
   for (f in ls(getNamespace("ern"), pattern = "def_dist_")) {
-    expect_type(get(f)(), "list")
-    expect_equal(names(get(f)())[1], "dist")
+    expect_type(suppressWarnings(get(f)()), "list")
+    expect_equal(names(suppressWarnings(get(f)()))[1], "dist")
   }
 })
 
