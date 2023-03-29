@@ -292,8 +292,8 @@ get_discrete_dist <- function(params){
 
   if(!(params$dist %in% c("lnorm", "gamma", "norm"))) {
     stop(paste0("Distribution recipe has not been defined
-                for specified distribution type (dist = ",
-                params$dist, ")"))
+                for specified distribution type (dist = `",
+                params$dist, "`)"))
   }
 
   # --- get discrete dist
