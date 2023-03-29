@@ -44,7 +44,7 @@ Elements include:
 \code{EpiEstim} to estimate Rt
 \item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
 estimates after sampling uncertain distributions.
-\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\item \code{config.EpiEstim}: (optional) configuration for \code{EpiEstim} defined via
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
 \code{EpiEstim}.
 }}
