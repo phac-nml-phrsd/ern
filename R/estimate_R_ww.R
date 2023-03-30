@@ -39,9 +39,6 @@ estimate_R_ww <- function(
     silent = FALSE
 ) {
 
-  # Add defaults to partially specified prm lists
-  prm.R <- add_defaults_prm.R(prm.R)
-
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
   check_prm.smooth(prm.smooth)

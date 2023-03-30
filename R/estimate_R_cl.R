@@ -12,9 +12,9 @@
 #' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
-#'  \item `burn`: Numeric. Length of burn-in period (number of days). Default is 100.
-#'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days). Default is 500.
-#'  \item `chains`: Numeric. Number of chains to simulate. Default is 1.
+#'  \item `burn`: Numeric. Length of burn-in period (number of days).
+#'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
+#'  \item `chains`: Numeric. Number of chains to simulate.
 #'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #' }
 #' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
@@ -67,9 +67,6 @@ estimate_R_cl <- function(
   ),
   silent = FALSE
 ) {
-  # Add defaults to partially specified prm lists
-  prm.daily <- add_defaults_prm.daily(prm.daily)
-  prm.R <- add_defaults_prm.R(prm.R)
 
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
