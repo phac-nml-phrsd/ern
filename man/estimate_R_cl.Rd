@@ -14,7 +14,7 @@ estimate_R_cl(
   prm.daily = list(burn = 500, iter = 2000, chains = 20, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(window = 7),
-  prm.R = list(iter = 10, window = 7, config.EpiEstim = NULL),
+  prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
   silent = FALSE
 )
 }
