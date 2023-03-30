@@ -101,7 +101,7 @@ test_that("defaults common between estimate_R_ww and estimate_R_cl have the same
   defaults_ww <- formals(estimate_R_ww)
   defaults_cl <- formals(estimate_R_cl)
 
-  prm.list <c("prm.R")
+  prm.list <- c("prm.R")
   # prm.list <- c("prm.R", "prm.smooth")
 
   for(prm.name in prm.list){
