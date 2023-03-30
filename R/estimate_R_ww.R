@@ -36,7 +36,6 @@ estimate_R_ww <- function(
       window = 7,
       config.EpiEstim = NULL
     ),
-    iter = 100,
     silent = FALSE
 ) {
 
