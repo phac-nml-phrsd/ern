@@ -120,22 +120,24 @@ test_that("check_prm.smooth returns an error when method is not specified or
 
 test_that("check_dist returns an error when invalid distributions are
           passed, and returns NULL when valid distribution is passed", {
-            fec = def_dist_fecal_shedding()
-            fec.missing.shape = purrr::discard_at(fec, "shape")
-            fec.sd = purrr::list_modify(fec,
-                                        sd = 2)
-            expect_error(
-              check_dist(fec.missing.shape)
-            )
-            expect_error(
-              check_dist(fec.sd)
-            )
-            expect_equal(
-              check_dist(fec),
-              NULL
-            )
-          }
-)
+  fec = def_dist_fecal_shedding()
+  fec.missing.shape = purrr::discard_at(fec, "shape")
+  fec.sd = purrr::list_modify(fec,
+                              sd = 2)
+  out <- capture_output(expect_error(
+    check_dist(fec.missing.shape))
+  ) # suppress additional printing in error
+  out <- capture_output(expect_error(
+    check_dist(fec.sd)
+  ))
+  expect_equal(
+    check_dist(fec),
+    NULL
+  )
+})
+
+
+# deconv ------------------------------------------------------------------
 
 test_that("check_for_deconv returns an error when number of observations <
           length of distribution vector, and returns NULL when obs >=
