@@ -11,7 +11,7 @@ check_prm.R <- function(x, silent = FALSE){
   assertthat::assert_that(assertthat::is.count(x$iter))
   assertthat::has_name(x, "CI")
   assertthat::assert_that(is.numeric(x$CI))
-  ## TODO: check that CI is between 0 and 1 (not inclusive)
+  if(x$CI <= 0 | x$CI >= 1) stop("prm.R$CI must be between 0 and 1 (non-inclusive)")
   assertthat::has_name(x, "window")
   assertthat::assert_that(is.numeric(x$window))
 

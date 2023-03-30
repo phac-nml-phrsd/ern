@@ -21,8 +21,7 @@ test_that("check_prm.R fails when mandatory elements are missing", {
 test_that("check_prm.R fails when list items are of wrong type", {
   expect_error(check_prm.R(purrr::list_modify(x, iter = "2")))
   expect_error(check_prm.R(purrr::list_modify(x, CI = "2")))
-  ## TODO: uncomment this once CI we have an error if CI is not strictly between 0 and 1
-  # expect_error(check_prm.R(purrr::list_modify(x, CI = 2)))
+  expect_error(check_prm.R(purrr::list_modify(x, CI = 2)))
   expect_error(check_prm.R(purrr::list_modify(x, window = "2")))
 })
 
