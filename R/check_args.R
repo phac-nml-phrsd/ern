@@ -1,3 +1,11 @@
+
+# prm.daily ---------------------------------------------------------------
+
+#' Check parameters for daily data inference
+#'
+#' @param x List. Parameters for daily data inference.
+#'
+#' @return NULL
 check_prm.daily <- function(x){
   # Check that mandatory elements are present and of the right type
   for (name in c("burn", "iter", "chains")){
@@ -13,15 +21,61 @@ check_prm.daily <- function(x){
 
   return()
 }
-#
-# check_prm.daily.check <- function(x){
-#   if(is.null(prm.daily.check)) return()
-#
-# }
+
+
+# prm.daily.check ---------------------------------------------------------
+
+#' Check parameters for daily data inference check
+#'
+#' @param x List. Parameters for daily data inference check.
+#'
+#' @return NULL
+check_prm.daily.check <- function(x){
+  # if prm.daily.check list is NULL, return early (NULL is a valid option, turns off daily inference check)
+  if(is.null(x)) return(NULL)
+
+  # otherwise, must specify agg.reldiff.tol
+  assertthat::has_name(x, "agg.reldiff.tol")
+  tol <- x[["agg.reldiff.tol"]]
+  assertthat::assert_that(is.numeric(tol))
+  if(tol <= 0) stop("prm.daily.check$agg.reldiff.tol must be positive and non-zero")
+
+  return(NULL)
+}
+
+# prm.smooth --------------------------------------------------------------
+
+#' Check parameters for smoothing
+#'
+#' @param x List that specifies the type of smoothing and the parameters associated with the smoothing method.
+#'
+#' @return NULL
+check_prm.smooth <- function(x){
+
+  if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
+
+  if(x$method == "rollmean"){
+    err.msg <- "For the rolling mean smoothing method, a numeric `window` value must be specified in `prm.smooth`"
+    if(!("window" %in% names(x))) stop(err.msg)
+    if(!is.numeric(x$window)) stop(err.msg)
+  }
+  else if(x$method == "loess"){
+    err.msg <- "For the loess smoothing method, a numeric `span` value must be specified in `prm.smooth`"
+    if(!("span" %in% names(x))) stop(err.msg)
+    if(!is.numeric(x$span)) stop(err.msg)
+  }
+  else {
+    stop(paste0("Smoothing method of ", x$method, " not recognized"))
+  }
+
+  return()
+}
+
+# prm.R -------------------------------------------------------------------
 
 #' Check parameters for Rt calculation
 #'
-#' @param x List of parameters for Rt calculation
+#' @param x List. Parameters for Rt calculation.
 #' @template param-silent
 #'
 #' @return NULL
@@ -55,32 +109,6 @@ Also, any config parameters that are specific to
 method = 'non_parametric_si' (like si_distr) cannot be modified and
 will also be ignored.")
     }
-  }
-
-  return()
-}
-
-#' Check parameters for smoothing
-#'
-#' @param x List that specifies the type of smoothing and the parameters associated with the smoothing method.
-#'
-#' @return NULL
-check_prm.smooth <- function(x){
-
-  if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
-
-  if(x$method == "rollmean"){
-    err.msg <- "For the rolling mean smoothing method, a numeric `window` value must be specified in `prm.smooth`"
-    if(!("window" %in% names(x))) stop(err.msg)
-    if(!is.numeric(x$window)) stop(err.msg)
-  }
-  else if(x$method == "loess"){
-    err.msg <- "For the loess smoothing method, a numeric `span` value must be specified in `prm.smooth`"
-    if(!("span" %in% names(x))) stop(err.msg)
-    if(!is.numeric(x$span)) stop(err.msg)
-  }
-  else {
-    stop(paste0("Smoothing method of ", x$method, " not recognized"))
   }
 
   return()

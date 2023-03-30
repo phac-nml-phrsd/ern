@@ -101,7 +101,6 @@ estimate_R_cl <- function(
   # trim smoothed reports based on relative error criterion
 
   if(!is.null(prm.daily.check)){
-    if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
     if(!silent){
       message("-----
 - Aggregating inferred daily reports back using the original
