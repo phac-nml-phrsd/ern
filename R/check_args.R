@@ -1,3 +1,24 @@
+check_prm.daily <- function(x){
+  # Check that mandatory elements are present and of the right type
+  for (name in c("burn", "iter", "chains")){
+    # Check presence of element
+    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::is.count(x[[name]]))
+  }
+
+  # Check optional arguments
+  if(!is.null(x$first.agg.period)){
+    assertthat::assert_that(assertthat::is.count((x$first.agg.period)))
+  }
+
+  return()
+}
+#
+# check_prm.daily.check <- function(x){
+#   if(is.null(prm.daily.check)) return()
+#
+# }
+
 #' Check parameters for Rt calculation
 #'
 #' @param x List of parameters for Rt calculation
@@ -7,15 +28,23 @@
 check_prm.R <- function(x, silent = FALSE){
 
   # Check that mandatory elements are present and of the right type
-  assertthat::has_name(x, "iter")
-  assertthat::assert_that(assertthat::is.count(x$iter))
-  assertthat::has_name(x, "CI")
-  assertthat::assert_that(is.numeric(x$CI))
-  if(x$CI <= 0 | x$CI >= 1) stop("prm.R$CI must be between 0 and 1 (non-inclusive)")
-  assertthat::has_name(x, "window")
-  assertthat::assert_that(is.numeric(x$window))
+  for (name in c("iter", "CI", "window")){
+    # Check presence of element
+    assertthat::has_name(x, name)
 
-  # Check config.EpiEstim
+    # Check element type
+    if(name %in% c("iter", "window")){
+      assertthat::assert_that(assertthat::is.count(x[[name]]))
+    }
+
+    if(name == "CI"){
+      assertthat::assert_that(is.numeric(x[[name]]))
+      if(x[[name]] <= 0 | x[[name]] >= 1) stop("prm.R$CI must be between 0 and 1 (non-inclusive)")
+    }
+  }
+
+  # Check optional arguments
+  # config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
     if(!silent){
       message("-----
