@@ -7,7 +7,7 @@
 check_prm.R(x, silent = FALSE)
 }
 \arguments{
-\item{x}{List of parameters for Rt calculation}
+\item{x}{List. Parameters for Rt calculation.}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
