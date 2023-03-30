@@ -10,8 +10,6 @@
 #' @template param-prm.smooth
 #' @template param-prm.R
 #' @template param-silent
-#' @param iter Integer. Number of samples for the (uncertain) generation
-#'  interval distribution.
 #' @return List. Elements include:
 #' \itemize{
 #'  \item `ww.conc`: original wastewater signal
@@ -33,11 +31,11 @@ estimate_R_ww <- function(
       span   = 0.20
     ),
     prm.R = list(
+      iter = 10,
       CI = 0.95,
       window = 7,
       config.EpiEstim = NULL
     ),
-    iter = 100,
     silent = FALSE
 ) {
 
@@ -69,7 +67,7 @@ estimate_R_ww <- function(
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
-  r = lapply(X = 1:iter, FUN = inc2R_one_iter,
+  r = lapply(X = 1:prm.R$iter, FUN = inc2R_one_iter,
     dist.gi = dist.gi, dist.fec = dist.fec,
     ww.conc = ww.smooth, scaling.factor = scaling.factor,
     prm.R = prm.R, silent = silent
