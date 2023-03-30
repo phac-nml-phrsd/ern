@@ -19,9 +19,9 @@ fit_jags_aggreg(obs.times, Y, g, N, n.days = NULL, prm.daily, silent = FALSE)
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
-\item \code{burn}: Numeric. Length of burn-in period (number of days). Default is 100.
-\item \code{iter}: Numeric. Number of iterations after burn-in period (number of days). Default is 500.
-\item \code{chains}: Numeric. Number of chains to simulate. Default is 1.
+\item \code{burn}: Numeric. Length of burn-in period (number of days).
+\item \code{iter}: Numeric. Number of iterations after burn-in period (number of days).
+\item \code{chains}: Numeric. Number of chains to simulate.
 \item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 }}
 

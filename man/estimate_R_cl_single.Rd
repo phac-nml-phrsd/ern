@@ -30,7 +30,7 @@ Elements include:
 \itemize{
 \item \code{iter}: Integer. Number of iterations for the Rt ensemble
 \item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
-estimates after sampling uncertain distributions. If \code{NULL}, will default to 0.95.
+estimates after sampling uncertain distributions.
 \item \code{window}: Integer. Number of days defining the window of data used by
 \code{EpiEstim} to estimate Rt. If \code{NULL}, will default to 7.
 \item \code{config.EpiEstim}: (optional) configuration for \code{EpiEstim} defined via
