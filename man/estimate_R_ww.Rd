@@ -12,7 +12,6 @@ estimate_R_ww(
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
   prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
-  iter = 100,
   silent = FALSE
 )
 }
