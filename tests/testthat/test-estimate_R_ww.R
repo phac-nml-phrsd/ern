@@ -52,8 +52,7 @@ test_that("estimate_R_ww returns a list of four dataframes", {
       ww.conc = ww.conc,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      prm.smooth = prm.smooth,
-      iter = 1
+      prm.smooth = prm.smooth
     ),
     "list"
   )
@@ -62,8 +61,7 @@ test_that("estimate_R_ww returns a list of four dataframes", {
       ww.conc = ww.conc,
       dist.fec = dist.fec,
       dist.gi = dist.gi,
-      prm.smooth = prm.smooth,
-      iter = 1
+      prm.smooth = prm.smooth
     ),
     4
   )
@@ -77,7 +75,6 @@ test_that("estimate_R_ww returns a message when silent mode is disabled", {
       dist.fec = dist.fec,
       dist.gi = dist.gi,
       prm.smooth = prm.smooth,
-      iter = 1,
       silent = FALSE
     )
   )
@@ -91,7 +88,6 @@ test_that("estimate_R_ww executes silently when silent mode is enabled", {
       dist.fec = dist.fec,
       dist.gi = dist.gi,
       prm.smooth = prm.smooth,
-      iter = 1,
       silent = TRUE
     )
   )
