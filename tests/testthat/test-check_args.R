@@ -1,98 +1,122 @@
-x <- list(
-  iter = 2,
-  CI = 0.95,
-  window = 10
-)
+# get current defaults from estimate_R_cl as formals
+defaults <- formals(estimate_R_cl)
+
+# prm.daily ---------------------------------------------------------
+
+# evaluate defaults
+prm.daily <- eval(defaults$prm.daily)
+
+test_that("check_prm.daily fails when mandatory elements are missing",{
+  for(name in c("burn", "iter", "chains")){
+    expect_error(check_prm.daily(prm.daily[setdiff(names(prm.daily), name)]))
+  }
+})
+
+test_that("check_prm.daily fails when list items are of wrong type", {
+  expect_error(check_prm.daily(purrr::list_modify(prm.daily, burn = "2")))
+  expect_error(check_prm.daily(purrr::list_modify(prm.daily, iter = -2)))
+  expect_error(check_prm.daily(purrr::list_modify(prm.daily, chains = 0.5)))
+  expect_error(check_prm.daily(purrr::list_modify(prm.daily, first.agg.period = "-2")))
+})
+
+test_that("check_prm.daily returns NULL when all checks are passed", {
+  expect_null(check_prm.daily(prm.daily))
+})
+
+# prm.R -------------------------------------------------------------
+
+# evaluate defaults
+prm.R <- eval(defaults$prm.R)
 
 test_that("specifying a custom EpiEstim config in `prm.R` triggers a message", {
-  x.message <- append(
-    x,
-    list(config.EpiEstim = EpiEstim::make_config(t_start = c(6)))
-  )
-  expect_message(check_prm.R(x.message))
+  expect_message(check_prm.R(
+    purrr::list_modify(prm.R,
+                       config.EpiEstim = EpiEstim::make_config(t_start = c(6)))))
 })
 
 test_that("check_prm.R fails when mandatory elements are missing", {
-  for(i in 1:length(x)){
-    expect_error(check_prm.R(x[-i]))
+  for(name in c("iter", "CI", "window")){
+    expect_error(check_prm.R(prm.R[setdiff(names(prm.R), name)]))
   }
 })
 
 test_that("check_prm.R fails when list items are of wrong type", {
-  expect_error(check_prm.R(purrr::list_modify(x, iter = "2")))
-  expect_error(check_prm.R(purrr::list_modify(x, CI = "2")))
-  expect_error(check_prm.R(purrr::list_modify(x, CI = 2)))
-  expect_error(check_prm.R(purrr::list_modify(x, window = "2")))
+  expect_error(check_prm.R(purrr::list_modify(prm.R, iter = "2")))
+  expect_error(check_prm.R(purrr::list_modify(prm.R, CI = "2")))
+  expect_error(check_prm.R(purrr::list_modify(prm.R, CI = 2)))
+  expect_error(check_prm.R(purrr::list_modify(prm.R, window = "2")))
 })
 
 test_that("check_prm.R returns a message and a value of NULL
           when users passes their own config for R calculations", {
-            prm.R = list(
-              iter = 2,
-              CI = 0.95,
-              window = 10,
-              config.EpiEstim = EpiEstim::make_config(seed = 15)
-            )
-            expect_message(
-              check_prm.R(prm.R, silent = FALSE)
-            )
-            expect_null(
-              check_prm.R(prm.R, silent = FALSE)
-            )
-          }
-)
+  expect_message(
+    check_prm.R(
+      purrr::list_modify(prm.R,
+                         config.EpiEstim = EpiEstim::make_config(t_start = c(6)))
+      , silent = FALSE)
+  )
+  expect_null(
+    check_prm.R(
+      purrr::list_modify(prm.R,
+                         config.EpiEstim = EpiEstim::make_config(t_start = c(6)))
+                , silent = TRUE)
+  )
+})
 
 test_that("check_prm.smooth returns an error when method is not specified or
           valid, returns an error when window or span is not specified or valid,
           and returns NULL when valid prm.smooth parameters are passed", {
-            prm.smooth.valid.rm = list(
-              window = 14,
-              align = "center",
-              method = "rollmean"
-            )
-            prm.smooth.valid.loess = list(
-              method = "loess",
-              span = 1
-            )
-            expect_equal(
-              check_prm.smooth(prm.smooth.valid.rm),
-              NULL
-            )
-            expect_equal(
-              check_prm.smooth(prm.smooth.valid.loess),
-              NULL
-            )
-            prm.smooth.missing.method =
-              purrr::discard_at(prm.smooth.valid.loess, "method")
-            expect_error(
-              check_prm.smooth(prm.smooth.missing.method)
-            )
-            prm.smooth.invalid.method =
-              purrr::list_modify(prm.smooth.valid.loess, method = "rollloess")
-            expect_error(
-              check_prm.smooth(prm.smooth.invalid.method)
-            )
-            prm.smooth.missing.window = purrr::discard_at(prm.smooth.valid.rm,
-                                                          "window")
-            expect_error(
-              check_prm.smooth(prm.smooth.missing.window)
-            )
-            prm.smooth.invalid.window = purrr::list_modify(prm.smooth.valid.rm,
-                                                           window = "14")
-            expect_error(
-              check_prm.smooth(prm.smooth.invalid.window)
-            )
-            prm.smooth.missing.span = purrr::discard_at(prm.smooth.valid.loess,
-                                                        "span")
-            expect_error(
-              check_prm.smooth(prm.smooth.missing.span)
-            )
-            prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
-                                                         span = "1")
-            expect_error(
-              check_prm.smooth(prm.smooth.invalid.span)
-            )
-          })
+  prm.smooth.valid.rm = list(
+    window = 14,
+    align = "center",
+    method = "rollmean"
+  )
+  prm.smooth.valid.loess = list(
+    method = "loess",
+    span = 1
+  )
+  expect_equal(
+    check_prm.smooth(prm.smooth.valid.rm),
+    NULL
+  )
+  expect_equal(
+    check_prm.smooth(prm.smooth.valid.loess),
+    NULL
+  )
+  prm.smooth.missing.method =
+    purrr::discard_at(prm.smooth.valid.loess, "method")
+  expect_error(
+    check_prm.smooth(prm.smooth.missing.method)
+  )
+  prm.smooth.invalid.method =
+    purrr::list_modify(prm.smooth.valid.loess, method = "rollloess")
+  expect_error(
+    check_prm.smooth(prm.smooth.invalid.method)
+  )
+  prm.smooth.missing.window = purrr::discard_at(prm.smooth.valid.rm,
+                                                "window")
+  expect_error(
+    check_prm.smooth(prm.smooth.missing.window)
+  )
+  prm.smooth.invalid.window = purrr::list_modify(prm.smooth.valid.rm,
+                                                 window = "14")
+  expect_error(
+    check_prm.smooth(prm.smooth.invalid.window)
+  )
+  prm.smooth.missing.span = purrr::discard_at(prm.smooth.valid.loess,
+                                              "span")
+  expect_error(
+    check_prm.smooth(prm.smooth.missing.span)
+  )
+  prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
+                                               span = "1")
+  expect_error(
+    check_prm.smooth(prm.smooth.invalid.span)
+  )
+})
+
+
+# distributions -----------------------------------------------------------
 
 test_that("check_dist returns an error when invalid distributions are
           passed, and returns NULL when valid distribution is passed", {
@@ -116,43 +140,45 @@ test_that("check_dist returns an error when invalid distributions are
 test_that("check_for_deconv returns an error when number of observations <
           length of distribution vector, and returns NULL when obs >=
           length(dist)", {
-            fec = get_discrete_dist(
-              def_dist_fecal_shedding()
-            )
-            n.obs = 1:33
-            n.obs.error = n.obs[-1]
-            expect_error(
-              check_for_deconv(
-                obs = n.obs.error,
-                dist = fec
-              )
-            )
-            expect_equal(
-              check_for_deconv(
-                obs = n.obs,
-                dist = fec
-              ),
-              NULL
-            )
-          })
+  fec = get_discrete_dist(
+    def_dist_fecal_shedding()
+  )
+  n.obs = 1:33
+  n.obs.error = n.obs[-1]
+  expect_error(
+    check_for_deconv(
+      obs = n.obs.error,
+      dist = fec
+    )
+  )
+  expect_equal(
+    check_for_deconv(
+      obs = n.obs,
+      dist = fec
+    ),
+    NULL
+  )
+})
+
+# data_clin ---------------------------------------------------------------
 
 test_that("check_data_clin returns an error when date and count columns
           are missing, and returns NULL when both columns are present in
           dateframe", {
-            dat = data.frame(
-              date = as.Date(character()),
-              count = integer()
-            )
-            dat.rm.date = dplyr::select(dat, -date)
-            dat.rm.count = dplyr::select(dat, -count)
-            expect_error(
-              check_data_clin(dat.rm.date)
-            )
-            expect_error(
-              check_data_clin(dat.rm.count)
-            )
-            expect_equal(
-              check_data_clin(dat),
-              NULL
-            )
-          })
+  dat = data.frame(
+    date = as.Date(character()),
+    count = integer()
+  )
+  dat.rm.date = dplyr::select(dat, -date)
+  dat.rm.count = dplyr::select(dat, -count)
+  expect_error(
+    check_data_clin(dat.rm.date)
+  )
+  expect_error(
+    check_data_clin(dat.rm.count)
+  )
+  expect_equal(
+    check_data_clin(dat),
+    NULL
+  )
+})
