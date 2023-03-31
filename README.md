@@ -22,7 +22,8 @@ devtools::install_github('phac-nml-phrsd/ern')
 
 `rjags` is a dependency for `ern`. `rjags` is the R interface for the [`JAGS` Bayesian modelling library](https://mcmc-jags.sourceforge.io/). Installation of `JAGS` is required and the latest version can be found [here](https://sourceforge.net/projects/mcmc-jags/files/). It is recommended that you are using the latest version of R and `JAGS` for optimal usage of `ern`.
 
-* For users who are only able to install older versions of `JAGS`, we recommend downgrading to R version 4.1.
+* For users who are only unable to install the latest version of `JAGS`, we recommend downgrading to an R version that is less than 4.2. More details can be found [here](https://martynplummer.wordpress.com/2022/04/12/windows-update-jags-4-3-1-is-released/)
+* For users who are having issues installing or running `JAGS` or `rjags`, we recommend using the [`JAGS` discussion board](https://sourceforge.net/p/mcmc-jags/discussion/610037/). 
 
 ## Vignettes
 
