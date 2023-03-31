@@ -67,6 +67,15 @@ estimate_R_cl <- function(
   silent = FALSE
 ) {
 
+  # Checking if JAGS is installed on machine. Stop function if not found
+  suppressWarnings(j <- runjags::testjags(silent = TRUE))
+  if(isFALSE(j$JAGS.found)){
+stop("JAGS is not installed on this machine.
+Please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
+or request JAGS to be installed by your network administrator
+before loading package.")
+  }
+
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
   check_data_clin(cl.agg, silent = silent)
