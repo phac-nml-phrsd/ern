@@ -1,8 +1,8 @@
 .onAttach <- function(libname, pkgname){
   suppressWarnings(j <- runjags::testjags(silent = TRUE))
   if(isFALSE(j$JAGS.found)){
-    warning("JAGS is not installed on this machine.
-Please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
+    warning("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
+To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
 or request JAGS to be installed by your network administrator.
 See README for more details.")
   }
@@ -15,8 +15,8 @@ See README for more details.")
 .onLoad <- function(libname, pkgname){
   suppressWarnings(j <- runjags::testjags(silent = TRUE))
   if(isFALSE(j$JAGS.found)){
-    warning("JAGS is not installed on this machine.
-Please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
+    warning("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
+To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
 or request JAGS to be installed by your network administrator.
 See README for more details.")
   }
