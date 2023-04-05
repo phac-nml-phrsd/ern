@@ -40,10 +40,10 @@ test_that("na_to_0 returns a warning message and a vector with no NAs
               na_to_0(v)
             )
             expect_vector(
-              na_to_0(v)
+              suppressWarnings(na_to_0(v))
             )
             expect_equal(
-              any(is.na(na_to_0(v))),
+              any(is.na(suppressWarnings(na_to_0(v)))),
               FALSE
             )
           })

@@ -1,26 +1,49 @@
-#' Check parameters for Rt calculation
+
+# prm.daily ---------------------------------------------------------------
+
+#' Check parameters for daily data inference
 #'
-#' @param x List of parameters for Rt calculation
-#' @template param-silent
+#' @param x List. Parameters for daily data inference.
 #'
 #' @return NULL
-check_prm.R <- function(x, silent = FALSE){
+check_prm.daily <- function(x){
+  # Check that mandatory elements are present and of the right type
+  for (name in c("burn", "iter", "chains")){
+    # Check presence of element
+    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::is.count(x[[name]]))
+  }
 
-  # Check config.EpiEstim
-  if(!is.null(x$config.EpiEstim)){
-    if(!silent){
-      warning("-----
-You are passing your own config for EpiEstim::estimate_R().
-Please note that ern always uses method = 'non_parametric_si',
-and thus any method specified in your config will be ignored.
-Also, any config parameters that are specific to
-method = 'non_parametric_si' (like si_distr) cannot be modified and
-will also be ignored.")
-    }
+  # Check optional arguments
+  if(!is.null(x$first.agg.period)){
+    assertthat::assert_that(assertthat::is.count((x$first.agg.period)))
   }
 
   return()
 }
+
+
+# prm.daily.check ---------------------------------------------------------
+
+#' Check parameters for daily data inference check
+#'
+#' @param x List. Parameters for daily data inference check.
+#'
+#' @return NULL
+check_prm.daily.check <- function(x){
+  # if prm.daily.check list is NULL, return early (NULL is a valid option, turns off daily inference check)
+  if(is.null(x)) return(NULL)
+
+  # otherwise, must specify agg.reldiff.tol
+  assertthat::has_name(x, "agg.reldiff.tol")
+  tol <- x[["agg.reldiff.tol"]]
+  assertthat::assert_that(is.numeric(tol))
+  if(tol <= 0) stop("prm.daily.check$agg.reldiff.tol must be positive and non-zero")
+
+  return(NULL)
+}
+
+# prm.smooth --------------------------------------------------------------
 
 #' Check parameters for smoothing
 #'
@@ -43,6 +66,49 @@ check_prm.smooth <- function(x){
   }
   else {
     stop(paste0("Smoothing method of ", x$method, " not recognized"))
+  }
+
+  return()
+}
+
+# prm.R -------------------------------------------------------------------
+
+#' Check parameters for Rt calculation
+#'
+#' @param x List. Parameters for Rt calculation.
+#' @template param-silent
+#'
+#' @return NULL
+check_prm.R <- function(x, silent = FALSE){
+
+  # Check that mandatory elements are present and of the right type
+  for (name in c("iter", "CI", "window")){
+    # Check presence of element
+    assertthat::has_name(x, name)
+
+    # Check element type
+    if(name %in% c("iter", "window")){
+      assertthat::assert_that(assertthat::is.count(x[[name]]))
+    }
+
+    if(name == "CI"){
+      assertthat::assert_that(is.numeric(x[[name]]))
+      if(x[[name]] <= 0 | x[[name]] >= 1) stop("prm.R$CI must be between 0 and 1 (non-inclusive)")
+    }
+  }
+
+  # Check optional arguments
+  # config.EpiEstim
+  if(!is.null(x$config.EpiEstim)){
+    if(!silent){
+      message("-----
+You are passing your own config for EpiEstim::estimate_R().
+Please note that ern always uses method = 'non_parametric_si',
+and thus any method specified in your config will be ignored.
+Also, any config parameters that are specific to
+method = 'non_parametric_si' (like si_distr) cannot be modified and
+will also be ignored.")
+    }
   }
 
   return()
