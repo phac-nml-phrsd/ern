@@ -28,6 +28,7 @@ Suggests:
     rmarkdown,
     bookdown,
     purrr,
+    runjags,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
