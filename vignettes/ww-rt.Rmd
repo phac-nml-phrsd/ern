@@ -73,6 +73,7 @@ prm.smooth = list(
 
 # Initialzing Rt settings
 prm.R = list(
+  iter = 20, # number of iterations in Rt ensemble
   CI = 0.95, # confidence interval
   window = 10, # Time window for Rt calculations
   config.EpiEstim = EpiEstim::make_config(seed = 15) # EpiEstim configuration for Rt calculations
@@ -90,7 +91,6 @@ r.estim = ern::estimate_R_ww(
   dist.gi        = dist.gi,
   prm.smooth     = prm.smooth,
   prm.R = prm.R,
-  iter = 20,
   silent = TRUE
 )
 ```

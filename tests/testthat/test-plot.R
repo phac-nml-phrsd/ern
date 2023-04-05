@@ -5,8 +5,7 @@ test_that("plot_diagnostic_ww returns an object that has a class that includes
               ww.conc = ww.conc,
               dist.fec = dist.fec,
               dist.gi = dist.gi,
-              prm.smooth = prm.smooth,
-              iter = 1
+              prm.smooth = prm.smooth
             )
             g = plot_diagnostic_ww(r.obj, caption = "test")
             expect_equal(
