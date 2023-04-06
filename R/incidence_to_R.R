@@ -22,9 +22,6 @@ incidence_to_R <- function(
   tmp    <- prm.R[['method.EpiEstim']]
   method <- ifelse(is.null(tmp), "non_parametric_si", tmp)
 
-  # DEBUG
-  message(paste('This is EpiEstim method:', method))
-
   if(is.null(prm.R$config.EpiEstim)){
     # If the configuration for EpiEstim's function
     # is not specified, we create a default one:
@@ -46,15 +43,7 @@ incidence_to_R <- function(
       message('\nERROR: `si_distr` must be specified in `config.EpiEstim`. ABORTING!')
       stop('Missing `si_distr`')
     }
-    if(! 'incid' %in% names(config.EpiEstim)){
-      message('\nERROR: `incid` must be specified in `config.EpiEstim`. ABORTING!')
-      stop('Missing `incid`')
-    }
   }
-
-  # DEBUG
-  # message('\nDEBUG: This is SI distribution:')
-  # message(config.EpiEstim$si_distr)
 
   # update t_end in config if window is specified in prm.R
   # NOTE: this overrides specification of t_end in config.EpiEstim
