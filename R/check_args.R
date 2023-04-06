@@ -7,14 +7,13 @@
 #'
 #' @return NULL
 check_prm.daily <- function(x){
-  
+
   # Check that mandatory elements are present and of the right type
   for (name in c("burn", "iter", "chains")){
     # Check presence of element
-    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::has_name(x, name))
     assertthat::assert_that(assertthat::is.count(x[[name]]))
   }
-
 
   # Check config.EpiEstim
   if(!is.null(x$config.EpiEstim)){
@@ -50,7 +49,7 @@ check_prm.daily.check <- function(x){
   if(is.null(x)) return(NULL)
 
   # otherwise, must specify agg.reldiff.tol
-  assertthat::has_name(x, "agg.reldiff.tol")
+  assertthat::assert_that(assertthat::has_name(x, "agg.reldiff.tol"))
   tol <- x[["agg.reldiff.tol"]]
   assertthat::assert_that(is.numeric(tol))
   if(tol <= 0) stop("prm.daily.check$agg.reldiff.tol must be positive and non-zero")
@@ -99,7 +98,7 @@ check_prm.R <- function(x, silent = FALSE){
   # Check that mandatory elements are present and of the right type
   for (name in c("iter", "CI", "window")){
     # Check presence of element
-    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::has_name(x, name))
 
     # Check element type
     if(name %in% c("iter", "window")){
@@ -135,6 +134,7 @@ will also be ignored.")
 #'
 #' @return NULL
 check_dist <- function(x){
+
   if(x$dist == "gamma"){
     if(!("sd" %in% names(x) | "shape" %in% names(x))){
       stop(paste0("Gamma distributions must be specified with a mean and one of
@@ -146,6 +146,7 @@ Neither sd nor shape found: ", print(x)))
 one of a standard deviation (sd) or a shape parameter (shape).
 Both sd and shape found: ", print(x)))
     }
+  }
 
   }
 
@@ -183,6 +184,5 @@ check_data_clin <- function(dat, silent = FALSE) {
       stop(paste0(msg.template1, var, msg.template2))
     }
   }
-
   return()
 }
