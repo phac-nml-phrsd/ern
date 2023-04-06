@@ -12,9 +12,9 @@
 #' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
-#'  \item `burn`: length of burn-in period (number of days)
-#'  \item `iter`: number of iterations after burn-in period (number of days)
-#'  \item `chains`: number of chains to simulate
+#'  \item `burn`: Numeric. Length of burn-in period (number of days).
+#'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
+#'  \item `chains`: Numeric. Number of chains to simulate.
 #'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #' }
 #' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
@@ -62,12 +62,22 @@ estimate_R_cl <- function(
   ),
   prm.R = list(
     iter = 10,
+    CI = 0.95,
     window = 7,
     config.EpiEstim = NULL
   ),
   RL.max.iter = 10,
   silent = FALSE
 ) {
+
+  # Checking if JAGS is installed on machine. Stop function if not found
+  suppressWarnings(j <- runjags::testjags(silent = TRUE))
+  if(isFALSE(j$JAGS.found)){
+stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
+To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
+or request JAGS to be installed by your network administrator.
+See README for more details.")
+  }
 
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
@@ -102,7 +112,6 @@ estimate_R_cl <- function(
   # Trim smoothed reports based on relative error criterion
 
   if(!is.null(prm.daily.check)){
-    if(is.null(prm.daily.check$agg.reldiff.tol)) stop("please specify agg.reldiff.tol in prm.daily.check")
     if(!silent){
       message("-----
 - Aggregating inferred daily reports back using the original

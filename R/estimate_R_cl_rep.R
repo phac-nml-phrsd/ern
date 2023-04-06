@@ -38,13 +38,13 @@ estimate_R_cl_rep <- function(
   }
   R = dplyr::bind_rows(tmp)
 
-  # return summary of ensembles
+  # Return summary of ensembles
   res = R %>%
-    summarise_by_date_ens()%>%  # 95% CIs
+    summarise_by_date_ens(CI = prm.R$CI) %>%  
     # flag which points to trust or not
     # beginning of estimate takes a bit to converge
     # use one max generation interval as rule of thumb
-    dplyr::mutate(use = (date >= min(date) + lubridate::days(dist.gi$max)))
+    dplyr::mutate(use = (date >= min(date, na.rm = TRUE) + lubridate::days(dist.gi$max)))
 
   return(res)
 }

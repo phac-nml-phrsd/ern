@@ -11,8 +11,7 @@ estimate_R_ww(
   dist.gi,
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
-  prm.R = list(CI = 0.95, window = 7, config.EpiEstim = NULL),
-  iter = 100,
+  prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
   silent = FALSE
 )
 }
@@ -40,17 +39,15 @@ specified as followed:
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:
 \itemize{
-\item \code{window}: number of days defining the window of data used by
-\code{EpiEstim} to estimate Rt
+\item \code{iter}: Integer. Number of iterations for the Rt ensemble
 \item \code{CI}: Numeric between 0 and 1. Confidence interval width for Rt
 estimates after sampling uncertain distributions.
-\item \code{config.EpiEstim}: configuration for \code{EpiEstim} defined via
+\item \code{window}: Integer. Number of days defining the window of data used by
+\code{EpiEstim} to estimate Rt. If \code{NULL}, will default to 7.
+\item \code{config.EpiEstim}: (optional) configuration for \code{EpiEstim} defined via
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}. If \code{NULL}, will use default config from
 \code{EpiEstim}.
 }}
-
-\item{iter}{Integer. Number of samples for the (uncertain) generation
-interval distribution.}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
