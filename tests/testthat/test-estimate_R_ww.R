@@ -5,7 +5,7 @@ test_that("estimate_R_ww detects missing variables in ww.conc",{
     estimate_R_ww(ww.conc,
                   dist.fec,
                   dist.gi),
-    "date and value columns are required. Please check ww.conc.
+    "`date` and `value` columns are required. Please check `ww.conc`.
          Aborting!")
 
 })
