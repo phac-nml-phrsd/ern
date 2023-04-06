@@ -15,7 +15,7 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
   prm.R = list(
     CI = 0.95,
     window = 10,
-    config.EpiEstim = EpiEstim::make_config(seed = 15)
+    config.EpiEstim = NULL
   )
   ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
