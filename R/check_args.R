@@ -148,6 +148,30 @@ Both sd and shape found: ", print(x)))
     }
   }
 
+  if(x$dist == "norm"){
+
+    assertthat::assert_that(assertthat::has_name(x, 'mean'))
+    assertthat::assert_that(assertthat::is.number(x$mean))
+    assertthat::assert_that(assertthat::is.number(x$sd))
+    if(x$sd <= 0) {
+      stop(paste0('Standard deviation for normal distribution must be positive',
+                  ' (currently sd = ',x$sd,'). ABORTING.'))
+    }
+  }
+
+  if(x$dist == "lnorm"){
+
+    assertthat::assert_that(assertthat::is.number(x$meanlog))
+    assertthat::assert_that(assertthat::is.number(x$sdlog))
+
+    if(x$meanlog <= 0) {
+      stop(paste0('Mean for lognormal distribution must be positive',
+                  ' (currently meanlog = ',x$meanlog,'). ABORTING.'))
+    }
+    if(x$sdlog <= 0) {
+      stop(paste0('Standard deviation for lognormal distribution must be positive',
+                  ' (currently sdlog = ',x$sdlog,'). ABORTING.'))
+    }
   }
 
   return()
