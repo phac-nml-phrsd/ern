@@ -53,8 +53,8 @@ test_that("gamma and lnorm distributions get specified correctly", {
 
   pars.lnorm <- list(
     dist = "lnorm",
-    mean = mean,
-    sd = sd,
+    meanlog = mean,
+    sdlog = sd,
     max = max
   )
 
