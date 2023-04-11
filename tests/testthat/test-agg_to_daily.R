@@ -1,11 +1,6 @@
 # agg_to_daily() ------------------------------------------------------------
 
 # set up inputs
-cl.agg <- (ern::cl.agg
-%>% dplyr::filter(pt == "on")
-%>% dplyr::slice(1:6)
-%>% dplyr::mutate(t = seq(7, 42, by = 7))
-)
 dist.gi <- ern::def_dist_generation_interval()
 popsize <- 14.7e6
 prm.daily <- list(
@@ -35,23 +30,12 @@ test_that("agg_to_daily() returns a data frame with the right format", {
     silent = TRUE
   )
 
-  # check class of entire output
-  expect_s3_class(res, "tbl_df")
-
-  # set up expected column names and classes
-  col_name <- c("id", "date", "t", "value")
-  col_class <- c("integer", "Date", "integer", "numeric")
-
-  # check names
-  expect_equal(names(res), col_name)
-
-  # check col types
-  for (i in 1:length(col_name)){
-    expect_equal(
-      class(res[[col_name[i]]]),
-      col_class[i]
-    )
-  }
+  # check output
+  test_output_tibble(
+    res,
+    col_name = c("id", "date", "t", "value"),
+    col_class = c("integer", "Date", "integer", "numeric")
+  )
 })
 
 

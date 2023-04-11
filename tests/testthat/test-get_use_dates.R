@@ -4,14 +4,14 @@ n <- 4
 agg.window <- 2 # must divide n
 date.vec <- seq(start_date, start_date + (n-1), by = 1)
 t.vec <- 1:n
-cl.daily <- tibble::tibble(
+cl.daily.test <- tibble::tibble(
   id = as.integer(1),
   date = date.vec,
   t = t.vec,
   value = n # avoid zeroes
 )
 
-cl.agg <- (cl.daily
+cl.agg.test <- (cl.daily.test
   %>% dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
             rownum = 1:nrow(.))
   %>% dplyr::group_by(group)
@@ -27,32 +27,32 @@ prm.daily.check <- list(
 
 test_that("get_use_dates() works when dates.only = TRUE", {
   dates.new <- get_use_dates(
-    cl.daily,
-    cl.agg,
+    cl.daily.test,
+    cl.agg.test,
     prm.daily.check,
     dates.only = TRUE
   )
 
   # don't drop dates since results are exactly matching
-  expect_equal(length(dates.new), nrow(cl.daily))
+  expect_equal(length(dates.new), nrow(cl.daily.test))
 
   expect_s3_class(dates.new, "Date")
 })
 
 test_that("get_use_dates() works when dates.only = FALSE", {
   df.new <- get_use_dates(
-    cl.daily,
-    cl.agg,
+    cl.daily.test,
+    cl.agg.test,
     prm.daily.check,
     dates.only = FALSE
   )
   df.expected <- tibble::tibble(
-    date = cl.daily$date,
+    date = cl.daily.test$date,
     mean = n,
     lwr = n,
     upr = n,
     obs = rep(c(NA, n*agg.window), times = agg.window),
-    date.report = rep(cl.agg$date, each = agg.window),
+    date.report = rep(cl.agg.test$date, each = agg.window),
     mean.agg = n*agg.window,
     lwr.agg = n*agg.window,
     upr.agg = n*agg.window,
