@@ -14,13 +14,7 @@ test_that("estimate_R_cl_single() returns output of the expected format", {
     dist.repdelay = dist.repdelay,
     dist.incub = dist.incub,
     dist.gi = dist.gi,
-    prm.R = list(
-      iter = 1,
-      CI = 0.95,
-      window = 10,
-      config.EpiEstim = NULL,
-      silent = TRUE
-    )
+    prm.R = prm.R
   )
 
   expect_s3_class(res, "data.frame")

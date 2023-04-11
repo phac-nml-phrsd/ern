@@ -21,10 +21,6 @@ cl.agg.test <- (cl.daily.test
   %>% dplyr::select(date, count, t)
 )
 
-prm.daily.check <- list(
-  agg.reldiff.tol = 10
-)
-
 test_that("get_use_dates() works when dates.only = TRUE", {
   dates.new <- get_use_dates(
     cl.daily.test,

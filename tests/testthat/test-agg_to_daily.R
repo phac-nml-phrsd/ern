@@ -2,11 +2,6 @@
 
 # set up inputs
 popsize <- 14.7e6
-prm.daily <- list(
-  burn = 1,
-  iter = 1,
-  chains = 1
-)
 
 test_that("agg_to_daily() returns a message when silent = FALSE", {
   expect_message(
