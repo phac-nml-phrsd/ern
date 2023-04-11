@@ -37,13 +37,12 @@ In order to estimate $\mathcal{R}_t$ from aggregated clinical testing data in `e
 Sample weekly clinical reports are included in `ern`:
 
 ```{r load-data}
-dat <- ern::cl.agg %>% filter(pt == "bc")
+dat <- ern::cl.agg %>% filter(pt == "qc") %>% slice(1:6)
 ```
 
 The $\mathcal{R}_t$ calculation is as follows:
 
 ```{r calculate-Rt}
-
 # define distributions
 # - - - - - - - - - - - - - - - - -
 
@@ -73,9 +72,12 @@ dist.gi$max = max.dists
 popsize = 1e7
 
 prm.daily = list(
-  burn = 100,
-  iter = 200,
+  burn = 250,
+  iter = 500,
   chains = 1
+)
+prm.daily.check = list(
+  agg.reldiff.tol = 200
 )
 prm.smooth = list(
   method = "rollmean",
@@ -87,25 +89,24 @@ prm.R = list(
   window = 7, # time window for each Rt estimate
   config.EpiEstim = NULL
 )
-prm.daily.check = list(
-  agg.reldiff.tol = 200
-)
+RL.max.iter = 10
 
 # calculate Rt
 # - - - - - - - - - - - - - - - - - 
 
 r.estim = estimate_R_cl(
-  cl.agg        = dat,
-  dist.repdelay = dist.repdelay,
-  dist.repfrac  = dist.repfrac,
-  dist.incub    = dist.incub,
-  dist.gi       = dist.gi,
-  popsize       = popsize,
-  prm.smooth    = prm.smooth,
-  prm.daily     = prm.daily,
-  prm.R         = prm.R,
+  cl.agg          = dat,
+  dist.repdelay   = dist.repdelay,
+  dist.repfrac    = dist.repfrac,
+  dist.incub      = dist.incub,
+  dist.gi         = dist.gi,
+  popsize         = popsize,
+  prm.smooth      = prm.smooth,
+  prm.daily       = prm.daily,
+  prm.R           = prm.R,
   prm.daily.check = prm.daily.check,
-  silent = TRUE
+  RL.max.iter     = RL.max.iter,
+  silent          = TRUE
 )
 ```
 
