@@ -4,7 +4,7 @@ n <- 4
 agg.window <- 2 # must divide n
 date.vec <- seq(start_date, start_date + (n-1), by = 1)
 t.vec <- 1:n
-cl.daily <- tibble(
+cl.daily <- tibble::tibble(
   id = as.integer(1),
   date = date.vec,
   t = t.vec,
@@ -12,13 +12,13 @@ cl.daily <- tibble(
 )
 
 cl.agg <- (cl.daily
-  %>% mutate(group = rep(1:(n/agg.window), each = agg.window),
+  %>% dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
             rownum = 1:nrow(.))
-  %>% group_by(group)
-  %>% mutate(count = sum(value))
-  %>% ungroup()
-  %>% filter(rownum %% agg.window == 0)
-  %>% select(date, count, t)
+  %>% dplyr::group_by(group)
+  %>% dplyr::mutate(count = sum(value))
+  %>% dplyr::ungroup()
+  %>% dplyr::filter(rownum %% agg.window == 0)
+  %>% dplyr::select(date, count, t)
 )
 
 prm.daily.check <- list(
@@ -46,7 +46,7 @@ test_that("get_use_dates() works when dates.only = FALSE", {
     prm.daily.check,
     dates.only = FALSE
   )
-  df.expected <- tibble(
+  df.expected <- tibble::tibble(
     date = cl.daily$date,
     mean = n,
     lwr = n,
