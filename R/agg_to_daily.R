@@ -187,7 +187,7 @@ Running MCMC model to infer daily reports from aggregated reports...
   # Burn-in period:
   output <- capture.output(stats::update(mod, n.iter = prm.daily$burn))
 
-  if(!silent) print(output)
+  if(!silent & length(output)>0) print(output)
 
   # Posterior iterations:
   output <- capture.output(mod_sim <- rjags::coda.samples(
@@ -196,7 +196,7 @@ Running MCMC model to infer daily reports from aggregated reports...
     n.iter = prm.daily$iter
   ))
 
-  if(!silent) print(output)
+  if(!silent & length(output)>0) print(output)
 
   return(mod_sim)
 }
