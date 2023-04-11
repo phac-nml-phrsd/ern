@@ -1,7 +1,6 @@
 # agg_to_daily() ------------------------------------------------------------
 
 # set up inputs
-dist.gi <- ern::def_dist_generation_interval()
 popsize <- 14.7e6
 prm.daily <- list(
   burn = 1,

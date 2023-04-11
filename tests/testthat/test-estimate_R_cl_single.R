@@ -10,10 +10,10 @@ reports.daily <- tibble::tibble(
 test_that("estimate_R_cl_single() returns output of the expected format", {
   res <- ern::estimate_R_cl_single(
     cl.daily = cl.daily,
-    dist.repfrac = suppressWarnings(ern::def_dist_reporting_fraction()),
-    dist.repdelay = ern::def_dist_reporting_delay(),
-    dist.incub = ern::def_dist_incubation_period(),
-    dist.gi = ern::def_dist_generation_interval(),
+    dist.repfrac = dist.repfrac,
+    dist.repdelay = dist.repdelay,
+    dist.incub = dist.incub,
+    dist.gi = dist.gi,
     prm.R = list(
       iter = 1,
       CI = 0.95,
@@ -50,8 +50,8 @@ test_that("estimate_R_cl_single() returns output of the expected format", {
 test_that("reports_to_incidence() returns messages when silent mode is off", {
   expect_message(reports_to_incidence(
     reports.daily = reports.daily,
-    reporting.delay = ern::def_dist_reporting_delay(),
-    incubation.period = ern::def_dist_incubation_period(),
+    reporting.delay = dist.repdelay,
+    incubation.period = dist.incub,
     silent = FALSE
   ))
 })
@@ -59,8 +59,8 @@ test_that("reports_to_incidence() returns messages when silent mode is off", {
 test_that("reports_to_incidence() returns output of the expected format", {
   res <- reports_to_incidence(
     reports.daily = reports.daily,
-    reporting.delay = ern::def_dist_reporting_delay(),
-    incubation.period = ern::def_dist_incubation_period(),
+    reporting.delay = dist.repdelay,
+    incubation.period = dist.incub,
     silent = TRUE
   )
 
