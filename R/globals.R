@@ -3,4 +3,4 @@ utils::globalVariables(c(".","Mean(R)","Quantile.0.025(R)","Quantile.0.975(R)",
                          "inc.deconvol","iteration","lo","lwr","lwr.agg",
                          "mean.agg","mean.agg.reldiff","name","obs","trash",
                          "upr","upr.agg","use","use.cumm","val","val_smooth",
-                         "value","y","aes","geom_line","silent","x"))
+                         "value","y","silent","x"))

@@ -135,7 +135,7 @@ reports_to_incidence <- function(
       dplyr::mutate(onsets, t, y, var = 'deconv reporting'),
       dplyr::mutate(incidence, t,y, var = 'deconv incubation')
     )
-   ggplot2::ggplot(dfplot, aes(x=t, y=y, color = var)) + geom_line(size=1)
+   ggplot2::ggplot(dfplot, ggplot2::aes(x=t, y=y, color = var)) + ggplot2::geom_line(size=1)
 
   }
 
