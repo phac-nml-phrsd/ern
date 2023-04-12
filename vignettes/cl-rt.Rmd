@@ -37,7 +37,7 @@ In order to estimate $\mathcal{R}_t$ from aggregated clinical testing data in `e
 Sample weekly clinical reports are included in `ern`:
 
 ```{r load-data}
-dat <- ern::cl.agg %>% filter(pt == "bc")
+dat <- ern::cl.input %>% filter(pt == "bc")
 ```
 
 The $\mathcal{R}_t$ calculation is as follows:
@@ -97,7 +97,7 @@ prm.daily.check = list(
 # - - - - - - - - - - - - - - - - - 
 
 r.estim = estimate_R_cl(
-  cl.agg        = dat,
+  cl.input      = dat,
   dist.repdelay = dist.repdelay,
   dist.repfrac  = dist.repfrac,
   dist.incub    = dist.incub,

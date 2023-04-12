@@ -4,12 +4,12 @@
 \alias{get_use_dates}
 \title{Get dates for which to use (trust) inferred daily reports}
 \usage{
-get_use_dates(cl.daily, cl.agg, prm.daily.check, dates.only = TRUE)
+get_use_dates(cl.daily, cl.input, prm.daily.check, dates.only = TRUE)
 }
 \arguments{
 \item{cl.daily}{Data frame. Output of \code{\link[=agg_to_daily]{agg_to_daily()}}.}
 
-\item{cl.agg}{Data frame. Must have variables:
+\item{cl.input}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{count}: count of reported cases

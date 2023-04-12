@@ -1,10 +1,6 @@
 #' @title Estimate the effective reproduction from clinical report data
 #'
-#' @param cl.agg Data frame. Must have variables:
-#' \itemize{
-#'  \item `date`: calendar date of report
-#'  \item `count`: count of reported cases
-#' }
+#' @template param-cl.input
 #' @param dist.repfrac List. Parameters for the reporting fraction distribution in the same format as returned by [`def_dist_reporting_fraction()`].
 #' @param dist.repdelay List. Parameters for the reporting delay distribution in the same format as returned by [`def_dist_reporting_delay()`].
 #' @param dist.incub List. Parameters for the incubation period distribution in the same format as returned by [`def_dist_incubation_period()`].
@@ -35,13 +31,13 @@
 #'
 #' @return List. Elements include:
 #' \itemize{
-#'  \item `cl.agg`: original aggregated reports signal
+#'  \item `cl.input`: original aggregated reports signal
 #'  \item `cl.daily`: reports as input for Rt calculation (inferred daily counts, smoothed)
 #'  \item `R`: the effective R estimate (summary from ensemble)
 #' }
 #' @export
 estimate_R_cl <- function(
-  cl.agg,
+  cl.input,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -79,20 +75,20 @@ See README for more details.")
 
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
-  check_data.cl_format(cl.agg, silent = silent)
+  check_data.cl_format(cl.input, silent = silent)
 
   # ==== Aggregated -> daily reports ====
 
   # attach time-index column to observed aggregated reports
-  cl.agg <- attach_t_agg(
-    cl.agg = cl.agg,
+  cl.input <- attach_t_agg(
+    cl.input  = cl.input,
     prm.daily = prm.daily,
-    silent = silent
+    silent    = silent
   )
 
   # estimate daily reports using JAGS model
   cl.daily.raw = agg_to_daily(
-    cl.agg    = cl.agg,
+    cl.input  = cl.input,
     dist.gi   = dist.gi,
     popsize   = popsize,
     prm.daily = prm.daily,
@@ -119,7 +115,7 @@ original reports...")
 
     cl.use.dates = get_use_dates(
       cl.daily = cl.daily,
-      cl.agg = cl.agg,
+      cl.input = cl.input,
       prm.daily.check = prm.daily.check
     )
 
@@ -156,7 +152,7 @@ with inferred aggregates outside of the specified tolerance of ",
 
   inferred.agg = (get_use_dates(
       cl.daily        = cl.daily,
-      cl.agg          = cl.agg,
+      cl.input        = cl.input,
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
   )
@@ -167,7 +163,7 @@ with inferred aggregates outside of the specified tolerance of ",
   # Return results
 
   res = list(
-    cl.agg  = cl.agg,
+    cl.input  = cl.input,
     cl.daily = cl.daily,
     inferred.agg = inferred.agg,
     R = R

@@ -121,7 +121,7 @@ plot_diagnostic_cl <- function(
   # ==== original input (aggregated cases) =====
 
   p2 <- (ggplot2::ggplot(
-    (r.estim$cl.agg
+    (r.estim$cl.input
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
      ggplot2::aes(x = date, y = count))
      + ggplot2::geom_col(na.rm = TRUE)

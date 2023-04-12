@@ -7,7 +7,7 @@
 #' @return Data frame with individual realizations of daily reported cases
 #' @export
 agg_to_daily <- function(
-  cl.agg,
+  cl.input,
   dist.gi,
   popsize,
   prm.daily,
@@ -19,12 +19,12 @@ agg_to_daily <- function(
   df.daily.inc = fit_jags_aggreg(
     g = gi,
     N = popsize,
-    obs.times = cl.agg$t,
-    Y = cl.agg$count,
+    obs.times = cl.input$t,
+    Y = cl.input$count,
     prm.daily = prm.daily,
     silent = silent) %>%
     reshape_fit_jags() %>%
-    get_realizations(cl.agg)
+    get_realizations(cl.input)
 
   return(df.daily.inc)
 }
@@ -38,16 +38,16 @@ agg_to_daily <- function(
 #' @inheritParams estimate_R_cl
 #'
 #' @return Data frame
-attach_t_agg <- function(cl.agg, prm.daily = NULL, silent = FALSE){
+attach_t_agg <- function(cl.input, prm.daily = NULL, silent = FALSE){
 
   first.agg.period <- prm.daily$first.agg.period
 
   # Handling the first aggregation
   if(is.null(first.agg.period)){
-    fa = as.integer(cl.agg$date[2]-cl.agg$date[1])
+    fa = as.integer(cl.input$date[2]-cl.input$date[1])
     if(!silent){
       message(paste0("-----
-Assuming the first observed report (from ", cl.agg$date[1], ")
+Assuming the first observed report (from ", cl.input$date[1], ")
 is aggregated over ", fa , " previous days
 (second observation's aggregation period).
 This can be changed in `estimate_R_cl()`, using the
@@ -64,9 +64,9 @@ in this parameter list)."))
     }
   }
 
-  date.min = min(cl.agg$date)
+  date.min = min(cl.input$date)
 
-  res = cl.agg %>%
+  res = cl.input %>%
     dplyr::mutate(t = as.numeric(date - date.min) + fa) %>%
     dplyr::arrange(t)
 

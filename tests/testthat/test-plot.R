@@ -24,7 +24,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   # define inputs
   # - - - - - - - - - - - - - - - - -
-  dat <- ern::cl.agg %>% dplyr::filter(pt == "bc") %>% dplyr::slice(1:4)
+  dat <- ern::cl.input %>% dplyr::filter(pt == "bc") %>% dplyr::slice(1:4)
   pathogen = 'sarscov2'
   max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
@@ -54,7 +54,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   # compute Rt and make plot
   # - - - - - - - - - - - - - - - - -
   r.obj = ern::estimate_R_cl(
-    cl.agg        = dat,
+    cl.input      = dat,
     dist.repdelay = dist.repdelay,
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,

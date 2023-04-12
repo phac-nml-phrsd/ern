@@ -4,10 +4,14 @@
 \alias{check_data.cl_format}
 \title{Check the format of input clinical data}
 \usage{
-check_data.cl_format(data.cl, silent = FALSE)
+check_data.cl_format(cl.input, silent = FALSE)
 }
 \arguments{
-\item{data.cl}{Data frame. Timeseries of clinical reports. Must have at least \code{date} and \code{count} columns.}
+\item{cl.input}{Data frame. Must have variables:
+\itemize{
+\item \code{date}: calendar date of report
+\item \code{count}: count of reported cases
+}}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }

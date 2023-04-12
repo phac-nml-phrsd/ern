@@ -183,7 +183,7 @@ test_that("check_for_deconv returns an error when number of observations <
   )
 })
 
-# data_clin ---------------------------------------------------------------
+# data.cl ---------------------------------------------------------------
 
 test_that("check_data.cl_format returns an error when date and count columns
           are missing, and returns NULL when both columns are present in

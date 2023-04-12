@@ -152,7 +152,7 @@ check_for_deconv <- function(obs, dist){
 
 #' Check the format of input clinical data
 #'
-#' @template param-data.cl
+#' @template param-cl.input
 #' @template param-silent
 #'
 #' @return NULL

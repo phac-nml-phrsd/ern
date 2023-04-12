@@ -2,7 +2,7 @@ popsize = 14.7e6
 
 test_that("estiamte_R_cl() returns a message when prm.daily.check is not NULL and silent mode is off", {
   expect_message(estimate_R_cl(
-    cl.agg %>% dplyr::filter(pt == "on"),
+    cl.input %>% dplyr::filter(pt == "on"),
     dist.repdelay,
     dist.repfrac,
     dist.incub,
@@ -18,7 +18,7 @@ test_that("estiamte_R_cl() returns a message when prm.daily.check is not NULL an
 
 test_that("estiamte_R_cl() returns output of the expected type", {
   res <- estimate_R_cl(
-    cl.agg %>% dplyr::filter(pt == "on"),
+    cl.input %>% dplyr::filter(pt == "on"),
     dist.repdelay,
     dist.repfrac,
     dist.incub,
@@ -40,7 +40,7 @@ test_that("estiamte_R_cl() returns output of the expected type", {
 
   expect_equal(
     names(res),
-    c("cl.agg", "cl.daily", "inferred.agg", "R")
+    c("cl.input", "cl.daily", "inferred.agg", "R")
   )
 
   test_output_tibble(

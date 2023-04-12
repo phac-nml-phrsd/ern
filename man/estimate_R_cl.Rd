@@ -5,7 +5,7 @@
 \title{Estimate the effective reproduction from clinical report data}
 \usage{
 estimate_R_cl(
-  cl.agg,
+  cl.input,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -19,7 +19,7 @@ estimate_R_cl(
 )
 }
 \arguments{
-\item{cl.agg}{Data frame. Must have variables:
+\item{cl.input}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{count}: count of reported cases
@@ -74,7 +74,7 @@ estimates after sampling uncertain distributions.
 \value{
 List. Elements include:
 \itemize{
-\item \code{cl.agg}: original aggregated reports signal
+\item \code{cl.input}: original aggregated reports signal
 \item \code{cl.daily}: reports as input for Rt calculation (inferred daily counts, smoothed)
 \item \code{R}: the effective R estimate (summary from ensemble)
 }

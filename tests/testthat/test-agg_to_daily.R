@@ -6,7 +6,7 @@ popsize <- 14.7e6
 test_that("agg_to_daily() returns a message when silent = FALSE", {
   expect_message(
     agg_to_daily(
-      cl.agg = cl.agg,
+      cl.input = cl.input,
       dist.gi = dist.gi,
       popsize = popsize,
       prm.daily = prm.daily,
@@ -17,7 +17,7 @@ test_that("agg_to_daily() returns a message when silent = FALSE", {
 
 test_that("agg_to_daily() returns a data frame with the right format", {
   res <- agg_to_daily(
-    cl.agg = cl.agg,
+    cl.input = cl.input,
     dist.gi = dist.gi,
     popsize = popsize,
     prm.daily = prm.daily,
@@ -37,12 +37,12 @@ test_that("agg_to_daily() returns a data frame with the right format", {
 # uses inputs set up for agg_to_daily() above
 
 test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", {
-  df <- cl.agg
+  df <- cl.input
 
   df[1, "count"] <- -2
   expect_error(
     agg_to_daily(
-      cl.agg = df,
+      cl.input = df,
       dist.gi = dist.gi,
       popsize = popsize,
       prm.daily = prm.daily,
@@ -53,7 +53,7 @@ test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", 
   df[1, "count"] <- popsize*1e4
   expect_error(
     agg_to_daily(
-      cl.agg = df,
+      cl.input = df,
       dist.gi = dist.gi,
       popsize = popsize,
       prm.daily = prm.daily,
