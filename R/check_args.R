@@ -150,15 +150,15 @@ check_for_deconv <- function(obs, dist){
   return()
 }
 
-#' Check the data frame of clinical data
+#' Check the format of input clinical data
 #'
-#' @param dat Data frame. Timeseries of clinical reports.
+#' @template param-data.cl
 #' @template param-silent
 #'
 #' @return NULL
-check_data_clin <- function(dat, silent = FALSE) {
+check_data.cl_format <- function(data.cl, silent = FALSE) {
 
-  n = names(dat)
+  n = names(data.cl)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'

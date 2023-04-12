@@ -185,7 +185,7 @@ test_that("check_for_deconv returns an error when number of observations <
 
 # data_clin ---------------------------------------------------------------
 
-test_that("check_data_clin returns an error when date and count columns
+test_that("check_data.cl_format returns an error when date and count columns
           are missing, and returns NULL when both columns are present in
           dateframe", {
   dat = data.frame(
@@ -195,13 +195,13 @@ test_that("check_data_clin returns an error when date and count columns
   dat.rm.date = dplyr::select(dat, -date)
   dat.rm.count = dplyr::select(dat, -count)
   expect_error(
-    check_data_clin(dat.rm.date)
+    check_data.cl_format(dat.rm.date)
   )
   expect_error(
-    check_data_clin(dat.rm.count)
+    check_data.cl_format(dat.rm.count)
   )
   expect_equal(
-    check_data_clin(dat),
+    check_data.cl_format(dat),
     NULL
   )
 })
