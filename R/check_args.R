@@ -156,9 +156,9 @@ check_for_deconv <- function(obs, dist){
 #' @template param-silent
 #'
 #' @return NULL
-check_data.cl_format <- function(data.cl, silent = FALSE) {
+check_data.cl_format <- function(cl.input, silent = FALSE) {
 
-  n = names(data.cl)
+  n = names(cl.input)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'
