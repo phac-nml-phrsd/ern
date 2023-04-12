@@ -73,39 +73,51 @@ or request JAGS to be installed by your network administrator.
 See README for more details.")
   }
 
-  # Checking arguments
+  # Checking argument formats
   check_prm.R(prm.R, silent = silent)
   check_cl.input_format(cl.input, silent = silent)
 
-  # ==== Aggregated -> daily reports ====
+  # Check whether input data is daily
+  # if not, need to do aggregated -> daily inference
+  is.daily <- check_cl.input_daily(cl.input, silent = silent)
 
-  # attach time-index column to observed aggregated reports
-  cl.input <- attach_t_agg(
-    cl.input  = cl.input,
-    prm.daily = prm.daily,
-    silent    = silent
-  )
+  if(is.daily){
+    # ==== Data is already daily ====
+    cl.daily.raw <- format_cl.daily(cl.input)
+  } else {
+    # ==== Aggregated -> daily reports ====
 
-  # estimate daily reports using JAGS model
-  cl.daily.raw = agg_to_daily(
-    cl.input  = cl.input,
-    dist.gi   = dist.gi,
-    popsize   = popsize,
-    prm.daily = prm.daily,
-    silent    = silent
-  )
+    # attach time-index column to observed aggregated reports
+    cl.input <- attach_t_agg(
+      cl.input  = cl.input,
+      prm.daily = prm.daily,
+      silent    = silent
+    )
+
+    # estimate daily reports using JAGS model
+    cl.daily.raw = agg_to_daily(
+      cl.input  = cl.input,
+      dist.gi   = dist.gi,
+      popsize   = popsize,
+      prm.daily = prm.daily,
+      silent    = silent
+    )
+  }
 
   # ==== Smooth daily reports =====
 
+  if(!is.null(prm.smooth)){
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
     cl.daily   = cl.daily.raw,
     prm.smooth = prm.smooth
-  )
+  )} else {
+    cl.daily <- cl.daily.raw
+  }
 
   # trim smoothed reports based on relative error criterion
 
-  if(!is.null(prm.daily.check)){
+  if(!is.daily & !is.null(prm.daily.check)){
     if(!silent){
       message("-----
 - Aggregating inferred daily reports back using the original
@@ -148,17 +160,22 @@ with inferred aggregates outside of the specified tolerance of ",
     silent        = silent
   )
 
-  # Calculate the aggregated reports from the inferred daily reports
+  # Get inferred aggregates, if relevant
 
-  inferred.agg = (get_use_dates(
+  if(is.daily){
+    inferred.agg = NULL
+  } else {
+    # Calculate the aggregated reports from the inferred daily reports
+    inferred.agg = (get_use_dates(
       cl.daily        = cl.daily,
       cl.input        = cl.input,
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
-  )
+    )
     %>% dplyr::filter(!is.na(obs))
     %>% dplyr::select(date, obs, dplyr::matches('agg$'))
-  )
+    )
+  }
 
   # Return results
 

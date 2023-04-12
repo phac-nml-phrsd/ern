@@ -22,7 +22,7 @@ test_that("plot_diagnostic_ww returns an object that has a class that includes
 test_that("plot_diagnostic_cl returns an object that has a class that includes
           'ggplot' and 'patchwork'", {
 
-  # define inputs
+  # aggregate data
   # - - - - - - - - - - - - - - - - -
   dat <- ern::cl.input %>% dplyr::filter(pt == "bc") %>% dplyr::slice(1:4)
   pathogen = 'sarscov2'
@@ -51,8 +51,34 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
     agg.reldiff.tol = 200
   )
 
-  # compute Rt and make plot
+  r.obj = ern::estimate_R_cl(
+    cl.input      = dat,
+    dist.repdelay = dist.repdelay,
+    dist.repfrac  = dist.repfrac,
+    dist.incub    = dist.incub.test,
+    dist.gi       = dist.gi.test,
+    popsize       = popsize,
+    prm.smooth    = prm.smooth,
+    prm.daily     = prm.daily,
+    prm.R         = prm.R,
+    prm.daily.check = prm.daily.check,
+    silent = TRUE
+  )
+
+  g = ern::plot_diagnostic_cl(r.obj)
+  expect_s3_class(
+    g,
+    "patchwork"
+  )
+  expect_s3_class(
+    g,
+    "ggplot"
+  )
+
+  # daily data
   # - - - - - - - - - - - - - - - - -
+  dat <- cl.daily %>% dplyr::transmute(date, count = value)
+
   r.obj = ern::estimate_R_cl(
     cl.input      = dat,
     dist.repdelay = dist.repdelay,
