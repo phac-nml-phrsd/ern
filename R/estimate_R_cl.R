@@ -75,7 +75,7 @@ See README for more details.")
 
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
-  check_data.cl_format(cl.input, silent = silent)
+  check_cl.input_format(cl.input, silent = silent)
 
   # ==== Aggregated -> daily reports ====
 

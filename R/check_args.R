@@ -156,7 +156,7 @@ check_for_deconv <- function(obs, dist){
 #' @template param-silent
 #'
 #' @return NULL
-check_data.cl_format <- function(cl.input, silent = FALSE) {
+check_cl.input_format <- function(cl.input, silent = FALSE) {
 
   n = names(cl.input)
 
