@@ -24,6 +24,7 @@
 #'  \item `window`: width of smoothing window (number of days)
 #' }
 #' Set this entire argument to `NULL` to turn off smoothing.
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #' @template param-prm.R
 #' @template param-silent
 #'
@@ -46,7 +47,7 @@ estimate_R_cl <- function(
   prm.daily = list(
     burn = 500,
     iter = 2e3,
-    chains = 20,
+    chains = 3,
     first.agg.period = NULL
   ),
   prm.daily.check = list(
@@ -61,6 +62,7 @@ estimate_R_cl <- function(
     window = 7,
     config.EpiEstim = NULL
   ),
+  RL.max.iter = 10,
   silent = FALSE
 ) {
 
@@ -115,7 +117,7 @@ See README for more details.")
     cl.daily <- cl.daily.raw
   }
 
-  # trim smoothed reports based on relative error criterion
+  # Trim smoothed reports based on relative error criterion
 
   if(!is.daily & !is.null(prm.daily.check)){
     if(!silent){
@@ -136,8 +138,9 @@ original reports...")
 with inferred aggregates outside of the specified tolerance of ",
                    prm.daily.check$agg.reldiff.tol, "%..."
     ))
-    message(paste0("Before filtering: ", nrow(cl.daily), " daily reports"))
-    message(paste0("After filtering: ", length(cl.use.dates), " daily reports"))
+      dates.before = unique(cl.daily$date)
+    message(paste0("Before filtering: ", length(dates.before), " daily reports"))
+    message(paste0("After filtering:  ", length(cl.use.dates), " daily reports"))
     message("To reduce the number of observations dropped in filtering, either:
   - adjust MCMC parameters in prm.daily (burn, iter, chains) to
       improve chances of MCMC convergence,
@@ -157,6 +160,7 @@ with inferred aggregates outside of the specified tolerance of ",
     dist.incub    = dist.incub,
     dist.gi       = dist.gi,
     prm.R         = prm.R,
+    RL.max.iter   = RL.max.iter,
     silent        = silent
   )
 

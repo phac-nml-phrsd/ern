@@ -23,7 +23,7 @@ observed. Must be the same length as observed.}
 
 \item{p_delay}{A numeric vector whose entries give the probability that
 the delay from infection to observation is exactly 0, 1, ... N days.
-p_delay must sum to 1 and to to facilitate vectorization should be
+p_delay must sum to 1 and to  facilitate vectorization should be
 the same length as observed, and times
 (the last several entries will most likely be 0s).}
 

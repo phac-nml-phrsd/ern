@@ -31,8 +31,8 @@ estimate_R_ww <- function(
       span   = 0.20
     ),
     prm.R = list(
-      iter = 10,
-      CI = 0.95,
+      iter   = 10,
+      CI     = 0.95,
       window = 7,
       config.EpiEstim = NULL
     ),
@@ -47,7 +47,7 @@ estimate_R_ww <- function(
   if(!isTRUE("date" %in% names(ww.conc)) |
      !isTRUE("val" %in% names(ww.conc))
      ){
-    stop("date and value columns are required. Please check ww.conc.
+    stop("`date` and `value` columns are required. Please check `ww.conc`.
          Aborting!")
   }
 
@@ -72,8 +72,7 @@ estimate_R_ww <- function(
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%
-    dplyr::transmute(value = I,
-              date) %>%
+    dplyr::transmute(value = I, date) %>%
     summarise_by_date_iters()
 
   rt = lapply(r, `[[`, 2) %>%
@@ -85,9 +84,10 @@ estimate_R_ww <- function(
     ww.smooth = ww.smooth,
     inc       = inc,
     R         = rt
-  )
-  )
+  ))
 }
+
+
 
 #' Helper function.
 #' Converts wastewater to Rt after sampling one fecal shedding and
@@ -104,12 +104,12 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                            scaling.factor, prm.R, silent) {
   set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
-  sample.gi = sample_a_dist(dist = dist.gi)
+  sample.gi  = sample_a_dist(dist = dist.gi)
 
   inc = deconv_ww_inc(d              = ww.conc,
                       fec            = sample.fec,
                       scaling.factor = scaling.factor,
-                      silent = silent)
+                      silent         = silent)
 
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = inc.deconvol) %>%
