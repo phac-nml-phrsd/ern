@@ -171,3 +171,26 @@ check_cl.input_format <- function(cl.input, silent = FALSE) {
 
   return()
 }
+
+#' Check if input clinical data is already daily
+#'
+#' @template param-cl.input
+#' @template param-silent
+#'
+#' @return Logical. Indicates whether clinical data is already daily.
+check_cl.input_daily <- function(cl.input, silent = FALSE){
+  is.daily <- (cl.input
+    %>% dplyr::mutate(t.diff = as.numeric(date - dplyr::lag(date)))
+    %>% tidyr::drop_na()
+    %>% dplyr::mutate(t.diff.check = t.diff == 1)
+    %>% dplyr::summarise(check = all(t.diff.check))
+    %>% dplyr::pull(check)
+  )
+
+  if(!is.daily & !silent){
+    message("-----
+The clinical testing data you input is not daily. `ern` requires daily data to compute Rt. `ern` will infer daily reports from your inputs. See `prm.daily` and `prm.daily.check` arguments of `estimate_R_cl()` for daily inference options.")
+  }
+
+  return(is.daily)
+}

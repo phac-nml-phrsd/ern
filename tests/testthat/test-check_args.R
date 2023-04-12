@@ -205,3 +205,41 @@ test_that("check_cl.input_format() returns an error when date and count columns
     NULL
   )
 })
+
+test_that("check_cl.input_daily() returns a message when data is not daily and silent mode is off", {
+  # message check
+  expect_message(
+    check_cl.input_daily(
+      cl.input,
+      silent = FALSE
+    )
+  )
+})
+
+test_that("expected output of check_cl.input_daily()", {
+
+  # logical check
+  expect_equal(
+    class(check_cl.input_daily(
+      cl.input,
+      silent = TRUE
+    )),
+    "logical"
+  )
+
+  # FALSE check
+  expect_false(
+    check_cl.input_daily(
+      cl.input,
+      silent = TRUE
+    )
+  )
+
+  # TRUE check
+  expect_true(
+    check_cl.input_daily(
+      cl.daily %>% dplyr::rename(count = value),
+      silent = TRUE
+    )
+  )
+})
