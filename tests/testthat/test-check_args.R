@@ -141,7 +141,7 @@ test_that("check_prm.R returns a message and a value of NULL
 
 test_that("check_dist returns an error when invalid distributions are
           passed, and returns NULL when valid distribution is passed", {
-  fec = def_dist_fecal_shedding()
+  fec = dist.fec
   fec.missing.shape = purrr::discard_at(fec, "shape")
   fec.sd = purrr::list_modify(fec,
                               sd = 2)
@@ -164,7 +164,7 @@ test_that("check_for_deconv returns an error when number of observations <
           length of distribution vector, and returns NULL when obs >=
           length(dist)", {
   fec = get_discrete_dist(
-    def_dist_fecal_shedding()
+    dist.fec
   )
   n.obs = 1:33
   n.obs.error = n.obs[-1]

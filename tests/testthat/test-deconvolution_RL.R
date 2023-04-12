@@ -4,7 +4,7 @@ test_that("deconvolution_RL returns a message when verbose = TRUE,
   load("../testdata/ww_test_params.RData")
   ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
-  f = get_discrete_dist(def_dist_fecal_shedding())
+  f = get_discrete_dist(dist.fec)
   f.warn = f + 0.01
   expect_message(
     deconvolution_RL(observed = ww.smooth$obs,
