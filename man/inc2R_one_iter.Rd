@@ -6,7 +6,16 @@
 Converts wastewater to Rt after sampling one fecal shedding and
 one generation interval distribution.}
 \usage{
-inc2R_one_iter(i, dist.fec, dist.gi, ww.conc, scaling.factor, prm.R, silent)
+inc2R_one_iter(
+  i,
+  dist.fec,
+  dist.gi,
+  ww.conc,
+  scaling.factor,
+  prm.R,
+  silent,
+  RL.max.iter
+)
 }
 \arguments{
 \item{i}{Numeric. Iteration index. (not used but required when using
@@ -36,6 +45,8 @@ estimates after sampling uncertain distributions.
 }}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 }
 \value{
 List. Elements include \code{inc} (incidence) and \code{rt}
