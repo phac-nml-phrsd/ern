@@ -43,9 +43,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
     iter = 10, # number of iterations in Rt ensemble
     CI = 0.95, # 95% confidence interval
     window = 7, # time window for each Rt estimate
-    config.EpiEstim = EpiEstim::make_config(
-      seed = 14
-    )
+    config.EpiEstim = NULL
   )
   prm.daily.check = list(
     agg.reldiff.tol = 200
