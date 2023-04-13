@@ -37,24 +37,15 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
 
 test_that("estimate_R_ww returns a list of four dataframes", {
   load("../testdata/ww_test_params.RData")
-  expect_type(
-    estimate_R_ww(
-      ww.conc = ww.conc,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      prm.smooth = prm.smooth
-    ),
-    "list"
-  )
-  expect_length(
-    estimate_R_ww(
-      ww.conc = ww.conc,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      prm.smooth = prm.smooth
-    ),
-    4
-  )
+
+  res = estimate_R_ww(
+    ww.conc = ww.conc,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    prm.smooth = prm.smooth)
+
+  expect_type(res ,"list")
+  expect_length(estimate_R_ww(res,4))
 })
 
 test_that("estimate_R_ww returns a message when silent mode is disabled", {
