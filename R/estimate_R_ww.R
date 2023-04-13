@@ -102,7 +102,7 @@ estimate_R_ww <- function(
 #'  (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                            scaling.factor, prm.R, silent) {
-  set.seed(i)
+  # set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
   sample.gi  = sample_a_dist(dist = dist.gi)
 
