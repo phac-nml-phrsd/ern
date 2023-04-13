@@ -19,30 +19,20 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
   )
   ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
-  expect_type(
-    inc2R_one_iter(
-      i = 1,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      ww.conc = ww.smooth,
-      scaling.factor = 1,
-      prm.R = prm.R,
-      silent = TRUE
-    ),
-    "list"
+
+  res = inc2R_one_iter(
+    i = 1,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    ww.conc = ww.smooth,
+    scaling.factor = 1,
+    prm.R = prm.R,
+    silent = TRUE,
+    RL.max.iter = 9
   )
-  expect_length(
-    inc2R_one_iter(
-      i = 1,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      ww.conc = ww.smooth,
-      scaling.factor = 1,
-      prm.R = prm.R,
-      silent = TRUE
-    ),
-    2
-  )
+
+  expect_type(res, "list")
+  expect_length(res,2)
 })
 
 test_that("estimate_R_ww returns a list of four dataframes", {
