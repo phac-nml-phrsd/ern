@@ -9,3 +9,5 @@ man-roxygen
 ^data-raw$
 ^vignettes/articles$
 ^\.github$
+^doc$
+^Meta$
