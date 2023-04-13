@@ -162,14 +162,10 @@ Both sd and shape found: ", print(x)))
   if(x$dist == "lnorm"){
 
     assertthat::assert_that(assertthat::has_name(x, 'meanlog'))
-    assertthat::assert_that(assertthat::has_name(x, 'sdmean'))
+    assertthat::assert_that(assertthat::has_name(x, 'sdlog'))
     assertthat::assert_that(assertthat::is.number(x$meanlog))
     assertthat::assert_that(assertthat::is.number(x$sdlog))
 
-    if(x$meanlog <= 0) {
-      stop(paste0('Mean for lognormal distribution must be positive',
-                  ' (currently meanlog = ',x$meanlog,'). ABORTING.'))
-    }
     if(x$sdlog <= 0) {
       stop(paste0('Standard deviation for lognormal distribution must be positive',
                   ' (currently sdlog = ',x$sdlog,'). ABORTING.'))
