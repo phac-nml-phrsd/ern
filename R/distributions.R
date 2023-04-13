@@ -301,8 +301,8 @@ get_discrete_dist <- function(params){
   if(params$dist == "lnorm"){
     x <- stats::dlnorm(
       x       = 1:params$max,
-      meanlog = params$mean,
-      sdlog   = params$sd
+      meanlog = params$meanlog,
+      sdlog   = params$sdlog
     )
   }
 

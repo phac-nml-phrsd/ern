@@ -161,6 +161,8 @@ Both sd and shape found: ", print(x)))
 
   if(x$dist == "lnorm"){
 
+    assertthat::assert_that(assertthat::has_name(x, 'meanlog'))
+    assertthat::assert_that(assertthat::has_name(x, 'sdmean'))
     assertthat::assert_that(assertthat::is.number(x$meanlog))
     assertthat::assert_that(assertthat::is.number(x$sdlog))
 
