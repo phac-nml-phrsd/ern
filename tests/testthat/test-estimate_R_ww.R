@@ -45,7 +45,7 @@ test_that("estimate_R_ww returns a list of four dataframes", {
     prm.smooth = prm.smooth)
 
   expect_type(res ,"list")
-  expect_length(estimate_R_ww(res,4))
+  expect_length(res,4)
 })
 
 test_that("estimate_R_ww returns a message when silent mode is disabled", {
