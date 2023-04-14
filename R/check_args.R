@@ -209,3 +209,22 @@ check_data_clin <- function(dat, silent = FALSE) {
   }
   return()
 }
+
+check_ww.conc_format <- function(ww.conc){
+
+  # check is df
+  assertthat::assert_that(is.data.frame(ww.conc))
+
+  # check for required columns
+  if(!isTRUE("date" %in% names(ww.conc)) |
+     !isTRUE("value" %in% names(ww.conc))
+  ){
+    stop("`date` and `value` columns are required. Please check `ww.conc`.
+         Aborting!")
+  }
+
+  # check column types
+  assertthat::assert_that(is.Date(ww.conc$date))
+  assertthat::assert_that(is.numeric(ww.conc$value))
+
+}

@@ -46,12 +46,7 @@ estimate_R_ww <- function(
   check_prm.smooth(prm.smooth)
 
   # Checking if ww.conc df contains required variables
-  if(!isTRUE("date" %in% names(ww.conc)) |
-     !isTRUE("value" %in% names(ww.conc))
-     ){
-    stop("`date` and `value` columns are required. Please check `ww.conc`.
-         Aborting!")
-  }
+  check_ww.conc_format(ww.conc)
 
   # Smooth the wastewater signal, if requested
   if(!is.null(prm.smooth)){
