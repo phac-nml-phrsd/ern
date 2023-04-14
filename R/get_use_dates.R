@@ -30,8 +30,8 @@ get_use_dates <- function(
     # fill report date up to make grouping variable to aggregate
     # inferred daily reports
     %>% tidyr::fill(date.report, .direction = "up")
-    # rename count as obs to make col clearer in unified data below
-    %>% dplyr::rename(obs = count)
+    # rename value as obs to make col clearer in unified data below
+    %>% dplyr::rename(obs = value)
   )
 
   # unified data with aggregates and relative differences

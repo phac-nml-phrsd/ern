@@ -202,7 +202,7 @@ check_data_clin <- function(dat, silent = FALSE) {
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'
 
-  for(var in c("count", "date")){
+  for(var in c("value", "date")){
     if(!(var %in% n)){
       stop(paste0(msg.template1, var, msg.template2))
     }
