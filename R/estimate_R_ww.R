@@ -54,13 +54,14 @@ estimate_R_ww <- function(
   }
 
   # Smooth the wastewater signal, if requested
-  ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
     ww.smooth <- smooth_ww(
       ww.conc = ww.conc,
       prm.smooth = prm.smooth,
       silent = silent
     )
+  } else {
+    ww.smooth <- format_ww.smooth(ww.conc)
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
