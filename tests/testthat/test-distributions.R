@@ -53,8 +53,8 @@ test_that("gamma and lnorm distributions get specified correctly", {
 
   pars.lnorm <- list(
     dist = "lnorm",
-    mean = mean,
-    sd = sd,
+    meanlog = log(mean),
+    sdlog = log(sd),
     max = max
   )
 
@@ -116,4 +116,5 @@ test_that("sample_from_dist returns error when uniform distribution not defined,
                 params = param.correct
               )
             )
-          })
+          }
+)

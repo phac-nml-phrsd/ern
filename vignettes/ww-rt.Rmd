@@ -67,16 +67,16 @@ dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
 # Initializing smoothing parameters
 prm.smooth = list(
   align  = 'center', # smoothing alignment
-  method = 'loess', # smoothing method
-  span   = 0.29 # smoothing span (used for loess smoothing only)
+  method = 'loess',  # smoothing method
+  span   = 0.29      # smoothing span (used for loess smoothing only)
 )
 
 # Initialzing Rt settings
 prm.R = list(
-  iter = 20, # number of iterations in Rt ensemble
-  CI = 0.95, # confidence interval
-  window = 10, # Time window for Rt calculations
-  config.EpiEstim = EpiEstim::make_config(seed = 15) # EpiEstim configuration for Rt calculations
+  iter   = 20,   # number of iterations in Rt ensemble
+  CI     = 0.95, # confidence interval
+  window = 10,   # Time window for Rt calculations
+  config.EpiEstim = NULL # EpiEstim configuration for Rt calculations
 )
 ```
 
@@ -99,7 +99,7 @@ r.estim = ern::estimate_R_ww(
 
 Using `plot_diagnostic_ww()`, $\mathcal{R}_t$ estimates can be visualized in a time-series graph along with wastewater concentration, and deconvoluted incidence (an intermediate between wastewater data and $\mathcal{R}_t$).
 
-```{r plot rt, fig.width = 6, fig.height = 4, warning = FALSE}
+```{r plot rt, fig.width = 6, fig.height = 6, warning = FALSE}
 g = ern::plot_diagnostic_ww(r.estim)
 plot(g)
 ```

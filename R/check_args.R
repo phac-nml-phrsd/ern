@@ -7,12 +7,26 @@
 #'
 #' @return NULL
 check_prm.daily <- function(x){
+
   # Check that mandatory elements are present and of the right type
   for (name in c("burn", "iter", "chains")){
     # Check presence of element
-    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::has_name(x, name))
     assertthat::assert_that(assertthat::is.count(x[[name]]))
   }
+
+  # Check config.EpiEstim
+  if(!is.null(x$config.EpiEstim)){
+    if(!silent){
+      warning("\n-----
+You are passing your own config for EpiEstim::estimate_R().
+Please note that ern always uses method = 'non_parametric_si',
+and thus any method specified in your config will be ignored.
+Also, any config parameters that are specific to
+method = 'non_parametric_si' (like si_distr) cannot be modified and
+will also be ignored.\n")
+    }
+}
 
   # Check optional arguments
   if(!is.null(x$first.agg.period)){
@@ -35,7 +49,7 @@ check_prm.daily.check <- function(x){
   if(is.null(x)) return(NULL)
 
   # otherwise, must specify agg.reldiff.tol
-  assertthat::has_name(x, "agg.reldiff.tol")
+  assertthat::assert_that(assertthat::has_name(x, "agg.reldiff.tol"))
   tol <- x[["agg.reldiff.tol"]]
   assertthat::assert_that(is.numeric(tol))
   if(tol <= 0) stop("prm.daily.check$agg.reldiff.tol must be positive and non-zero")
@@ -84,7 +98,7 @@ check_prm.R <- function(x, silent = FALSE){
   # Check that mandatory elements are present and of the right type
   for (name in c("iter", "CI", "window")){
     # Check presence of element
-    assertthat::has_name(x, name)
+    assertthat::assert_that(assertthat::has_name(x, name))
 
     # Check element type
     if(name %in% c("iter", "window")){
@@ -120,6 +134,7 @@ will also be ignored.")
 #'
 #' @return NULL
 check_dist <- function(x){
+
   if(x$dist == "gamma"){
     if(!("sd" %in% names(x) | "shape" %in% names(x))){
       stop(paste0("Gamma distributions must be specified with a mean and one of
@@ -131,7 +146,30 @@ Neither sd nor shape found: ", print(x)))
 one of a standard deviation (sd) or a shape parameter (shape).
 Both sd and shape found: ", print(x)))
     }
+  }
 
+  if(x$dist == "norm"){
+
+    assertthat::assert_that(assertthat::has_name(x, 'mean'))
+    assertthat::assert_that(assertthat::is.number(x$mean))
+    assertthat::assert_that(assertthat::is.number(x$sd))
+    if(x$sd <= 0) {
+      stop(paste0('Standard deviation for normal distribution must be positive',
+                  ' (currently sd = ',x$sd,'). ABORTING.'))
+    }
+  }
+
+  if(x$dist == "lnorm"){
+
+    assertthat::assert_that(assertthat::has_name(x, 'meanlog'))
+    assertthat::assert_that(assertthat::has_name(x, 'sdlog'))
+    assertthat::assert_that(assertthat::is.number(x$meanlog))
+    assertthat::assert_that(assertthat::is.number(x$sdlog))
+
+    if(x$sdlog <= 0) {
+      stop(paste0('Standard deviation for lognormal distribution must be positive',
+                  ' (currently sdlog = ',x$sdlog,'). ABORTING.'))
+    }
   }
 
   return()
@@ -168,6 +206,5 @@ check_data_clin <- function(dat, silent = FALSE) {
       stop(paste0(msg.template1, var, msg.template2))
     }
   }
-
   return()
 }

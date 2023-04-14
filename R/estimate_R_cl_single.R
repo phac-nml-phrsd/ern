@@ -12,12 +12,13 @@ estimate_R_cl_single <- function(
     dist.incub,
     dist.gi,
     prm.R,
-    silent = FALSE
+    silent = FALSE,
+    RL.max.iter = 10
 ){
 
   # sample one realization of reports.daily (smoothed)
   id.list <- unique(cl.daily$id)
-  the_id <- sample(id.list, size = 1)
+  the_id  <- sample(id.list, size = 1)
   df.draw <- (cl.daily
      %>% dplyr::filter(id == the_id)
   )
@@ -45,25 +46,22 @@ estimate_R_cl_single <- function(
 
   # reports deconvoluted with reporting delay distribution
   # and then with incubation period distribution
-  incidence <- (reports_to_incidence(
-    reports.daily.scaled,
+  incidence <- reports_to_incidence(
+    reports.daily = reports.daily.scaled,
     reporting.delay,
     incubation.period,
-    silent = silent
-  )
+    silent = silent,
+    max.iter = RL.max.iter  ) %>%
     # attach time index to incidence
-    %>% dplyr::mutate(
-      t = 1:nrow(.)
-    )
-  )
+    dplyr::mutate(t = 1:nrow(.))
 
   # estimate Rt
-  incidence_to_R(
+  res = incidence_to_R(
     incidence,
     generation.interval,
-    prm.R
-  )
+    prm.R)
 
+  return(res)
 }
 
 
@@ -97,62 +95,58 @@ reports_to_incidence <- function(
     reports.daily,
     reporting.delay,
     incubation.period,
-    max.iter = 50,
+    max.iter = 9,
     silent = FALSE
 ){
 
   # reports -> onsets
   # - - - - - - - - - - - - - - - - -
 
-  # deconv reports with reporting delay distribution
+  # Deconvolving inferred daily reports with reporting delay
+  # distribution to get daily onsets.
   if(!silent){
-    message("-----
-Deconvolving inferred daily reports with reporting delay
-distribution to get daily onsets...")
+    message("Deconvolution reporting delays...")
   }
+
   onsets <- deconv(
-    counts = reports.daily$value,
-    dist = get_discrete_dist(reporting.delay),
+    counts   = reports.daily$value,
+    dist     = get_discrete_dist(reporting.delay),
     max.iter = max.iter,
-    silent = silent
+    silent   = silent
   )
 
   # onsets -> incidence
   # - - - - - - - - - - - - - - - - -
 
-  # deconv onsets with incubation period distribution
+  # Deconvolving daily onsets with incubation period
+  # distribution to get daily incidence
   if(!silent){
-    message("-----
-Deconvolving daily onsets with incubation period
-distribution to get daily incidence...")
+    message("Deconvolution incubation period...")
   }
   incidence <- deconv(
-    counts = onsets$y,
-    dist = get_discrete_dist(incubation.period),
+    counts   = onsets$y,
+    dist     = get_discrete_dist(incubation.period),
     max.iter = max.iter,
-    silent = silent
+    silent   = silent
   )
 
-  # output
-  # - - - - - - - - - - - - - - - - -
+  # - - - output
 
   date.lookup <- tibble::tibble(
     date = reports.daily$date,
     t = 1:nrow(reports.daily)
   )
 
-  (incidence
+  res = incidence %>%
     # filter out first x days, where x is the sum of
     # the max reporting delay and the max incubation period
     # (i.e. disregard reports before a full observation period is complete)
     # %>% dplyr::filter(t >= incubation.period$max + reporting.delay$max)
-    %>% dplyr::left_join(date.lookup, by = "t")
-    %>% dplyr::transmute(
-      date,
-      I = y
-    )
-    %>% tibble::as_tibble()
-  )
+    dplyr::left_join(date.lookup, by = "t") %>%
+    dplyr::transmute(date, I = y) %>%
+    tibble::as_tibble()
+
+  return(res)
 }
 
 #' Wrapper for deconvolution with a given distribution

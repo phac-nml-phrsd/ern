@@ -10,6 +10,7 @@
 #' @template param-prm.smooth
 #' @template param-prm.R
 #' @template param-silent
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #' @return List. Elements include:
 #' \itemize{
 #'  \item `ww.conc`: original wastewater signal
@@ -31,12 +32,13 @@ estimate_R_ww <- function(
       span   = 0.20
     ),
     prm.R = list(
-      iter = 10,
-      CI = 0.95,
+      iter   = 10,
+      CI     = 0.95,
       window = 7,
       config.EpiEstim = NULL
     ),
-    silent = FALSE
+    silent = FALSE,
+    RL.max.iter = 9
 ) {
 
   # Checking arguments
@@ -47,7 +49,7 @@ estimate_R_ww <- function(
   if(!isTRUE("date" %in% names(ww.conc)) |
      !isTRUE("val" %in% names(ww.conc))
      ){
-    stop("date and value columns are required. Please check ww.conc.
+    stop("`date` and `value` columns are required. Please check `ww.conc`.
          Aborting!")
   }
 
@@ -64,16 +66,21 @@ estimate_R_ww <- function(
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
-  r = lapply(X = 1:prm.R$iter, FUN = inc2R_one_iter,
-    dist.gi = dist.gi, dist.fec = dist.fec,
-    ww.conc = ww.smooth, scaling.factor = scaling.factor,
-    prm.R = prm.R, silent = silent
+  r = lapply(
+    X           = 1:prm.R$iter,
+    FUN         = inc2R_one_iter,
+    dist.gi     = dist.gi,
+    dist.fec    = dist.fec,
+    ww.conc     = ww.smooth,
+    scaling.factor = scaling.factor,
+    prm.R       = prm.R,
+    silent      = silent,
+    RL.max.iter = RL.max.iter
   )
 
   inc = lapply(r, `[[`, 'inc') %>%
     dplyr::bind_rows() %>%
-    dplyr::transmute(value = I,
-              date) %>%
+    dplyr::transmute(value = I, date) %>%
     summarise_by_date_iters()
 
   rt = lapply(r, `[[`, 2) %>%
@@ -85,9 +92,10 @@ estimate_R_ww <- function(
     ww.smooth = ww.smooth,
     inc       = inc,
     R         = rt
-  )
-  )
+  ))
 }
+
+
 
 #' Helper function.
 #' Converts wastewater to Rt after sampling one fecal shedding and
@@ -97,19 +105,22 @@ estimate_R_ww <- function(
 #'  `lapply()`)
 #' @inheritParams estimate_R_ww
 #' @template param-silent
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #'
 #' @return List. Elements include `inc` (incidence) and `rt`
 #'  (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
-                           scaling.factor, prm.R, silent) {
-  set.seed(i)
+                           scaling.factor, prm.R, silent,
+                           RL.max.iter) {
+  # set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
-  sample.gi = sample_a_dist(dist = dist.gi)
+  sample.gi  = sample_a_dist(dist = dist.gi)
 
   inc = deconv_ww_inc(d              = ww.conc,
                       fec            = sample.fec,
                       scaling.factor = scaling.factor,
-                      silent = silent)
+                      silent         = silent,
+                      RL.max.iter    = RL.max.iter)
 
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = inc.deconvol) %>%
