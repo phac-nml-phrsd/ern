@@ -35,7 +35,8 @@ specified as followed:
 \item align - smoothing alignment (for rollmean smoothing, either
 'center', 'left', 'right')
 \item span - smoothing span (for loess smoothing)
-}}
+}
+Set this entire list to \code{NULL} to turn off smoothing}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:

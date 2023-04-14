@@ -18,7 +18,8 @@ specified as followed:
 \item align - smoothing alignment (for rollmean smoothing, either
 'center', 'left', 'right')
 \item span - smoothing span (for loess smoothing)
-}}
+}
+Set this entire list to \code{NULL} to turn off smoothing}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
