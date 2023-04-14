@@ -8,6 +8,10 @@
 #' @export
 smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
 
+  if(is.null(prm.smooth)) return(format_ww.smooth(ww.conc))
+
+  check_prm.smooth(prm.smooth)
+
   # Checking if prm.smooth contains smoothing method
   if(is.null(prm.smooth$method)){
     stop("Method is not specified in prm.smooth. Please specify a smoothing
