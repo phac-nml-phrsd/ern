@@ -65,6 +65,7 @@ check_prm.daily.check <- function(x){
 #'
 #' @return NULL
 check_prm.smooth <- function(x){
+  if(is.null(x)) return() # no smoothing
 
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
 
