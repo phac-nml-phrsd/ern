@@ -5,5 +5,6 @@ utils::globalVariables(c(
   "mean.agg","mean.agg.reldiff","name","obs","trash",
   "upr","upr.agg","use","use.cumm","val","val_smooth",
   "value","y",
-  "t.diff", "t.diff.check", "check"
+  "t.diff", "t.diff.check", "check",
+  "silent", "x"
 ))
