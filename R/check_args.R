@@ -197,6 +197,10 @@ check_for_deconv <- function(obs, dist){
 #' @return NULL
 check_data_clin <- function(dat, silent = FALSE) {
 
+  # check is df
+  assertthat::assert_that(is.data.frame(dat))
+
+  # check for required columns
   n = names(dat)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
@@ -207,6 +211,11 @@ check_data_clin <- function(dat, silent = FALSE) {
       stop(paste0(msg.template1, var, msg.template2))
     }
   }
+
+  # check column types
+  assertthat::assert_that(is.Date(dat$date))
+  assertthat::assert_that(is.numeric(dat$value))
+
   return()
 }
 
