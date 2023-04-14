@@ -65,6 +65,7 @@ check_prm.daily.check <- function(x){
 #'
 #' @return NULL
 check_prm.smooth <- function(x){
+  if(is.null(x)) return() # no smoothing
 
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
 
@@ -196,15 +197,43 @@ check_for_deconv <- function(obs, dist){
 #' @return NULL
 check_data_clin <- function(dat, silent = FALSE) {
 
+  # check is df
+  assertthat::assert_that(is.data.frame(dat))
+
+  # check for required columns
   n = names(dat)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'
 
-  for(var in c("count", "date")){
+  for(var in c("value", "date")){
     if(!(var %in% n)){
       stop(paste0(msg.template1, var, msg.template2))
     }
   }
+
+  # check column types
+  assertthat::assert_that(assertthat::is.date(dat$date))
+  assertthat::assert_that(is.numeric(dat$value))
+
   return()
+}
+
+check_ww.conc_format <- function(ww.conc){
+
+  # check is df
+  assertthat::assert_that(is.data.frame(ww.conc))
+
+  # check for required columns
+  if(!isTRUE("date" %in% names(ww.conc)) |
+     !isTRUE("value" %in% names(ww.conc))
+  ){
+    stop("`date` and `value` columns are required. Please check `ww.conc`.
+         Aborting!")
+  }
+
+  # check column types
+  assertthat::assert_that(assertthat::is.date(ww.conc$date))
+  assertthat::assert_that(is.numeric(ww.conc$value))
+
 }

@@ -23,7 +23,7 @@ estimate_R_cl(
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
-\item \code{count}: count of reported cases
+\item \code{value}: count of reported cases
 }}
 
 \item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}

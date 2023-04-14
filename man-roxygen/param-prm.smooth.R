@@ -7,3 +7,4 @@
 #'    'center', 'left', 'right')
 #'   \item span - smoothing span (for loess smoothing)
 #'  }
+#'  Set this entire list to `NULL` to turn off smoothing
