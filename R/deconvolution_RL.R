@@ -141,7 +141,7 @@ deconvolution_RL <- function(
                      expected = expected_D)
     iter = iter+1
   }
-  if(verbose) message(paste('Number of iterations for Richardson-Lucy deconvolution: ', iter))
+  if(verbose) message(paste('iterations Richardson-Lucy deconvolution: ', iter))
 
   # Clean
   clean_lambda <- function(xx){ifelse(xx>orig_ceiling, NA, xx)}

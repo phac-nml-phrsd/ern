@@ -18,9 +18,7 @@ incidence_to_R <- function(
   # === prep inputs ====
 
   # Prepare the configuration for EpiEstim's function
-  incid  <- incidence$I
-  tmp    <- prm.R[['method.EpiEstim']]
-  method <- ifelse(is.null(tmp), "non_parametric_si", tmp)
+  incid <- incidence$I
 
   if(is.null(prm.R$config.EpiEstim)){
     # If the configuration for EpiEstim's function
@@ -29,7 +27,6 @@ incidence_to_R <- function(
     config.EpiEstim <- suppressMessages(
       EpiEstim::make_config(
         incid    = incid,
-        # method   = method,  # EpiEstim "bug"
         si_distr = c(0, si)
       )
     )
@@ -50,20 +47,24 @@ incidence_to_R <- function(
   if(!is.null(prm.R$window)){
     t_start <- config.EpiEstim$t_start
     t_end   <- as.integer(t_start + (prm.R$window - 1)) # -1 because window includes endpoints
+
     # trim off start/end dates where end date exceeds
     # number of incidence observations
-    valid <- t_end <= length(incid)
+    valid                   <- ( t_end <= length(incid) )
     config.EpiEstim$t_start <- t_start[valid]
     config.EpiEstim$t_end   <- t_end[valid]
   }
 
   # ==== Calculate Rt ====
+
   # calculate Rt based on _one_ generation interval
-  # (handle GI sampling outside of this function)
+  # (handle GI sampling outside of this function).
+  # Note: only the method `non_parametric_si` can
+  # be used within the `ern` library.
 
   R = EpiEstim::estimate_R(
     incid  = incid,
-    method = method,
+    method = "non_parametric_si",
     config = config.EpiEstim
   )$R
 

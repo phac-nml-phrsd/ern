@@ -171,3 +171,39 @@ plot_diagnostic_cl <- function(
 
   return(g)
 }
+
+
+
+
+#' Plot a distribution
+#'
+#' @param d List that defines the distribution (as returned by `def_dist_incubation_period()` for example)
+#'
+#' @return A ggplot object.
+#' @export
+#'
+plot_dist <- function(d) {
+
+  a = get_discrete_dist(d)
+
+  emp.mean = sum(c(1:d$max)*a)
+
+  dplot = data.frame(
+    x = 1:d$max,
+    y = a
+  )
+
+  g = ggplot2::ggplot(dplot, ggplot2::aes(x=x, y=y)) +
+    ggplot2::geom_line(linewidth = 2) +
+    ggplot2::geom_point(size=3, fill='white', shape = 21, stroke = 1) +
+    ggplot2::geom_vline(xintercept = emp.mean, linetype = 'dashed')+
+    ggplot2::annotate(geom = 'label', x=emp.mean*1, y=0,
+                      label = paste('mean =',round(emp.mean,2)), size=3)+
+    ggplot2::theme(panel.grid.minor = ggplot2::element_blank())+
+    ggplot2::scale_x_continuous(breaks = 0:d$max)+
+    ggplot2::labs(title = d$dist, x='',y='')
+
+  return(g)
+}
+
+

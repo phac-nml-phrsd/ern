@@ -4,7 +4,7 @@
 \alias{deconv_ww_inc}
 \title{Deconvoluting Wastewater Data to Incidence}
 \usage{
-deconv_ww_inc(d, fec, scaling.factor, silent)
+deconv_ww_inc(d, fec, scaling.factor, silent, RL.max.iter)
 }
 \arguments{
 \item{d}{Data frame. Wastewater dataframe. Must include at least \code{date} and
@@ -16,6 +16,8 @@ deconv_ww_inc(d, fec, scaling.factor, silent)
 prevalence. This value may be assumed or independently calibrated to data.}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 }
 \value{
 Data frame with deconvoluted incidence
