@@ -2,7 +2,7 @@
 #'  data.
 #'
 #' @param ww.conc Data frame. Must have variables named \code{date} for the
-#'  wastewater collection date and \code{val} for the pathogen concentration.
+#'  wastewater collection date and \code{value} for the pathogen concentration.
 #' @param dist.fec List. Parameters for the fecal shedding distribution in the same format as returned by [`def_dist_fecal_shedding()`].
 #' @template param-dist.gi
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
@@ -47,7 +47,7 @@ estimate_R_ww <- function(
 
   # Checking if ww.conc df contains required variables
   if(!isTRUE("date" %in% names(ww.conc)) |
-     !isTRUE("val" %in% names(ww.conc))
+     !isTRUE("value" %in% names(ww.conc))
      ){
     stop("`date` and `value` columns are required. Please check `ww.conc`.
          Aborting!")

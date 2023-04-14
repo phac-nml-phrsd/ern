@@ -8,7 +8,7 @@ smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
 \arguments{
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:

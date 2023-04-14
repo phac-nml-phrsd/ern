@@ -22,7 +22,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = value)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
