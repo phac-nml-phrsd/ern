@@ -213,7 +213,7 @@ check_data_clin <- function(dat, silent = FALSE) {
   }
 
   # check column types
-  assertthat::assert_that(is.Date(dat$date))
+  assertthat::assert_that(assertthat::is.date(dat$date))
   assertthat::assert_that(is.numeric(dat$value))
 
   return()
@@ -233,7 +233,7 @@ check_ww.conc_format <- function(ww.conc){
   }
 
   # check column types
-  assertthat::assert_that(is.Date(ww.conc$date))
+  assertthat::assert_that(assertthat::is.date(ww.conc$date))
   assertthat::assert_that(is.numeric(ww.conc$value))
 
 }
