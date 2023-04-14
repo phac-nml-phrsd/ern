@@ -8,30 +8,11 @@
 #' @export
 smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
 
-  if(is.null(prm.smooth)) return(format_ww.smooth(ww.conc))
-
+  # check args
   check_prm.smooth(prm.smooth)
 
-  # Checking if prm.smooth contains smoothing method
-  if(is.null(prm.smooth$method)){
-    stop("Method is not specified in prm.smooth. Please specify a smoothing
-         method. Aborting!")
-  }
-  else if(!isTRUE(prm.smooth$method %in% c('rollmean', 'loess'))){
-    stop("Invalid smoothing method. Please specify either rollmean or loess
-         as smoothing in prm.smooth. Aborting!")
-  }
-
+  # rollmean
   if(prm.smooth$method == 'rollmean'){
-    if(is.null(prm.smooth$window) | prm.smooth$window <= 0){
-      stop("Missing or invalid rollmean window. Please specify a rollmean value
-           that is greater than 0 in prm.smooth. Aborting!")
-    }
-    if(is.null(prm.smooth$align) |
-       !isTRUE(prm.smooth$align %in% c('center', 'left', 'right'))){
-      stop("Missing or invalid rollmean alignment. Please specify a valid
-           alignment in prm.smooth. Aborting!")
-    }
     d = ww.conc %>%
       tidyr::complete(date = seq.Date(dplyr::first(date),
                                       dplyr::last(date), by = "day")) %>%
@@ -46,11 +27,8 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
                     obs = value_smooth)
   }
 
+  # loess
   if(prm.smooth$method == 'loess'){
-    if(is.null(prm.smooth$span) | prm.smooth$span <= 0){
-      stop("Missing or invalid loess span. Please specify a loess span that is
-           greater than 0 in prm.smooth. Aborting!")
-    }
     t = ww.conc %>%
       dplyr::mutate(x = as.numeric(date - min(date, na.rm = TRUE)+1))
 

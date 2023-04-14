@@ -65,22 +65,39 @@ check_prm.daily.check <- function(x){
 #'
 #' @return NULL
 check_prm.smooth <- function(x){
-  if(is.null(x)) return() # no smoothing
-
+  # general checks
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
 
   if(x$method == "rollmean"){
-    err.msg <- "For the rolling mean smoothing method, a numeric `window` value must be specified in `prm.smooth`"
+
+    # rollmean checks
+    # - - - - - - - - - - - - - - - - -
+
+    # window
+    err.msg <- "For `method = 'rollmean'`, a numeric `window` value must be specified in `prm.smooth`"
     if(!("window" %in% names(x))) stop(err.msg)
     if(!is.numeric(x$window)) stop(err.msg)
+
+    # align
+    if(is.null(x$align) |
+       !isTRUE(x$align %in% c('center', 'left', 'right'))){
+      stop("Missing or invalid `align` argument for `method = 'rollmean'` in `prm.smooth`")
+    }
   }
   else if(x$method == "loess"){
-    err.msg <- "For the loess smoothing method, a numeric `span` value must be specified in `prm.smooth`"
+
+    # loess checks
+    err.msg <- "For `method = 'loess', a numeric `span` value greater than must be specified in `prm.smooth`"
     if(!("span" %in% names(x))) stop(err.msg)
     if(!is.numeric(x$span)) stop(err.msg)
-  }
-  else {
-    stop(paste0("Smoothing method of ", x$method, " not recognized"))
+    if(is.null(x$span) | x$span <= 0){
+      stop(err.msg)
+    }
+  } else {
+
+    # input method not recognized
+    stop(paste0("Smoothing method of '", x$method, "' not recognized"))
+
   }
 
   return()
