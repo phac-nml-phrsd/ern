@@ -88,3 +88,19 @@ test_that("defaults common between estimate_R_ww and estimate_R_cl have the same
     expect_equal(ww, cl)
   }
 })
+
+test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL`", {
+  load("../testdata/ww_test_params.RData")
+
+  res = estimate_R_ww(
+    ww.conc = ww.conc,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    prm.smooth = NULL
+  )
+
+  expect_equal(
+    res$ww.conc$val,
+    res$ww.smooth$obs
+  )
+})
