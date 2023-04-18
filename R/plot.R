@@ -103,7 +103,10 @@ plot_diagnostic_cl <- function(
    %>% range()
   )
 
-  p1 <- (ggplot2::ggplot(r.estim$R, ggplot2::aes(x = date))
+  df1 = r.estim$R %>%
+    filter(!is.na(date))
+
+  p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
    + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
                           alpha = use),
