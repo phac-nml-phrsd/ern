@@ -104,7 +104,7 @@ plot_diagnostic_cl <- function(
   )
 
   df1 = r.estim$R %>%
-    filter(!is.na(date))
+    tidyr::drop_na(date)
 
   p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
