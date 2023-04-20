@@ -64,7 +64,7 @@ estimate_R_ww <- function(
     warning("\n-----
 You are not passing smoothing parameters.
 Smoothing parameters are strongly recommended
-to obtain accurate Rt estimates.\n")
+to obtain accurate Rt estimates using wastewater data.\n")
     ww.smooth <- format_ww.smooth(ww.conc)
   }
 
