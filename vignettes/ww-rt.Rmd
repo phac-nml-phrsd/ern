@@ -31,7 +31,7 @@ With the `ern` package, the effective reproductive number ($\mathcal{R}_t$) can 
 
 In order to estimate $\mathcal{R}_t$ from wastewater data in `ern`, the following items are required:
 
--   Viral concentration dataframe containing the following columns: `date` and `val` (concentration value).
+-   Viral concentration dataframe containing the following columns: `date` and `value` (concentration value).
 
 -   Fecal shedding distribution (included in `ern`).
 
@@ -47,12 +47,12 @@ set.seed(1234)
 n=60
 x=1:n
 
-val = x * (40 - x) * rnorm(n, mean=1, sd=0.02)
-val = val[val>0]
+value = x * (40 - x) * rnorm(n, mean=1, sd=0.02)
+value = value[value>0]
 
-dd = ymd('2022-11-01') + 1:length(val)
+dd = ymd('2022-11-01') + 1:length(value)
 
-ww.conc = data.frame(date = dd, val=val)
+ww.conc = data.frame(date = dd, value = value)
 
 head(ww.conc)
 ```

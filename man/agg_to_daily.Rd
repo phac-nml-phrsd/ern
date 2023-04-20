@@ -10,7 +10,7 @@ agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
-\item \code{count}: count of reported cases
+\item \code{value}: count of reported cases
 }}
 
 \item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}

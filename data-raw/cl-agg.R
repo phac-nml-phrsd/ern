@@ -33,16 +33,16 @@ cl.agg <- (
    %>% dplyr::transmute(
      province_en = .data$prname,
      .data$date,
-     count_cumm = .data$totalcases
+     value_cumm = .data$totalcases
    )
    %>% dplyr::left_join(pt.lookup, by = "province_en")
    %>% dplyr::filter(pt %in% pt.list)
    %>% dplyr::group_by(pt)
-   %>% dplyr::mutate(count = dplyr::case_when(
-     .data$date == min(.data$date) ~ .data$count_cumm,
-     T ~ .data$count_cumm - dplyr::lag(count_cumm)
+   %>% dplyr::mutate(value = dplyr::case_when(
+     .data$date == min(.data$date) ~ .data$value_cumm,
+     T ~ .data$value_cumm - dplyr::lag(value_cumm)
    ))
-   %>% dplyr::select(pt, date, count)
+   %>% dplyr::select(pt, date, value)
    %>% tidyr::drop_na()
    %>% dplyr::filter(dplyr::between(.data$date, date.lim[1], date.lim[2]))
    %>% dplyr::arrange(.data$date)

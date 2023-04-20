@@ -12,7 +12,7 @@ attach_t_agg(cl.agg, prm.daily = NULL, silent = FALSE)
 \item{cl.agg}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
-\item \code{count}: count of reported cases
+\item \code{value}: count of reported cases
 }}
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:

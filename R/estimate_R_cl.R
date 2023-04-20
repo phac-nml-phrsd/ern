@@ -3,7 +3,7 @@
 #' @param cl.agg Data frame. Must have variables:
 #' \itemize{
 #'  \item `date`: calendar date of report
-#'  \item `count`: count of reported cases
+#'  \item `value`: count of reported cases
 #' }
 #' @param dist.repfrac List. Parameters for the reporting fraction distribution in the same format as returned by [`def_dist_reporting_fraction()`].
 #' @param dist.repdelay List. Parameters for the reporting delay distribution in the same format as returned by [`def_dist_reporting_delay()`].

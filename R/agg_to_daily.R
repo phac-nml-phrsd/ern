@@ -20,7 +20,7 @@ agg_to_daily <- function(
     g = gi,
     N = popsize,
     obs.times = cl.agg$t,
-    Y = cl.agg$count,
+    Y = cl.agg$value,
     prm.daily = prm.daily,
     silent = silent) %>%
     reshape_fit_jags() %>%
@@ -265,7 +265,7 @@ get_realizations <- function(
 #' Attach start date from first observation for aggregated data
 #' from time (day number)
 #'
-#' @param x dataframe. only has columns `date`, `count`, and `t`
+#' @param x dataframe. only has columns `date`, `value`, and `t`
 attach_startdate_agg <- function(x){
   start_date <- (x
    %>% dplyr::arrange(date)
@@ -277,7 +277,7 @@ attach_startdate_agg <- function(x){
   dplyr::bind_rows(
     tibble::tibble(
       date = start_date,
-      count = NA,
+      value = NA,
       t = 1
     ),
     (x %>% dplyr::arrange(date))

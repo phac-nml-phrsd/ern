@@ -101,7 +101,7 @@ test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL
   ))
 
   expect_equal(
-    res$ww.conc$val,
+    res$ww.conc$value,
     res$ww.smooth$obs
   )
 })
