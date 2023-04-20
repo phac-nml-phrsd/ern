@@ -189,19 +189,19 @@ check_for_deconv <- function(obs, dist){
   return()
 }
 
-#' Check the data frame of clinical data
+#' Check the format of input clinical data
 #'
-#' @param dat Data frame. Timeseries of clinical reports.
+#' @template param-cl.input
 #' @template param-silent
 #'
 #' @return NULL
-check_data_clin <- function(dat, silent = FALSE) {
+check_cl.input_format <- function(cl.input, silent = FALSE) {
 
   # check is df
-  assertthat::assert_that(is.data.frame(dat))
+  assertthat::assert_that(is.data.frame(cl.input))
 
   # check for required columns
-  n = names(dat)
+  n = names(cl.input)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'
@@ -213,10 +213,33 @@ check_data_clin <- function(dat, silent = FALSE) {
   }
 
   # check column types
-  assertthat::assert_that(assertthat::is.date(dat$date))
-  assertthat::assert_that(is.numeric(dat$value))
+  assertthat::assert_that(assertthat::is.date(cl.input$date))
+  assertthat::assert_that(is.numeric(cl.input$value))
 
   return()
+}
+
+#' Check if input clinical data is already daily
+#'
+#' @template param-cl.input
+#' @template param-silent
+#'
+#' @return Logical. Indicates whether clinical data is already daily.
+check_cl.input_daily <- function(cl.input, silent = FALSE){
+  is.daily <- (cl.input
+    %>% dplyr::mutate(t.diff = as.numeric(date - dplyr::lag(date)))
+    %>% tidyr::drop_na()
+    %>% dplyr::mutate(t.diff.check = t.diff == 1)
+    %>% dplyr::summarise(check = all(t.diff.check))
+    %>% dplyr::pull(check)
+  )
+
+  if(!is.daily & !silent){
+    message("-----
+The clinical testing data you input is not daily. `ern` requires daily data to compute Rt. `ern` will infer daily reports from your inputs. See `prm.daily` and `prm.daily.check` arguments of `estimate_R_cl()` for daily inference options.")
+  }
+
+  return(is.daily)
 }
 
 check_ww.conc_format <- function(ww.conc){

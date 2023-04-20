@@ -4,10 +4,10 @@
 \alias{agg_to_daily}
 \title{Infer daily counts from aggregates}
 \usage{
-agg_to_daily(cl.agg, dist.gi, popsize, prm.daily, silent = FALSE)
+agg_to_daily(cl.input, dist.gi, popsize, prm.daily, silent = FALSE)
 }
 \arguments{
-\item{cl.agg}{Data frame. Must have variables:
+\item{cl.input}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{value}: count of reported cases
