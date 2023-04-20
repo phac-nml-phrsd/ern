@@ -7,7 +7,7 @@
 #' \itemize{
 #'   \item `pt`: standard two-character abbreviation (lowercase) of the province name (based on \href{https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=T1_8}{Statcan 2021 census abbreviations})
 #'   \item `date`: report date
-#'   \item `count`: count of reported cases for the previous week
+#'   \item `value`: count of reported cases for the previous week
 #' }
 #'
 #' Filter indicating a specific province to extract a sample dataset for use with [estimate_R_cl()], _e.g._

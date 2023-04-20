@@ -26,7 +26,7 @@ inc2R_one_iter(
 \item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{scaling.factor}{Numeric. Scaling from wastewater concentration to
 prevalence. This value may be assumed or independently calibrated to data.}

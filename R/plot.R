@@ -22,7 +22,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
   g.ww = r.estim$ww.conc %>%
     dplyr::filter(date >= date.start) %>%
-    ggplot2::ggplot(ggplot2::aes(x = date, y = val)) +
+    ggplot2::ggplot(ggplot2::aes(x = date, y = value)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
       data = r.estim$ww.smooth,
@@ -103,7 +103,10 @@ plot_diagnostic_cl <- function(
    %>% range()
   )
 
-  p1 <- (ggplot2::ggplot(r.estim$R, ggplot2::aes(x = date))
+  df1 = r.estim$R %>%
+    tidyr::drop_na(date)
+
+  p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
    + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
                           alpha = use),
@@ -123,7 +126,7 @@ plot_diagnostic_cl <- function(
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.input
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
-     ggplot2::aes(x = date, y = count))
+     ggplot2::aes(x = date, y = value))
      + ggplot2::geom_col(na.rm = TRUE)
      + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
      + ggplot2::labs(subtitle = "Original signal: aggregated case reports")
