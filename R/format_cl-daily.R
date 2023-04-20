@@ -8,7 +8,7 @@ format_cl.daily <- function(cl.input) {
      id = as.integer(1),
      date,
      t,
-     value = count
+     value
    ))
 }
 

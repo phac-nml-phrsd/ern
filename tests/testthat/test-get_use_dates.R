@@ -15,10 +15,10 @@ cl.input.test <- (cl.daily.test
   %>% dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
             rownum = 1:nrow(.))
   %>% dplyr::group_by(group)
-  %>% dplyr::mutate(count = sum(value))
+  %>% dplyr::mutate(value = sum(value))
   %>% dplyr::ungroup()
   %>% dplyr::filter(rownum %% agg.window == 0)
-  %>% dplyr::select(date, count, t)
+  %>% dplyr::select(date, value, t)
 )
 
 test_that("get_use_dates() works when dates.only = TRUE", {

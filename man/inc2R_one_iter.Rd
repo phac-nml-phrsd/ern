@@ -6,7 +6,16 @@
 Converts wastewater to Rt after sampling one fecal shedding and
 one generation interval distribution.}
 \usage{
-inc2R_one_iter(i, dist.fec, dist.gi, ww.conc, scaling.factor, prm.R, silent)
+inc2R_one_iter(
+  i,
+  dist.fec,
+  dist.gi,
+  ww.conc,
+  scaling.factor,
+  prm.R,
+  silent,
+  RL.max.iter
+)
 }
 \arguments{
 \item{i}{Numeric. Iteration index. (not used but required when using
@@ -17,7 +26,7 @@ inc2R_one_iter(i, dist.fec, dist.gi, ww.conc, scaling.factor, prm.R, silent)
 \item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
 
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{scaling.factor}{Numeric. Scaling from wastewater concentration to
 prevalence. This value may be assumed or independently calibrated to data.}
@@ -36,6 +45,8 @@ estimates after sampling uncertain distributions.
 }}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 }
 \value{
 List. Elements include \code{inc} (incidence) and \code{rt}

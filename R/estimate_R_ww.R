@@ -2,7 +2,7 @@
 #'  data.
 #'
 #' @param ww.conc Data frame. Must have variables named \code{date} for the
-#'  wastewater collection date and \code{val} for the pathogen concentration.
+#'  wastewater collection date and \code{value} for the pathogen concentration.
 #' @param dist.fec List. Parameters for the fecal shedding distribution in the same format as returned by [`def_dist_fecal_shedding()`].
 #' @template param-dist.gi
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
@@ -10,6 +10,7 @@
 #' @template param-prm.smooth
 #' @template param-prm.R
 #' @template param-silent
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #' @return List. Elements include:
 #' \itemize{
 #'  \item `ww.conc`: original wastewater signal
@@ -36,7 +37,8 @@ estimate_R_ww <- function(
       window = 7,
       config.EpiEstim = NULL
     ),
-    silent = FALSE
+    silent = FALSE,
+    RL.max.iter = 9
 ) {
 
   # Checking arguments
@@ -44,30 +46,36 @@ estimate_R_ww <- function(
   check_prm.smooth(prm.smooth)
 
   # Checking if ww.conc df contains required variables
-  if(!isTRUE("date" %in% names(ww.conc)) |
-     !isTRUE("val" %in% names(ww.conc))
-     ){
-    stop("`date` and `value` columns are required. Please check `ww.conc`.
-         Aborting!")
-  }
+  check_ww.conc_format(ww.conc)
 
   # Smooth the wastewater signal, if requested
-  ww.smooth = ww.conc
   if(!is.null(prm.smooth)){
     ww.smooth <- smooth_ww(
       ww.conc = ww.conc,
       prm.smooth = prm.smooth,
       silent = silent
     )
+  } else {
+    warning("\n-----
+You are not passing smoothing parameters.
+Smoothing parameters are strongly recommended
+to obtain accurate Rt estimates using wastewater data.\n")
+    ww.smooth <- format_ww.smooth(ww.conc)
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
   # Use the estimated incidence to calculate R:
-  r = lapply(X = 1:prm.R$iter, FUN = inc2R_one_iter,
-    dist.gi = dist.gi, dist.fec = dist.fec,
-    ww.conc = ww.smooth, scaling.factor = scaling.factor,
-    prm.R = prm.R, silent = silent
+  r = lapply(
+    X           = 1:prm.R$iter,
+    FUN         = inc2R_one_iter,
+    dist.gi     = dist.gi,
+    dist.fec    = dist.fec,
+    ww.conc     = ww.smooth,
+    scaling.factor = scaling.factor,
+    prm.R       = prm.R,
+    silent      = silent,
+    RL.max.iter = RL.max.iter
   )
 
   inc = lapply(r, `[[`, 'inc') %>%
@@ -97,19 +105,22 @@ estimate_R_ww <- function(
 #'  `lapply()`)
 #' @inheritParams estimate_R_ww
 #' @template param-silent
+#' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #'
 #' @return List. Elements include `inc` (incidence) and `rt`
 #'  (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
-                           scaling.factor, prm.R, silent) {
-  set.seed(i)
+                           scaling.factor, prm.R, silent,
+                           RL.max.iter) {
+  # set.seed(i)
   sample.fec = sample_a_dist(dist = dist.fec)
   sample.gi  = sample_a_dist(dist = dist.gi)
 
   inc = deconv_ww_inc(d              = ww.conc,
                       fec            = sample.fec,
                       scaling.factor = scaling.factor,
-                      silent         = silent)
+                      silent         = silent,
+                      RL.max.iter    = RL.max.iter)
 
   i.df = inc[["inc"]] %>%
     dplyr::mutate(I = inc.deconvol) %>%

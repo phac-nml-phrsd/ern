@@ -62,7 +62,7 @@ test_that("smooth_ww detects invalid loess span",{
 test_that("smooth_ww returns an error when df is missing a date or val columns", {
   load("../testdata/ww_test_params.RData")
   df.missingdate = dplyr::select(ww.conc, -date)
-  df.missingval = dplyr::select(ww.conc, -val)
+  df.missingval = dplyr::select(ww.conc, -value)
   expect_error(smooth_ww(df.missingdate, prm.smooth))
   expect_error(smooth_ww(df.missingval, prm.smooth))
 })

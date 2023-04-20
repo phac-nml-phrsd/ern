@@ -6,3 +6,4 @@
 #'   \item `align`: for `method = 'rollmean` only; smoothing alignment, either `'center'`, `'left'`, `'right'`
 #'   \item `span`: for `method = 'loess'` only; smoothing span (see the documentation for `stats::loess()` for details)
 #'  }
+#'  Set this entire list to `NULL` to turn off smoothing

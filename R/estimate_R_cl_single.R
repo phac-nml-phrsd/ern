@@ -129,16 +129,6 @@ reports_to_incidence <- function(
     max.iter = max.iter,
     silent   = silent
   )
-  if(1){ # ---- DEBUG
-    dfplot = rbind(
-      dplyr::transmute(reports.daily, t, y=value, var = 'daily reports'),
-      dplyr::mutate(onsets, t, y, var = 'deconv reporting'),
-      dplyr::mutate(incidence, t,y, var = 'deconv incubation')
-    )
-   ggplot2::ggplot(dfplot, ggplot2::aes(x=t, y=y, color = var)) + ggplot2::geom_line(size=1)
-
-  }
-
 
   # - - - output
 

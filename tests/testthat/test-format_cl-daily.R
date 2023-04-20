@@ -1,7 +1,4 @@
-cl.daily.test <- (cl.daily %>% dplyr::transmute(
-  date,
-  count = value
-))
+cl.daily.test <- (cl.daily %>% dplyr::select(date, value))
 
 test_that("format_cl.daily() returns output in the expected format", {
   test_output_tibble(

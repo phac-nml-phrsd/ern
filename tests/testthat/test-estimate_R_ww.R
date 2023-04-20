@@ -19,52 +19,33 @@ test_that("inc2R_one_iter returns a list of two dataframes", {
   )
   ww.smooth = smooth_ww(ww.conc = ww.conc,
                         prm.smooth = prm.smooth)
-  expect_type(
-    inc2R_one_iter(
-      i = 1,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      ww.conc = ww.smooth,
-      scaling.factor = 1,
-      prm.R = prm.R,
-      silent = TRUE
-    ),
-    "list"
+
+  res = inc2R_one_iter(
+    i = 1,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    ww.conc = ww.smooth,
+    scaling.factor = 1,
+    prm.R = prm.R,
+    silent = TRUE,
+    RL.max.iter = 9
   )
-  expect_length(
-    inc2R_one_iter(
-      i = 1,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      ww.conc = ww.smooth,
-      scaling.factor = 1,
-      prm.R = prm.R,
-      silent = TRUE
-    ),
-    2
-  )
+
+  expect_type(res, "list")
+  expect_length(res,2)
 })
 
 test_that("estimate_R_ww returns a list of four dataframes", {
   load("../testdata/ww_test_params.RData")
-  expect_type(
-    estimate_R_ww(
-      ww.conc = ww.conc,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      prm.smooth = prm.smooth
-    ),
-    "list"
-  )
-  expect_length(
-    estimate_R_ww(
-      ww.conc = ww.conc,
-      dist.fec = dist.fec,
-      dist.gi = dist.gi,
-      prm.smooth = prm.smooth
-    ),
-    4
-  )
+
+  res = estimate_R_ww(
+    ww.conc = ww.conc,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    prm.smooth = prm.smooth)
+
+  expect_type(res ,"list")
+  expect_length(res,4)
 })
 
 test_that("estimate_R_ww returns a message when silent mode is disabled", {
@@ -106,4 +87,21 @@ test_that("defaults common between estimate_R_ww and estimate_R_cl have the same
 
     expect_equal(ww, cl)
   }
+})
+
+test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL`", {
+  load("../testdata/ww_test_params.RData")
+
+  expect_warning(
+    res <- estimate_R_ww(
+    ww.conc = ww.conc,
+    dist.fec = dist.fec,
+    dist.gi = dist.gi,
+    prm.smooth = NULL
+  ))
+
+  expect_equal(
+    res$ww.conc$value,
+    res$ww.smooth$obs
+  )
 })

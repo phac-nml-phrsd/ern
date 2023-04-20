@@ -8,7 +8,7 @@ smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
 \arguments{
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:
@@ -18,7 +18,8 @@ specified as followed:
 \item align - smoothing alignment (for rollmean smoothing, either
 'center', 'left', 'right')
 \item span - smoothing span (for loess smoothing)
-}}
+}
+Set this entire list to \code{NULL} to turn off smoothing}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }

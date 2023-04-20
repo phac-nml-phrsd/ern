@@ -190,10 +190,10 @@ test_that("check_cl.input_format() returns an error when date and count columns
           dateframe", {
   dat = data.frame(
     date = as.Date(character()),
-    count = integer()
+    value = integer()
   )
   dat.rm.date = dplyr::select(dat, -date)
-  dat.rm.count = dplyr::select(dat, -count)
+  dat.rm.value = dplyr::select(dat, -value)
   expect_error(
     check_cl.input_format(dat.rm.date)
   )
@@ -238,7 +238,7 @@ test_that("expected output of check_cl.input_daily()", {
   # TRUE check
   expect_true(
     check_cl.input_daily(
-      cl.daily %>% dplyr::rename(count = value),
+      cl.daily,
       silent = TRUE
     )
   )

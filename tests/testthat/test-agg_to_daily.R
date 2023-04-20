@@ -39,7 +39,7 @@ test_that("agg_to_daily() returns a data frame with the right format", {
 test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", {
   df <- cl.input
 
-  df[1, "count"] <- -2
+  df[1, "value"] <- -2
   expect_error(
     agg_to_daily(
       cl.input = df,
@@ -50,7 +50,7 @@ test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", 
     )
   )
 
-  df[1, "count"] <- popsize*1e4
+  df[1, "value"] <- popsize*1e4
   expect_error(
     agg_to_daily(
       cl.input = df,

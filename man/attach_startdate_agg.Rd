@@ -8,7 +8,7 @@ from time (day number)}
 attach_startdate_agg(x)
 }
 \arguments{
-\item{x}{dataframe. only has columns \code{date}, \code{count}, and \code{t}}
+\item{x}{dataframe. only has columns \code{date}, \code{value}, and \code{t}}
 }
 \description{
 Attach start date from first observation for aggregated data

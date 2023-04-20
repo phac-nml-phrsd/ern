@@ -12,12 +12,13 @@ estimate_R_ww(
   scaling.factor = 1,
   prm.smooth = list(window = 14, align = "center", method = "loess", span = 0.2),
   prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
-  silent = FALSE
+  silent = FALSE,
+  RL.max.iter = 9
 )
 }
 \arguments{
 \item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{val} for the pathogen concentration.}
+wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
 
@@ -34,7 +35,8 @@ specified as followed:
 \item align - smoothing alignment (for rollmean smoothing, either
 'center', 'left', 'right')
 \item span - smoothing span (for loess smoothing)
-}}
+}
+Set this entire list to \code{NULL} to turn off smoothing}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:
@@ -50,6 +52,8 @@ estimates after sampling uncertain distributions.
 }}
 
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
+
+\item{RL.max.iter}{Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.}
 }
 \value{
 List. Elements include:
