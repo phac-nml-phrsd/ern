@@ -10,7 +10,7 @@ format_cl.daily(cl.input)
 \item{cl.input}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
-\item \code{count}: count of reported cases
+\item \code{value}: count of reported cases
 }}
 }
 \description{

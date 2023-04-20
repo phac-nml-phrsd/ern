@@ -75,7 +75,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   # daily data
   # - - - - - - - - - - - - - - - - -
-  dat <- cl.daily %>% dplyr::transmute(date, count = value)
+  dat <- cl.daily %>% dplyr::select(date, value)
 
   r.obj = ern::estimate_R_cl(
     cl.input      = dat,

@@ -19,8 +19,8 @@ agg_to_daily <- function(
   df.daily.inc = fit_jags_aggreg(
     g = gi,
     N = popsize,
-    obs.times = cl.agg$t,
-    Y = cl.agg$value,
+    obs.times = cl.input$t,
+    Y = cl.input$value,
     prm.daily = prm.daily,
     silent = silent) %>%
     reshape_fit_jags() %>%

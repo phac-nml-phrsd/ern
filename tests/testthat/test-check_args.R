@@ -238,7 +238,7 @@ test_that("expected output of check_cl.input_daily()", {
   # TRUE check
   expect_true(
     check_cl.input_daily(
-      cl.daily %>% dplyr::rename(count = value),
+      cl.daily,
       silent = TRUE
     )
   )

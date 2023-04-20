@@ -64,7 +64,6 @@ reporting schedule")
 
 cl.daily.test <- (cl.daily
 %>% dplyr::select(date, value)
-%>% dplyr::rename(count = value)
 )
 
 test_that("estimate_R_cl() skips JAGS step and smoothing if input data is already daily and prm.smooth is NULL", {
@@ -93,7 +92,7 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
 
     expect_identical(
       res$cl.input,
-      res$cl.daily %>% dplyr::transmute(date, count = value)
+      res$cl.daily %>% dplyr::select(date, value)
     )
 
     # verify this is still OK if popsize, prm.daily and prm.daily.check are NULL
@@ -113,7 +112,7 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
 
     expect_identical(
       res2$cl.input,
-      res2$cl.daily %>% dplyr::transmute(date, count = value)
+      res2$cl.daily %>% dplyr::select(date, value)
     )
 })
 
@@ -140,7 +139,7 @@ test_that("estimate_R_cl() smooths daily input data (but skips JAGS step) with s
   # calculate expected
   # (do manual smoothing of input data)
   input.count.smoothed <- zoo::rollapply(
-    cl.daily.test$count,
+    cl.daily.test$value,
     width = prm.smooth$window,
     FUN = mean,
     align = "center",
