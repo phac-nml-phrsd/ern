@@ -37,7 +37,8 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   prm.smooth = list(
     method = "rollmean",
-    window = 3
+    window = 3,
+    align = "center"
   )
   prm.R = list(
     iter = 10, # number of iterations in Rt ensemble

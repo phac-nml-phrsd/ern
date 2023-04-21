@@ -42,7 +42,7 @@ dat <- ern::cl.input %>% filter(pt == "qc") %>% slice(1:6)
 
 The $\mathcal{R}_t$ calculation is as follows:
 
-```{r calculate-Rt}
+```{r define-inputs}
 # define distributions
 # - - - - - - - - - - - - - - - - -
 
@@ -81,7 +81,8 @@ prm.daily.check = list(
 )
 prm.smooth = list(
   method = "rollmean",
-  window = 3
+  window = 3,
+  align = 'center'
 )
 prm.R = list(
   iter = 10, # number of iterations in Rt ensemble
@@ -90,7 +91,9 @@ prm.R = list(
   config.EpiEstim = NULL
 )
 RL.max.iter = 10
+```
 
+```{r calc-Rt}
 # calculate Rt
 # - - - - - - - - - - - - - - - - - 
 
@@ -109,6 +112,7 @@ r.estim = estimate_R_cl(
   silent        = TRUE
 )
 ```
+
 
 ```{r plot-Rt}
 plot_diagnostic_cl(r.estim)

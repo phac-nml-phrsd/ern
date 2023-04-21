@@ -81,13 +81,27 @@ See README for more details.")
 
   # Check whether input data is daily
   # if not, need to do aggregated -> daily inference
-  is.daily <- check_cl.input_daily(cl.input, silent = silent)
+  is.daily <- check_df.input_daily(cl.input)
 
   if(is.daily){
     # ==== Data is already daily ====
-    cl.daily.raw <- format_cl.daily(cl.input)
+    cl.daily.raw <- (cl.input
+      %>% attach_t()
+      %>% dplyr::transmute(
+       id = as.integer(1),
+       date,
+       t,
+       value
+    ))
   } else {
+    if(!silent){
+      message("-----
+The clinical testing data you input is not daily. `ern` requires daily data to compute Rt. `ern` will infer daily reports from your inputs. See `prm.daily` and `prm.daily.check` arguments of `estimate_R_cl()` for daily inference options.")
+    }
     # ==== Aggregated -> daily reports ====
+
+    # check daily inference params
+    check_prm.daily(prm.daily, silent = silent)
 
     # attach time-index column to observed aggregated reports
     cl.input <- attach_t_agg(
@@ -114,7 +128,12 @@ See README for more details.")
     cl.daily   = cl.daily.raw,
     prm.smooth = prm.smooth
   )} else {
-    cl.daily <- cl.daily.raw
+  # match format
+    cl.daily <- (cl.daily.raw
+     %>% dplyr::select(
+       id, date, value, t
+     )
+    )
   }
 
   # Trim smoothed reports based on relative error criterion

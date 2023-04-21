@@ -6,23 +6,32 @@ defaults <- formals(estimate_R_cl)
 # evaluate defaults
 prm.daily <- eval(defaults$prm.daily)
 
-test_that("check_prm.daily fails when mandatory elements are missing",{
+test_that("check_prm.daily() fails when mandatory elements are missing",{
   for(name in c("burn", "iter", "chains")){
     expect_error(check_prm.daily(prm.daily[setdiff(names(prm.daily), name)]))
   }
 })
 
-test_that("check_prm.daily fails when list items are of wrong type", {
+test_that("check_prm.daily() fails when list items are of wrong type", {
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, burn = "2")))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, iter = -2)))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, chains = 0.5)))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, first.agg.period = "-2")))
 })
 
-test_that("check_prm.daily returns NULL when all checks are passed", {
+test_that("check_prm.daily() returns NULL when all checks are passed", {
   expect_null(check_prm.daily(prm.daily))
 })
 
+test_that("check_prm.daily() returns warning when an EpiEstim config is passed", {
+  expect_warning(
+    check_prm.daily(
+      purrr::list_modify(prm.daily,
+                         config.EpiEstim = EpiEstim::make_config()),
+      silent = FALSE
+    )
+  )
+})
 
 # prm.daily.check ---------------------------------------------------------
 
@@ -84,22 +93,40 @@ test_that("check_prm.smooth returns an error when method is not specified or
             expect_error(
               check_prm.smooth(prm.smooth.invalid.window)
             )
+
+            prm.smooth.invalid.window = purrr::list_modify(prm.smooth.valid.rm,
+                                                           window = -14)
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.window)
+            )
+
+            prm.smooth.invalid.align = purrr::list_modify(prm.smooth.valid.rm,
+                                                          align = "up")
+
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.align)
+            )
+
             prm.smooth.missing.span = purrr::discard_at(prm.smooth.valid.loess,
                                                         "span")
             expect_error(
               check_prm.smooth(prm.smooth.missing.span)
             )
+
             prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
                                                          span = "1")
             expect_error(
               check_prm.smooth(prm.smooth.invalid.span)
             )
+
+            prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
+                                                         span = -100)
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.span)
+            )
           })
 
-# prm.R -------------------------------------------------------------
 
-# evaluate defaults
-prm.R <- eval(defaults$prm.R)
 
 test_that("specifying a custom EpiEstim config in `prm.R` triggers a message", {
   expect_message(check_prm.R(
@@ -139,22 +166,25 @@ test_that("check_prm.R returns a message and a value of NULL
 
 # distributions -----------------------------------------------------------
 
-test_that("check_dist returns an error when invalid distributions are
-          passed, and returns NULL when valid distribution is passed", {
-  fec = dist.fec
-  fec.missing.shape = purrr::discard_at(fec, "shape")
-  fec.sd = purrr::list_modify(fec,
-                              sd = 2)
+test_that("check_dist() returns an error when invalid distributions are passed, and returns NULL when valid distribution is passed", {
+
+  # gamma
+  dist.gamma = dist.fec
+  dist.gamma.missing.shape = purrr::discard_at(dist.gamma, "shape")
+  dist.gamma.sd = purrr::list_modify(dist.gamma, sd = 2)
   out <- capture_output(expect_error(
-    check_dist(fec.missing.shape))
+    check_dist(dist.gamma.missing.shape))
   ) # suppress additional printing in error
   out <- capture_output(expect_error(
-    check_dist(fec.sd)
+    check_dist(dist.gamma.sd)
   ))
   expect_equal(
-    check_dist(fec),
+    check_dist(dist.gamma),
     NULL
   )
+
+  # norm
+
 })
 
 
@@ -183,7 +213,7 @@ test_that("check_for_deconv returns an error when number of observations <
   )
 })
 
-# data.cl ---------------------------------------------------------------
+# cl.input ---------------------------------------------------------------
 
 test_that("check_cl.input_format() returns an error when date and count columns
           are missing, and returns NULL when both columns are present in
@@ -206,40 +236,38 @@ test_that("check_cl.input_format() returns an error when date and count columns
   )
 })
 
-test_that("check_cl.input_daily() returns a message when data is not daily and silent mode is off", {
-  # message check
-  expect_message(
-    check_cl.input_daily(
-      cl.input,
-      silent = FALSE
-    )
-  )
-})
-
-test_that("expected output of check_cl.input_daily()", {
+test_that("expected output of check_df.input_daily()", {
 
   # logical check
   expect_equal(
-    class(check_cl.input_daily(
-      cl.input,
-      silent = TRUE
+    class(check_df.input_daily(
+      cl.input
     )),
     "logical"
   )
 
   # FALSE check
   expect_false(
-    check_cl.input_daily(
-      cl.input,
-      silent = TRUE
+    check_df.input_daily(
+      cl.input
     )
   )
 
   # TRUE check
   expect_true(
-    check_cl.input_daily(
-      cl.daily,
-      silent = TRUE
+    check_df.input_daily(
+      cl.daily
     )
   )
+})
+
+
+# ww.conc -----------------------------------------------------------------
+
+test_that("check_ww.conc_format() returns an error when df is missing a date or value columns", {
+  load("../testdata/ww_test_params.RData")
+  df.missingdate = dplyr::select(ww.conc, -date)
+  df.missingval = dplyr::select(ww.conc, -value)
+  expect_error(check_ww.conc_format(df.missingdate))
+  expect_error(check_ww.conc_format(df.missingval))
 })

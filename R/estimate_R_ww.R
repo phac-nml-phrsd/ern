@@ -1,8 +1,11 @@
 #' @title Estimate the effective reproduction from wastewater concentration
 #'  data.
 #'
-#' @param ww.conc Data frame. Must have variables named \code{date} for the
-#'  wastewater collection date and \code{value} for the pathogen concentration.
+#' @param ww.conc Data frame. Must have variables:
+#' \itemize{
+#'  \item `date`: calendar date of wastewater collection
+#'  \item `value`: pathogen concentration
+#' }
 #' @param dist.fec List. Parameters for the fecal shedding distribution in the same format as returned by [`def_dist_fecal_shedding()`].
 #' @template param-dist.gi
 #' @param scaling.factor Numeric. Scaling from wastewater concentration to
@@ -43,10 +46,18 @@ estimate_R_ww <- function(
 
   # Checking arguments
   check_prm.R(prm.R, silent = silent)
-  check_prm.smooth(prm.smooth)
 
   # Checking if ww.conc df contains required variables
   check_ww.conc_format(ww.conc)
+
+  # Check that the input data is daily
+  # OK if smoothing as there will be interpolation,
+  # not OK if smoothing is turned off
+  is.daily <- check_df.input_daily(ww.conc)
+
+  if(!is.daily & is.null(prm.smooth)) stop("You have input non-daily wastewater concentration data. This data must be smoothed in order to be interpolated into a daily signal as required by `ern`. Please specify the `prm.smooth` argument of `estimate_R_ww()`.")
+
+  # Attach internal time index column
 
   # Smooth the wastewater signal, if requested
   if(!is.null(prm.smooth)){
@@ -60,7 +71,15 @@ estimate_R_ww <- function(
 You are not passing smoothing parameters.
 Smoothing parameters are strongly recommended
 to obtain accurate Rt estimates using wastewater data.\n")
-    ww.smooth <- format_ww.smooth(ww.conc)
+
+    # format
+    ww.smooth <- (ww.conc
+      %>% attach_t()
+      %>% dplyr::transmute(
+        t,
+        obs = value,
+        date
+      ))
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal

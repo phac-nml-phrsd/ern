@@ -17,8 +17,11 @@ estimate_R_ww(
 )
 }
 \arguments{
-\item{ww.conc}{Data frame. Must have variables named \code{date} for the
-wastewater collection date and \code{value} for the pathogen concentration.}
+\item{ww.conc}{Data frame. Must have variables:
+\itemize{
+\item \code{date}: calendar date of wastewater collection
+\item \code{value}: pathogen concentration
+}}
 
 \item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
 

@@ -70,9 +70,8 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
 
     # check that the input data is actually daily
     expect_true(
-      check_cl.input_daily(
-        cl.daily.test,
-        silent = TRUE
+      check_df.input_daily(
+        cl.daily.test
       )
     )
 

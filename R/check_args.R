@@ -4,9 +4,10 @@
 #' Check parameters for daily data inference
 #'
 #' @param x List. Parameters for daily data inference.
+#' @template param-silent
 #'
 #' @return NULL
-check_prm.daily <- function(x){
+check_prm.daily <- function(x, silent){
 
   # Check that mandatory elements are present and of the right type
   for (name in c("burn", "iter", "chains")){
@@ -65,22 +66,39 @@ check_prm.daily.check <- function(x){
 #'
 #' @return NULL
 check_prm.smooth <- function(x){
-  if(is.null(x)) return() # no smoothing
-
+  # general checks
   if(!("method" %in% names(x))) stop('Please specify a method for smoothing (e.g. method = "rollmean") in `prm.smooth`')
 
   if(x$method == "rollmean"){
-    err.msg <- "For the rolling mean smoothing method, a numeric `window` value must be specified in `prm.smooth`"
+
+    # rollmean checks
+    # - - - - - - - - - - - - - - - - -
+
+    # window
+    err.msg <- "For `method = 'rollmean'`, an positive integer numeric `window` value must be specified in `prm.smooth`"
     if(!("window" %in% names(x))) stop(err.msg)
-    if(!is.numeric(x$window)) stop(err.msg)
+    if(!assertthat::is.count(x$window)) stop(err.msg)
+
+    # align
+    if(is.null(x$align) |
+       !isTRUE(x$align %in% c('center', 'left', 'right'))){
+      stop("Missing or invalid `align` argument for `method = 'rollmean'` in `prm.smooth`")
+    }
   }
   else if(x$method == "loess"){
-    err.msg <- "For the loess smoothing method, a numeric `span` value must be specified in `prm.smooth`"
+
+    # loess checks
+    err.msg <- "For `method = 'loess', a numeric `span` value greater than must be specified in `prm.smooth`"
     if(!("span" %in% names(x))) stop(err.msg)
     if(!is.numeric(x$span)) stop(err.msg)
-  }
-  else {
-    stop(paste0("Smoothing method of ", x$method, " not recognized"))
+    if(is.null(x$span) | x$span <= 0){
+      stop(err.msg)
+    }
+  } else {
+
+    # input method not recognized
+    stop(paste0("Smoothing method of '", x$method, "' not recognized"))
+
   }
 
   return()
@@ -219,26 +237,19 @@ check_cl.input_format <- function(cl.input, silent = FALSE) {
   return()
 }
 
-#' Check if input clinical data is already daily
+#' Check if input data is already daily
 #'
-#' @template param-cl.input
-#' @template param-silent
+#' @template param-df.input
 #'
-#' @return Logical. Indicates whether clinical data is already daily.
-check_cl.input_daily <- function(cl.input, silent = FALSE){
-  is.daily <- (cl.input
+#' @return Logical. Indicates whether input data is already daily.
+check_df.input_daily <- function(df.input){
+  is.daily <- (df.input
     %>% dplyr::mutate(t.diff = as.numeric(date - dplyr::lag(date)))
     %>% tidyr::drop_na()
     %>% dplyr::mutate(t.diff.check = t.diff == 1)
     %>% dplyr::summarise(check = all(t.diff.check))
     %>% dplyr::pull(check)
   )
-
-  if(!is.daily & !silent){
-    message("-----
-The clinical testing data you input is not daily. `ern` requires daily data to compute Rt. `ern` will infer daily reports from your inputs. See `prm.daily` and `prm.daily.check` arguments of `estimate_R_cl()` for daily inference options.")
-  }
-
   return(is.daily)
 }
 

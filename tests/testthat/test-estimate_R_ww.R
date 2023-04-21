@@ -79,7 +79,6 @@ test_that("defaults common between estimate_R_ww and estimate_R_cl have the same
   defaults_cl <- formals(estimate_R_cl)
 
   prm.list <- c("prm.R")
-  # prm.list <- c("prm.R", "prm.smooth")
 
   for(prm.name in prm.list){
     ww <- names(eval(defaults_ww[[prm.name]]))
@@ -92,9 +91,12 @@ test_that("defaults common between estimate_R_ww and estimate_R_cl have the same
 test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL`", {
   load("../testdata/ww_test_params.RData")
 
+  # make daily data for checks where smoothing (and therefore interpolation) is turned off
+  ww.conc.daily <- (ww.conc %>% dplyr::select(date, value) %>% tidyr::complete(date = seq(min(date), max(date), by = "days")) %>% tidyr::fill(value))
+
   expect_warning(
     res <- estimate_R_ww(
-    ww.conc = ww.conc,
+    ww.conc = ww.conc.daily,
     dist.fec = dist.fec,
     dist.gi = dist.gi,
     prm.smooth = NULL
@@ -103,5 +105,17 @@ test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL
   expect_equal(
     res$ww.conc$value,
     res$ww.smooth$obs
+  )
+})
+
+test_that("estimate_R_ww() returns an error when wastewater concentration data is not daily and smoothing is turned off", {
+  expect_error(
+    estimate_R_ww(
+      ww.conc = data.frame(date = as.Date(c("2023-04-21", "2023-04-23")),
+                           value = c(0.4, 0.6)),
+      dist.fec = dist.fec,
+      dist.gi = dist.gi,
+      prm.smooth = NULL
+    )
   )
 })
