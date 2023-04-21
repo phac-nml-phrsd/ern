@@ -3,5 +3,3 @@
 #'  \item `date`: calendar date of report
 #'  \item `value`: count of reported cases
 #' }
-#'
-#'
