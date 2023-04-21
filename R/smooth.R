@@ -58,14 +58,16 @@ smooth_cl <- function(cl.daily, prm.smooth){
 
   check_prm.smooth(prm.smooth)
 
+  if(prm.smooth$method == 'rollmean') smooth_fun <- smooth_with_rollmean
+  if(prm.smooth$method == 'loess') smooth_fun <- smooth_with_loess
+
   (cl.daily
     %>% dplyr::group_by(id)
-    %>% dplyr::mutate(
-      value = zoo::rollapply(
-        value, width = prm.smooth$window,
-        FUN = mean, align = "center", partial = TRUE)
-    )
+    # perform smoothing
+    %>% smooth_fun(prm.smooth = prm.smooth)
     %>% dplyr::ungroup()
+    # standardize output
+    %>% dplyr::rename(value = value_smooth)
   )
 }
 
