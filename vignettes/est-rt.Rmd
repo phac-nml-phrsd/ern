@@ -1,0 +1,369 @@
+---
+title: "Estimating the effective reproductive number using `ern`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating the effective reproductive number using `ern`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo=FALSE, warning=FALSE}
+suppressMessages({
+  library(tidyr)
+  library(dplyr)
+  library(ggplot2) ; theme_set(theme_bw())
+  library(lubridate)
+  library(patchwork)
+  library(ern)
+})
+```
+
+# General method
+
+`ern` has two functions with which to estimate the daily effective reproduction number, $\mathcal{R}_t$, each for a different data stream:
+
+- `estimate_R_ww()`, which uses the concentration of a pathogen in wastewater over time as the input signal;
+- `estimate_R_cl()`, which uses the count of clinical reported cases over time as the input signal.
+
+In both cases, the general method is the same:
+
+1. use the input data to infer daily incidence
+2. use the inferred daily incidence to compute $\mathcal{R}_t$
+
+Step 2 is common to both wastewater and clinical methods; where they differ is in step 1. We give details of both steps below, followed by full demos for both wastewater and clinical input data.
+
+# Step 2: Using inferred daily incidence to compute $\mathcal{R}_t$
+
+In both the clinical and wastewater cases, step 1 outlined above will produce an ensemble of realizations for the inferred daily incidence. We use these timeseries, along with a family of generation interval distributions specified by the user, to compute $\mathcal{R}_t$ in an ensemble.
+
+To compute a single realization for the $\mathcal{R}_t$ ensemble, we draw one realization out of the ensemble of inferred daily incidence as well as one generation interval distribution out of the user-specified family, and feed both of these components into `EpiEstim::estimate_R()`. Once all realizations of $\mathcal{R}_t$ have been computed, the ensemble is summarized by day with a mean and with confidence interval bounds.
+
+# Step 1: Using the input data to infer daily incidence
+
+How we infer daily incidence from the input depends on the input data source.
+
+## Wastewater input data
+
+We convert the viral concentration in wastewater over time to a daily disease incidence by performing a deconvolution with a fecal shedding distribution, which describes the distribution of virus shed in feces by an infected individual during their disease course.
+
+## Clinical input data
+
+We convert the count of _daily_ clinical reports over time to daily disease incidence in the following way:
+
+1. scale daily clinical reports up by the user-specified reporting fraction (assumed to be constant over time)
+1. take scaled clinical reports and perform a deconvolution with a reporting delay distribution to get daily scaled onsets
+1. take daily scaled onsets and perform a deconvolution with an incubation period distribution to get daily incidence
+
+If the input reports are not daily, `ern` assumes that they are aggregated over the time between report dates and infer the daily count of cases using a Markov Chain Monte-Carlo simulation. More details can be found in `vignette('daily-report-inference', package = 'ern')`.
+
+# Wastewater demo
+
+`estimate_R_ww()` takes several [inputs](#ww-inputs) and [parameters](#ww-params), described in the next two sections.
+
+## Specifying inputs {#ww-inputs}
+
+`estimate_R_ww()` requires the following inputs from the user:
+
+- `ww.conc`: Viral concentration in wastewater over time, as a data frame with columns `date` (measurement date) and `value` (concentration value)
+
+- Distribution families for several quantities:
+  - `dist.fec`: fecal shedding rate
+  - `dist.gi`: generation interval
+  
+Here, we estimate $\mathcal{R}_t$ for a synthetic dataset:
+
+```{r create sample data}
+# Creating sample SARS-CoV-2 wastewater data
+set.seed(1234)
+n=60
+x=1:n
+
+value = x * (40 - x) * rnorm(n, mean=1, sd=0.02)
+value = value[value>0]
+
+dd = ymd('2022-11-01') + 1:length(value)
+
+ww.conc = data.frame(date = dd, value = value)
+
+head(ww.conc)
+```
+
+`ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.
+
+```{r loading fec shed and gi}
+# Loading SARS-CoV-2 fecal shedding and generation interval distributions from ern
+dist.fec = ern::def_dist_fecal_shedding('sarscov2')
+dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
+```
+
+We can visualize the assumed distributions with `plot_dist()`:
+
+```{r plot dist fecal, fig.width = 6}
+plot_dist(dist.fec) + labs(title = paste0("Mean fecal shedding distribution (", dist.fec$dist, ")"))
+```
+
+```{r plot dist gi, fig.width = 6}
+plot_dist(dist.gi) + labs(title = paste0("Mean generation interval distribution (", dist.gi$dist, ")"))
+```
+
+`plot_dist()` returns a `ggplot` object, and so it can be further annotated with the usual `ggplot2` tools (like `labs()` as above).
+
+Note that the above `dist.x` lists define _families_ of distributions (there is uncertainty specified in the mean distribution parameters), while `plot_dist()` only plots the mean distribution in this family.
+
+## Specifying parameters {#ww-params}
+
+`estimate_R_ww()` also takes a number of parameter sets that give the user control over various components of the $\mathcal{R}_t$ estimation:
+
+- `scaling.factor`: a factor used to scale viral concentration in wastewater to prevalence (number of infectious cases in the population at a given point in time)
+
+- `prm.smooth`: smoothing settings for the input wastewater data
+
+- `prm.R`: settings for the $\mathcal{R}_t$ calculation
+
+All of these parameters have defaults, but they can also be adjusted by the user. These settings are further described in the example below, but you may also want to consult the documentation of `estimate_R_ww()` for more details.
+
+```{r initializing smoothing and Rt params}
+# Initializing scaling factor
+scaling.factor = 1
+
+# Initializing smoothing parameters
+prm.smooth = list(
+  align  = 'center', # smoothing alignment
+  method = 'loess',  # smoothing method
+  span   = 0.29      # smoothing span (used for loess smoothing only)
+)
+
+# Initialzing Rt settings
+prm.R = list(
+  iter   = 20,   # number of iterations in Rt ensemble
+  CI     = 0.95, # confidence interval
+  window = 10,   # Time window for Rt calculations
+  config.EpiEstim = NULL # optional EpiEstim configuration for Rt calculations
+)
+```
+
+## Estimating $\mathcal{R}_t$
+
+Once the above inputs and parameters are defined, we estimate $\mathcal{R}_t$ as follows:
+
+```{r estimate rt}
+r.estim = ern::estimate_R_ww(
+  ww.conc        = ww.conc,
+  dist.fec       = dist.fec,
+  dist.gi        = dist.gi,
+  scaling.factor = scaling.factor,
+  prm.smooth     = prm.smooth,
+  prm.R = prm.R,
+  silent = TRUE # suppress output messages
+)
+```
+
+`estimate_R_ww()` returns a list with four elements:
+
+- `ww.conc`: the original input of viral concentration in wastewater over time
+
+- `ww.smooth`: the smoothed wastewater concentration over time; includes columns:
+  - `t`: internal time index
+  - `obs`: smoothed value of the observation
+  - `date`
+
+- `inc`: the daily incidence inferred over time; includes columns:
+  - `date`
+  - `mean`: mean of the inferred daily incidence
+  - `lwr`, `upr`: lower and upper bounds of a 95% confidence interval of the inferred daily incidence
+
+- `R`: the estimated daily reproduction number over time; includes columns:
+  - `date`
+  - `mean`: mean $\mathcal{R}_t$ value
+  - `lwr`, `upr`: lower and upper bounds of a confidence interval for each $\mathcal{R}_t$ estimate
+
+## Visualizing $\mathcal{R}_t$ estimates
+
+The output of `estimate_R_ww()` can be visualized readily using `plot_diagnostic_ww()`, which generates a figure with the following panels:
+
+1. original wastewater concentration against the smoothed signal over time
+2. inferred daily incidence
+3. the time-varying effective reproduction number, $\mathcal{R}_t$
+
+```{r plot rt, fig.width = 6, fig.height = 6, warning = FALSE}
+g = ern::plot_diagnostic_ww(r.estim)
+plot(g)
+```
+
+# Clinical demo
+
+`estimate_R_cl()` takes several [inputs](#cl-inputs) and [parameters](#cl-params), described in the next two sections.
+
+## Specifying inputs {#cl-inputs}
+
+`estimate_R_cl()` requires the following inputs from the user:
+
+- `cl.input`: clinical disease reports over time, as a data frame with columns `date` (report date) and `value` (count of reports)
+
+- Distribution families for several quantities:
+  - `dist.repdelay`: reporting delay
+  - `dist.repfrac`: reporting fraction
+  - `dist.incub`: incubation period
+  - `dist.gi`: generation interval
+  
+- If the input reports are not daily, the user must additionally specify the following arguments in order for `ern` to infer daily reported cases:
+  - `popsize`: the number of individual in the population being considered
+  
+Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 reports in the province of Quebec:
+
+```{r load-data}
+dat <- ern::cl.input %>% filter(pt == "qc") %>% slice(1:6)
+```
+
+`ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.
+
+```{r load-dists}
+# reporting delay 
+dist.repdelay = list(
+  dist = 'gamma',
+  mean = 5,
+  mean_sd = 1,
+  sd = 1,
+  sd_sd = 0.1,
+  max = 10
+)
+
+# reporting fraction 
+dist.repfrac = list(
+  dist = "unif",
+  min = 0.1,
+  max = 0.3
+)
+
+# incubation period
+dist.incub   = def_dist_incubation_period('sarscov2')
+
+# generation interval
+dist.gi      = def_dist_generation_interval('sarscov2')
+
+# population size for daily report inference
+popsize = 1e7
+```
+
+We can visualize the assumed distributions with `plot_dist()`:
+
+```{r plot-dist-repdelay, fig.width = 6}
+plot_dist(dist.repdelay) + labs(title = paste0("Mean reporting delay distribution (", dist.repdelay$dist, ")"))
+```
+
+```{r plot-dist-incub, fig.width = 6}
+plot_dist(dist.incub) + labs(title = paste0("Mean incubation period distribution (", dist.incub$dist, ")"))
+```
+
+```{r plot-dist-gi, fig.width = 6}
+plot_dist(dist.gi) + labs(title = paste0("Mean generation interval distribution (", dist.gi$dist, ")"))
+```
+
+`plot_dist()` returns a `ggplot` object, and so it can be further annotated with the usual `ggplot2` tools (like `labs()` as above).
+
+Note that the above `dist.x` lists define _families_ of distributions (there is uncertainty specified in the mean distribution parameters), while `plot_dist()` only plots the mean distribution in this family.
+
+## Specifying parameters {#cl-params}
+
+`estimate_R_cl()` also takes a number of parameter sets that give the user control over various components of the $\mathcal{R}_t$ estimation:
+
+- `prm.daily`: options for aggregate to daily report inference (only required if input reports are not already daily)
+
+- `prm.daily.check`: options for checking aggregates of inferred daily reports against input values and truncating the start of the timeseries until aggregates are sufficiently close to the input values (only required if input reports are not already daily)
+
+- `prm.smooth`: smoothing settings for the daily reports
+
+- `prm.R`: settings for the $\mathcal{R}_t$ calculation
+
+All of these parameters have defaults, but they can also be adjusted by the user. These settings are further described in the example below, but you may also want to consult the documentation of `estimate_R_cl()` for more details.
+
+```{r init-prms}
+# settings for daily report inference
+prm.daily = list(
+  burn = 250,
+  iter = 500,
+  chains = 1
+)
+
+# settings for checks of daily inferred reports
+prm.daily.check = list(
+  agg.reldiff.tol = 200
+)
+
+# smoothing settings for daily inferred reports
+prm.smooth = list(
+  method = "rollmean",
+  window = 3,
+  align = 'center'
+)
+
+# Rt settings
+prm.R = list(
+  iter = 10, # number of iterations in Rt ensemble
+  CI = 0.95, # 95% confidence interval
+  window = 7, # time window for each Rt estimate
+  config.EpiEstim = NULL
+)
+```
+
+## Estimating $\mathcal{R}_t$
+
+Once the above inputs and parameters are defined, we estimate $\mathcal{R}_t$ as follows:
+
+```{r est-rt}
+r.estim = estimate_R_cl(
+  cl.input      = dat,
+  dist.repdelay = dist.repdelay,
+  dist.repfrac  = dist.repfrac,
+  dist.incub    = dist.incub,
+  dist.gi       = dist.gi,
+  popsize       = popsize,
+  prm.daily     = prm.daily,
+  prm.daily.check = prm.daily.check,
+  prm.smooth    = prm.smooth,
+  prm.R         = prm.R,
+  silent        = TRUE # suppress output messages
+)
+```
+
+`estimate_R_cl()` returns a list with four elements:
+
+- `cl.input`: the original input of clinical disease reports over time
+
+- `cl.daily`: reports as input for Rt calculation (inferred daily counts if original inputs were aggregates, smoothed if specified); includes columns:
+  - `id`: identifier for each realization of the daily report inference
+  - `date`: daily date
+  - `value`: inferred daily report count
+  - `t`: internal time index
+
+- `inferred.agg`: inferred daily reports re-aggregated on the reporting schedule as input in `cl.input`; includes columns:
+  - `date`: report date
+  - `obs`: original (aggregated) observations
+  - `mean.agg`: mean of the aggregated inferred daily reports
+  - `lwr.agg`, `upr.agg`: lower and upper bounds of a 95% confidence interval of the aggregated inferred daily reports
+
+- `R`: the estimated daily reproduction number over time; includes columns:
+  - `date`
+  - `mean`: mean $\mathcal{R}_t$ value
+  - `lwr`, `upr`: lower and upper bounds of a confidence interval for each $\mathcal{R}_t$ estimate 
+  - `use`: logical flag used internally for the plotting method demonstrated below
+
+## Visualizing $\mathcal{R}_t$ estimates
+
+The output of `estimate_R_cl()` can be visualized readily using `plot_diagnostic_cl()`, which generates a figure with the following panels:
+
+1. the time-varying effective reproduction number, $\mathcal{R}_t$
+1. the (optionally inferred and smoothed) daily case reports
+1. (if the input data were not daily) the aggregated case reports (as observed vs inferred)
+
+```{r plot-rt, fig.width = 6, fig.height = 6, warning = FALSE}
+g = plot_diagnostic_cl(r.estim)
+plot(g)
+```
