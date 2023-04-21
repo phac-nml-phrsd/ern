@@ -4,9 +4,10 @@
 #' Check parameters for daily data inference
 #'
 #' @param x List. Parameters for daily data inference.
+#' @template param-silent
 #'
 #' @return NULL
-check_prm.daily <- function(x){
+check_prm.daily <- function(x, silent){
 
   # Check that mandatory elements are present and of the right type
   for (name in c("burn", "iter", "chains")){

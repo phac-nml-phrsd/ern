@@ -6,23 +6,32 @@ defaults <- formals(estimate_R_cl)
 # evaluate defaults
 prm.daily <- eval(defaults$prm.daily)
 
-test_that("check_prm.daily fails when mandatory elements are missing",{
+test_that("check_prm.daily() fails when mandatory elements are missing",{
   for(name in c("burn", "iter", "chains")){
     expect_error(check_prm.daily(prm.daily[setdiff(names(prm.daily), name)]))
   }
 })
 
-test_that("check_prm.daily fails when list items are of wrong type", {
+test_that("check_prm.daily() fails when list items are of wrong type", {
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, burn = "2")))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, iter = -2)))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, chains = 0.5)))
   expect_error(check_prm.daily(purrr::list_modify(prm.daily, first.agg.period = "-2")))
 })
 
-test_that("check_prm.daily returns NULL when all checks are passed", {
+test_that("check_prm.daily() returns NULL when all checks are passed", {
   expect_null(check_prm.daily(prm.daily))
 })
 
+test_that("check_prm.daily() returns warning when an EpiEstim config is passed", {
+  expect_warning(
+    check_prm.daily(
+      purrr::list_modify(prm.daily,
+                         config.EpiEstim = EpiEstim::make_config()),
+      silent = FALSE
+    )
+  )
+})
 
 # prm.daily.check ---------------------------------------------------------
 
@@ -157,22 +166,25 @@ test_that("check_prm.R returns a message and a value of NULL
 
 # distributions -----------------------------------------------------------
 
-test_that("check_dist returns an error when invalid distributions are
-          passed, and returns NULL when valid distribution is passed", {
-  fec = dist.fec
-  fec.missing.shape = purrr::discard_at(fec, "shape")
-  fec.sd = purrr::list_modify(fec,
-                              sd = 2)
+test_that("check_dist() returns an error when invalid distributions are passed, and returns NULL when valid distribution is passed", {
+
+  # gamma
+  dist.gamma = dist.fec
+  dist.gamma.missing.shape = purrr::discard_at(dist.gamma, "shape")
+  dist.gamma.sd = purrr::list_modify(dist.gamma, sd = 2)
   out <- capture_output(expect_error(
-    check_dist(fec.missing.shape))
+    check_dist(dist.gamma.missing.shape))
   ) # suppress additional printing in error
   out <- capture_output(expect_error(
-    check_dist(fec.sd)
+    check_dist(dist.gamma.sd)
   ))
   expect_equal(
-    check_dist(fec),
+    check_dist(dist.gamma),
     NULL
   )
+
+  # norm
+
 })
 
 

@@ -100,6 +100,9 @@ The clinical testing data you input is not daily. `ern` requires daily data to c
     }
     # ==== Aggregated -> daily reports ====
 
+    # check daily inference params
+    check_prm.daily(prm.daily, silent = silent)
+
     # attach time-index column to observed aggregated reports
     cl.input <- attach_t_agg(
       cl.input  = cl.input,
