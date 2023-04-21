@@ -240,7 +240,6 @@ check_cl.input_format <- function(cl.input, silent = FALSE) {
 #' Check if input data is already daily
 #'
 #' @template param-df.input
-#' @template param-silent
 #'
 #' @return Logical. Indicates whether input data is already daily.
 check_df.input_daily <- function(df.input){
