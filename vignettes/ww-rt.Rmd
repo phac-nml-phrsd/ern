@@ -65,9 +65,11 @@ dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
 
 We can visualize the assumed distributions with `plot_dist()`:
 
-```{r plot distributions, fig.width = 6}
+```{r plot dist fecal, fig.width = 6}
 plot_dist(dist.fec) + labs(title = paste0("Mean fecal shedding distribution (", dist.fec$dist, ")"))
+```
 
+```{r plot dist gi, fig.width = 6}
 plot_dist(dist.gi) + labs(title = paste0("Mean generation interval distribution (", dist.gi$dist, ")"))
 ```
 
@@ -103,7 +105,7 @@ prm.R = list(
   iter   = 20,   # number of iterations in Rt ensemble
   CI     = 0.95, # confidence interval
   window = 10,   # Time window for Rt calculations
-  config.EpiEstim = NULL # EpiEstim configuration for Rt calculations
+  config.EpiEstim = NULL # optional EpiEstim configuration for Rt calculations
 )
 ```
 
@@ -127,19 +129,19 @@ r.estim = ern::estimate_R_ww(
 
 - `ww.conc`: the original input of viral concentration in wastewater over time
 
-- `ww.smooth`: the smoothed wastewater concentration
+- `ww.smooth`: the smoothed wastewater concentration over time
 
 - `inc`: the daily incidence inferred over time, which is computed by performing a deconvolution of the smoothed wastewater concentration with a fecal shedding distribution. Since we specify a family of fecal shedding distributions, the incidence is computed as an ensemble by repeatedly taking draws from this family of distributions and performing the deconvolution. This ensemble is then summarized for each date with a mean, lower 95% confidence interval (CI) bound, and upper CI bound, which is reported in the `inc` data frame.
 
-- `R`: the daily reproduction number, taken by performing a deconvolution of inferred daily incidence with a generation interval distribution. $\mathcal{R}_t$ is computed in an ensemble by repeatedly taking a draw from the realizations of the inferred incidence and performing the deconvolution with an individual generation interval distribution drawn from the specified family (`dist.gi`). This ensemble is then summarized for each date with a mean, lower CI bound, and upper CI bound. The CI width can be specified by the user in `prm.R`.
+- `R`: the daily reproduction number, which we compute in an ensemble. Each run in the ensemble is computed by using `EpiEstim::estimate_R()` on an inferred daily incidence time series and a generation interval. Inferred daily incidence time series are drawn from the individual realizations used to produce the `inc` data frame described above. Generation interval distributions are drawn from the specified family (`dist.gi`). The $\mathcal{R}_t$ ensemble is then summarized for each date with a mean, lower CI bound, and upper CI bound. The CI width can be specified by the user in `prm.R`.
 
 ## Visualizing $\mathcal{R}_t$ estimates
 
 The output of `estimate_R_ww()` can be visualized readily using `plot_diagnostic_ww()`, which generates a multi-panel plot of three timeseries:
 
-1. original wastewater concentration against the smoothed signal
-2. inferred incidence
-3. $\mathcal{R}_t$
+1. original wastewater concentration against the smoothed signal over time
+2. inferred daily incidence
+3. the time-varying effective reproduction number, $\mathcal{R}_t$
 
 ```{r plot rt, fig.width = 6, fig.height = 6, warning = FALSE}
 g = ern::plot_diagnostic_ww(r.estim)
