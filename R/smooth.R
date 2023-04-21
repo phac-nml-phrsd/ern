@@ -47,18 +47,39 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
   return(d)
 }
 
+#' Smooth realizations from estimating daily reports
+#'
+#' @param cl.daily Data frame. Output of [`agg_to_daily()`].
+#' @inheritParams estimate_R_cl
+#'
+#' @return Data frame
+#' @export
+smooth_cl <- function(cl.daily, prm.smooth){
 
-# helpers -----------------------------------------------------------------
+  check_prm.smooth(prm.smooth)
+
+  (cl.daily
+    %>% dplyr::group_by(id)
+    %>% dplyr::mutate(
+      value = zoo::rollapply(
+        value, width = prm.smooth$window,
+        FUN = mean, align = "center", partial = TRUE)
+    )
+    %>% dplyr::ungroup()
+  )
+}
+
+
+# smoothing methods -----------------------------------------------------------------
 
 smooth_with_rollmean <- function(df, prm.smooth){
   d <- (df
     %>% dplyr::mutate(
-      value_smooth = zoo::rollmean(x = value,
-                                   k = prm.smooth$window,
-                                   align = prm.smooth$align,
-                                   fill  = NA,
-                                   na.rm = TRUE))
-    %>% tidyr::drop_na(value_smooth)
+      value_smooth = zoo::rollapply(
+        value, width = prm.smooth$window,
+        FUN = mean, align = prm.smooth$align,
+        partial = TRUE
+    ))
     # standardize output
     %>% attach_t()
     %>% dplyr::transmute(
