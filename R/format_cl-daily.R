@@ -11,17 +11,3 @@ format_cl.daily <- function(cl.input) {
      value
    ))
 }
-
-
-# helpers -----------------------------------------------------------------
-
-#' Attach time index column for daily input data
-#'
-#' @template param-cl.input
-#'
-#' @return Tibble.
-attach_t <- function(cl.input) {
-  (cl.input
-   %>% dplyr::mutate(t = 1:nrow(.))
-  )
-}
