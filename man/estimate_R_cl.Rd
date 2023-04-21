@@ -79,6 +79,7 @@ List. Elements include:
 \itemize{
 \item \code{cl.input}: original aggregated reports signal
 \item \code{cl.daily}: reports as input for Rt calculation (inferred daily counts, smoothed)
+\item \code{inferred.agg}: inferred daily reports aggregated on the reporting schedule as input in \code{cl.input}
 \item \code{R}: the effective R estimate (summary from ensemble)
 }
 }

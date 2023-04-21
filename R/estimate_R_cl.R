@@ -34,6 +34,7 @@
 #' \itemize{
 #'  \item `cl.input`: original aggregated reports signal
 #'  \item `cl.daily`: reports as input for Rt calculation (inferred daily counts, smoothed)
+#'  \item `inferred.agg`: inferred daily reports aggregated on the reporting schedule as input in `cl.input`
 #'  \item `R`: the effective R estimate (summary from ensemble)
 #' }
 #' @export
