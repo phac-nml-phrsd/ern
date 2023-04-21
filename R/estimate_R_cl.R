@@ -1,10 +1,6 @@
 #' @title Estimate the effective reproduction from clinical report data
 #'
-#' @param cl.agg Data frame. Must have variables:
-#' \itemize{
-#'  \item `date`: calendar date of report
-#'  \item `value`: count of reported cases
-#' }
+#' @template param-cl.input
 #' @param dist.repfrac List. Parameters for the reporting fraction distribution in the same format as returned by [`def_dist_reporting_fraction()`].
 #' @param dist.repdelay List. Parameters for the reporting delay distribution in the same format as returned by [`def_dist_reporting_delay()`].
 #' @param dist.incub List. Parameters for the incubation period distribution in the same format as returned by [`def_dist_incubation_period()`].
@@ -36,13 +32,13 @@
 #'
 #' @return List. Elements include:
 #' \itemize{
-#'  \item `cl.agg`: original aggregated reports signal
+#'  \item `cl.input`: original aggregated reports signal
 #'  \item `cl.daily`: reports as input for Rt calculation (inferred daily counts, smoothed)
 #'  \item `R`: the effective R estimate (summary from ensemble)
 #' }
 #' @export
 estimate_R_cl <- function(
-  cl.agg,
+  cl.input,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -79,39 +75,51 @@ or request JAGS to be installed by your network administrator.
 See README for more details.")
   }
 
-  # Checking arguments
+  # Checking argument formats
   check_prm.R(prm.R, silent = silent)
-  check_data_clin(cl.agg, silent = silent)
+  check_cl.input_format(cl.input, silent = silent)
 
-  # ==== Aggregated -> daily reports ====
+  # Check whether input data is daily
+  # if not, need to do aggregated -> daily inference
+  is.daily <- check_cl.input_daily(cl.input, silent = silent)
 
-  # attach time-index column to observed aggregated reports
-  cl.agg <- attach_t_agg(
-    cl.agg = cl.agg,
-    prm.daily = prm.daily,
-    silent = silent
-  )
+  if(is.daily){
+    # ==== Data is already daily ====
+    cl.daily.raw <- format_cl.daily(cl.input)
+  } else {
+    # ==== Aggregated -> daily reports ====
 
-  # estimate daily reports using JAGS model
-  cl.daily.raw = agg_to_daily(
-    cl.agg    = cl.agg,
-    dist.gi   = dist.gi,
-    popsize   = popsize,
-    prm.daily = prm.daily,
-    silent    = silent
-  )
+    # attach time-index column to observed aggregated reports
+    cl.input <- attach_t_agg(
+      cl.input  = cl.input,
+      prm.daily = prm.daily,
+      silent    = silent
+    )
+
+    # estimate daily reports using JAGS model
+    cl.daily.raw = agg_to_daily(
+      cl.input  = cl.input,
+      dist.gi   = dist.gi,
+      popsize   = popsize,
+      prm.daily = prm.daily,
+      silent    = silent
+    )
+  }
 
   # ==== Smooth daily reports =====
 
+  if(!is.null(prm.smooth)){
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
     cl.daily   = cl.daily.raw,
     prm.smooth = prm.smooth
-  )
+  )} else {
+    cl.daily <- cl.daily.raw
+  }
 
   # Trim smoothed reports based on relative error criterion
 
-  if(!is.null(prm.daily.check)){
+  if(!is.daily & !is.null(prm.daily.check)){
     if(!silent){
       message("-----
 - Aggregating inferred daily reports back using the original
@@ -121,7 +129,7 @@ original reports...")
 
     cl.use.dates = get_use_dates(
       cl.daily = cl.daily,
-      cl.agg = cl.agg,
+      cl.input = cl.input,
       prm.daily.check = prm.daily.check
     )
 
@@ -156,22 +164,27 @@ with inferred aggregates outside of the specified tolerance of ",
     silent        = silent
   )
 
-  # Calculate the aggregated reports from the inferred daily reports
+  # Get inferred aggregates, if relevant
 
-  inferred.agg = (get_use_dates(
+  if(is.daily){
+    inferred.agg = NULL
+  } else {
+    # Calculate the aggregated reports from the inferred daily reports
+    inferred.agg = (get_use_dates(
       cl.daily        = cl.daily,
-      cl.agg          = cl.agg,
+      cl.input        = cl.input,
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
-  )
+    )
     %>% dplyr::filter(!is.na(obs))
     %>% dplyr::select(date, obs, dplyr::matches('agg$'))
-  )
+    )
+  }
 
   # Return results
 
   res = list(
-    cl.agg  = cl.agg,
+    cl.input  = cl.input,
     cl.daily = cl.daily,
     inferred.agg = inferred.agg,
     R = R

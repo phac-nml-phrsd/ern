@@ -25,21 +25,21 @@ suppressMessages({
 })
 ```
 
-With the `ern` package, the effective reproductive number ($\mathcal{R}_t$) can be estimated using viral concentration data found in wastewater. In this vignette, $\mathcal{R}_t$ will be estimated using a sample dataset of SARS-CoV-2 wastewater concentration data.
+With the `ern` package, the effective reproductive number ($\mathcal{R}_t$) can be estimated using viral concentration data found in wastewater. In this vignette, $\mathcal{R}_t$ will be estimated using a synthetic dataset.
 
-## Loading data and necessary parameters
+The main function we use to estimate $\mathcal{R}_t$ from wastewater data is `estimate_R_ww()`. This function takes several [inputs](#inputs) and [parameters](#params), described in the next two sections.
 
-In order to estimate $\mathcal{R}_t$ from wastewater data in `ern`, the following items are required:
+## Specifying inputs {#inputs}
 
--   Viral concentration dataframe containing the following columns: `date` and `value` (concentration value).
+`estimate_R_ww()` requires the following inputs from the user:
 
--   Fecal shedding distribution (included in `ern`).
+- `ww.conc`: Viral concentration in wastewater over time, as a data frame with columns `date` (measurement date) and `value` (concentration value)
 
--   Generation interval distribution (included in `ern` ).
+- Distribution families for several quantities:
+  - `dist.fec`: fecal shedding rate
+  - `dist.gi`: generation interval
 
--   Wastewater data smoothing parameters. See `smooth_ww()` for more details.
-
--   Settings for $\mathcal{R}_t$ estimation.
+`ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.
 
 ```{r create sample data}
 # Creating sample SARS-CoV-2 wastewater data
@@ -63,7 +63,36 @@ dist.fec = ern::def_dist_fecal_shedding('sarscov2')
 dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
 ```
 
-```{r initializing smoothing and Rt params }
+We can visualize the assumed distributions with `plot_dist()`:
+
+```{r plot dist fecal, fig.width = 6}
+plot_dist(dist.fec) + labs(title = paste0("Mean fecal shedding distribution (", dist.fec$dist, ")"))
+```
+
+```{r plot dist gi, fig.width = 6}
+plot_dist(dist.gi) + labs(title = paste0("Mean generation interval distribution (", dist.gi$dist, ")"))
+```
+
+`plot_dist()` returns a `ggplot` object, and so it can be further annotated with the usual `ggplot2` tools (like `labs()` as above).
+
+Note that `dist.fec` and `dist.gi` define _families_ of distributions (there is uncertainty specified in the mean distribution parameters), while `plot_dist()` only plots the mean distribution in this family.
+
+## Specifying parameters {#params}
+
+`estimate_R_ww()` also takes a number of parameter sets that give the user control over various components of the $\mathcal{R}_t$ estimation:
+
+- `scaling.factor`: a factor used to scale viral concentration in wastewater to prevalence (number of infectious cases in the population at a given point in time)
+
+- `prm.smooth`: smoothing settings for the input wastewater data
+
+- `prm.R`: settings for the $\mathcal{R}_t$ calculation
+
+All of these parameters have defaults, but they can also be adjusted by the user. These settings are further described in the example below, but you may also want to consult the documentation of `estimate_R_ww()` for more details.
+
+```{r initializing smoothing and Rt params}
+# Initializing scaling factor
+scaling.factor = 1
+
 # Initializing smoothing parameters
 prm.smooth = list(
   align  = 'center', # smoothing alignment
@@ -76,28 +105,43 @@ prm.R = list(
   iter   = 20,   # number of iterations in Rt ensemble
   CI     = 0.95, # confidence interval
   window = 10,   # Time window for Rt calculations
-  config.EpiEstim = NULL # EpiEstim configuration for Rt calculations
+  config.EpiEstim = NULL # optional EpiEstim configuration for Rt calculations
 )
 ```
 
 ## Estimating $\mathcal{R}_t$
 
-Once the above items are loaded, $\mathcal{R}_t$ can be estimated using `estimate_R_ww()`. In this example, the number of iterations will be set to 20 (the default is 100).
+Once the above inputs and parameters are defined, we estimate $\mathcal{R}_t$ as follows:
 
 ```{r estimate rt}
 r.estim = ern::estimate_R_ww(
   ww.conc        = ww.conc,
   dist.fec       = dist.fec,
   dist.gi        = dist.gi,
+  scaling.factor = scaling.factor,
   prm.smooth     = prm.smooth,
   prm.R = prm.R,
   silent = TRUE
 )
 ```
 
-## Visualizing $R_t$ estimates
+`estimate_R_ww()` returns a list with four elements:
 
-Using `plot_diagnostic_ww()`, $\mathcal{R}_t$ estimates can be visualized in a time-series graph along with wastewater concentration, and deconvoluted incidence (an intermediate between wastewater data and $\mathcal{R}_t$).
+- `ww.conc`: the original input of viral concentration in wastewater over time
+
+- `ww.smooth`: the smoothed wastewater concentration over time
+
+- `inc`: the daily incidence inferred over time, which is computed by performing a deconvolution of the smoothed wastewater concentration with a fecal shedding distribution. Since we specify a family of fecal shedding distributions, the incidence is computed as an ensemble by repeatedly taking draws from this family of distributions and performing the deconvolution. This ensemble is then summarized for each date with a mean, lower 95% confidence interval (CI) bound, and upper CI bound, which is reported in the `inc` data frame.
+
+- `R`: the daily reproduction number, which we compute in an ensemble. Each run in the ensemble is computed by using `EpiEstim::estimate_R()` on an inferred daily incidence time series and a generation interval. Inferred daily incidence time series are drawn from the individual realizations used to produce the `inc` data frame described above. Generation interval distributions are drawn from the specified family (`dist.gi`). The $\mathcal{R}_t$ ensemble is then summarized for each date with a mean, lower CI bound, and upper CI bound. The CI width can be specified by the user in `prm.R`.
+
+## Visualizing $\mathcal{R}_t$ estimates
+
+The output of `estimate_R_ww()` can be visualized readily using `plot_diagnostic_ww()`, which generates a multi-panel plot of three timeseries:
+
+1. original wastewater concentration against the smoothed signal over time
+2. inferred daily incidence
+3. the time-varying effective reproduction number, $\mathcal{R}_t$
 
 ```{r plot rt, fig.width = 6, fig.height = 6, warning = FALSE}
 g = ern::plot_diagnostic_ww(r.estim)

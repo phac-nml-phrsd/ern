@@ -37,7 +37,7 @@ In order to estimate $\mathcal{R}_t$ from aggregated clinical testing data in `e
 Sample weekly clinical reports are included in `ern`:
 
 ```{r load-data}
-dat <- ern::cl.agg %>% filter(pt == "qc") %>% slice(1:6)
+dat <- ern::cl.input %>% filter(pt == "qc") %>% slice(1:6)
 ```
 
 The $\mathcal{R}_t$ calculation is as follows:
@@ -95,18 +95,18 @@ RL.max.iter = 10
 # - - - - - - - - - - - - - - - - - 
 
 r.estim = estimate_R_cl(
-  cl.agg          = dat,
-  dist.repdelay   = dist.repdelay,
-  dist.repfrac    = dist.repfrac,
-  dist.incub      = dist.incub,
-  dist.gi         = dist.gi,
-  popsize         = popsize,
-  prm.smooth      = prm.smooth,
-  prm.daily       = prm.daily,
-  prm.R           = prm.R,
+  cl.input      = dat,
+  dist.repdelay = dist.repdelay,
+  dist.repfrac  = dist.repfrac,
+  dist.incub    = dist.incub,
+  dist.gi       = dist.gi,
+  popsize       = popsize,
+  prm.daily     = prm.daily,
   prm.daily.check = prm.daily.check,
-  RL.max.iter     = RL.max.iter,
-  silent          = TRUE
+  prm.smooth    = prm.smooth,
+  prm.R         = prm.R,
+  RL.max.iter   = RL.max.iter,
+  silent        = TRUE
 )
 ```
 

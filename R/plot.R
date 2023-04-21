@@ -41,7 +41,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
     ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line()+
-    ggplot2::labs(title ='Deconvoluted incidence',
+    ggplot2::labs(title ='Inferred incidence',
                   x = 'infection date', y='cases')+
     xsc
 
@@ -103,7 +103,10 @@ plot_diagnostic_cl <- function(
    %>% range()
   )
 
-  p1 <- (ggplot2::ggplot(r.estim$R, ggplot2::aes(x = date))
+  df1 = r.estim$R %>%
+    tidyr::drop_na(date)
+
+  p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
    + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
    + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
                           alpha = use),
@@ -121,7 +124,7 @@ plot_diagnostic_cl <- function(
   # ==== original input (aggregated cases) =====
 
   p2 <- (ggplot2::ggplot(
-    (r.estim$cl.agg
+    (r.estim$cl.input
      %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
      ggplot2::aes(x = date, y = value))
      + ggplot2::geom_col(na.rm = TRUE)
@@ -146,21 +149,29 @@ plot_diagnostic_cl <- function(
     th
 
 
-  # Comparison observations vs aggregated data from inferred daily incidence
+  # Comparison observations vs aggregated data from inferred daily incidence (provided this inference was even done)
 
-  p4 <- r.estim$inferred.agg %>%
-    ggplot2::ggplot(ggplot2::aes(x=date)) +
-    ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
-    ggplot2::geom_line(ggplot2::aes(y=obs)) +
-    ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
-    ggplot2::geom_pointrange(
-      ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
-      color= 'red2', alpha=0.6) +
-    ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
-    th
+  if(!is.null(r.estim$inferred.agg)){
+    p4 <- r.estim$inferred.agg %>%
+      ggplot2::ggplot(ggplot2::aes(x=date)) +
+      ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
+      ggplot2::geom_line(ggplot2::aes(y=obs)) +
+      ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
+      ggplot2::geom_pointrange(
+        ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
+        color= 'red2', alpha=0.6) +
+      ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
+      th
+  }
+
 
   # ==== composite plot ====
-  g = patchwork::wrap_plots(p1,p3,p4, ncol=1)
+  if(!is.null(r.estim$inferred.agg)){
+    g = patchwork::wrap_plots(p1,p3,p4, ncol=1)
+  } else {
+    g = patchwork::wrap_plots(p1,p3, ncol=1)
+  }
+
   return(g)
 }
 

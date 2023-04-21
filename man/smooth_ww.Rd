@@ -12,12 +12,11 @@ wastewater collection date and \code{value} for the pathogen concentration.}
 
 \item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:
-\enumerate{
-\item method - smoothing method (either 'rollmean' or 'loess')
-\item window - smoothing window (number of days for rollmean smoothing)
-\item align - smoothing alignment (for rollmean smoothing, either
-'center', 'left', 'right')
-\item span - smoothing span (for loess smoothing)
+\itemize{
+\item \code{method}: smoothing method, either \code{'rollmean'} (rolling mean) or \code{'loess'} (LOESS smoothing)
+\item \code{window}: for \verb{method = 'rollmean} only; width of smoothing window in days
+\item \code{align}: for \verb{method = 'rollmean} only; smoothing alignment, either \code{'center'}, \code{'left'}, \code{'right'}
+\item \code{span}: for \code{method = 'loess'} only; smoothing span (see the documentation for \code{stats::loess()} for details)
 }
 Set this entire list to \code{NULL} to turn off smoothing}
 

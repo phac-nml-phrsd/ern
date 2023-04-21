@@ -48,11 +48,19 @@ estimate_R_ww <- function(
   check_ww.conc_format(ww.conc)
 
   # Smooth the wastewater signal, if requested
-  ww.smooth <- smooth_ww(
-    ww.conc = ww.conc,
-    prm.smooth = prm.smooth,
-    silent = silent
-  )
+  if(!is.null(prm.smooth)){
+    ww.smooth <- smooth_ww(
+      ww.conc = ww.conc,
+      prm.smooth = prm.smooth,
+      silent = silent
+    )
+  } else {
+    warning("\n-----
+You are not passing smoothing parameters.
+Smoothing parameters are strongly recommended
+to obtain accurate Rt estimates using wastewater data.\n")
+    ww.smooth <- format_ww.smooth(ww.conc)
+  }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal
   # and using the fecal shedding distribution as the kernel
