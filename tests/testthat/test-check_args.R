@@ -84,22 +84,40 @@ test_that("check_prm.smooth returns an error when method is not specified or
             expect_error(
               check_prm.smooth(prm.smooth.invalid.window)
             )
+
+            prm.smooth.invalid.window = purrr::list_modify(prm.smooth.valid.rm,
+                                                           window = -14)
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.window)
+            )
+
+            prm.smooth.invalid.align = purrr::list_modify(prm.smooth.valid.rm,
+                                                          align = "up")
+
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.align)
+            )
+
             prm.smooth.missing.span = purrr::discard_at(prm.smooth.valid.loess,
                                                         "span")
             expect_error(
               check_prm.smooth(prm.smooth.missing.span)
             )
+
             prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
                                                          span = "1")
             expect_error(
               check_prm.smooth(prm.smooth.invalid.span)
             )
+
+            prm.smooth.invalid.span = purrr::list_modify(prm.smooth.valid.loess,
+                                                         span = -100)
+            expect_error(
+              check_prm.smooth(prm.smooth.invalid.span)
+            )
           })
 
-# prm.R -------------------------------------------------------------
 
-# evaluate defaults
-prm.R <- eval(defaults$prm.R)
 
 test_that("specifying a custom EpiEstim config in `prm.R` triggers a message", {
   expect_message(check_prm.R(
@@ -229,4 +247,15 @@ test_that("expected output of check_df.input_daily()", {
       cl.daily
     )
   )
+})
+
+
+# ww.conc -----------------------------------------------------------------
+
+test_that("check_ww.conc_format() returns an error when df is missing a date or value columns", {
+  load("../testdata/ww_test_params.RData")
+  df.missingdate = dplyr::select(ww.conc, -date)
+  df.missingval = dplyr::select(ww.conc, -value)
+  expect_error(check_ww.conc_format(df.missingdate))
+  expect_error(check_ww.conc_format(df.missingval))
 })

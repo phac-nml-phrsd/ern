@@ -10,7 +10,8 @@ prm.daily.check = list(
 )
 prm.smooth = list(
   method = "rollmean",
-  window = 7
+  window = 7,
+  align = "center"
 )
 prm.R = list(
   iter = 1,

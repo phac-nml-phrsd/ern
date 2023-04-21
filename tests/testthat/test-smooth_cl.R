@@ -6,7 +6,7 @@ test_that("rollmean smoothing on clinical data produces expected results", {
 
   res <- smooth_cl(
     cl.daily,
-    prm.smooth = list(method = "rollmean", window = 2)
+    prm.smooth = list(method = "rollmean", window = 2, align = "center")
   )
 
   expect_equal(

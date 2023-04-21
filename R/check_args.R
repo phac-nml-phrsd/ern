@@ -74,9 +74,9 @@ check_prm.smooth <- function(x){
     # - - - - - - - - - - - - - - - - -
 
     # window
-    err.msg <- "For `method = 'rollmean'`, a numeric `window` value must be specified in `prm.smooth`"
+    err.msg <- "For `method = 'rollmean'`, an positive integer numeric `window` value must be specified in `prm.smooth`"
     if(!("window" %in% names(x))) stop(err.msg)
-    if(!is.numeric(x$window)) stop(err.msg)
+    if(!assertthat::is.count(x$window)) stop(err.msg)
 
     # align
     if(is.null(x$align) |
