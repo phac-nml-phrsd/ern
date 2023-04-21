@@ -12,8 +12,6 @@ check_df.input_daily(df.input)
 \item \code{date}: calendar date of observation (report for clinical data, wastewater sampling for wastewater data)
 \item \code{value}: observed values (count of reported cases for clinical data, wastewater concentration for wastewater data)
 }}
-
-\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
 Logical. Indicates whether input data is already daily.
