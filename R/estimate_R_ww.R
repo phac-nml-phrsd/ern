@@ -72,8 +72,14 @@ You are not passing smoothing parameters.
 Smoothing parameters are strongly recommended
 to obtain accurate Rt estimates using wastewater data.\n")
 
-    # check that the input data is daily
-    ww.smooth <- format_ww.smooth(ww.conc)
+    # format
+    ww.smooth <- (ww.conc
+      %>% attach_t()
+      %>% dplyr::transmute(
+        t,
+        obs = value,
+        date
+      ))
   }
 
   # Infer the incidence deconvoluting the (smoothed) wastewater signal

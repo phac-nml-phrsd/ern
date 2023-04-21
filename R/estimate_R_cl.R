@@ -85,7 +85,14 @@ See README for more details.")
 
   if(is.daily){
     # ==== Data is already daily ====
-    cl.daily.raw <- format_cl.daily(cl.input)
+    cl.daily.raw <- (cl.input
+      %>% attach_t()
+      %>% dplyr::transmute(
+       id = as.integer(1),
+       date,
+       t,
+       value
+    ))
   } else {
     if(!silent){
       message("-----
@@ -118,7 +125,12 @@ The clinical testing data you input is not daily. `ern` requires daily data to c
     cl.daily   = cl.daily.raw,
     prm.smooth = prm.smooth
   )} else {
-    cl.daily <- cl.daily.raw
+  # match format
+    cl.daily <- (cl.daily.raw
+     %>% dplyr::select(
+       id, date, value, t
+     )
+    )
   }
 
   # Trim smoothed reports based on relative error criterion
