@@ -25,7 +25,7 @@ suppressMessages({
 })
 ```
 
-# General method
+# Introduction
 
 `ern` has two functions with which to estimate the daily effective reproduction number, $\mathcal{R}_t$, each for a different data stream:
 
@@ -37,23 +37,23 @@ In both cases, the general method is the same:
 1. use the input data to infer daily incidence
 2. use the inferred daily incidence to compute $\mathcal{R}_t$
 
-Step 2 is common to both wastewater and clinical methods; where they differ is in step 1. We give details of both steps below, followed by full demos for both wastewater and clinical input data.
+Step 2 is common to both wastewater and clinical methods; where they differ is in step 1. We give details of both steps below, followed by full demos for both [wastewater](#rt-ww) and [clinical](#rt-cl) input data.
 
-# Step 2: Using inferred daily incidence to compute $\mathcal{R}_t$
+## Using inferred daily incidence to compute $\mathcal{R}_t$
 
-In both the clinical and wastewater cases, step 1 outlined above will produce an ensemble of realizations for the inferred daily incidence. We use these timeseries, along with a family of generation interval distributions specified by the user, to compute $\mathcal{R}_t$ in an ensemble.
+In both the clinical and wastewater cases, step 1 will produce an ensemble of realizations for the inferred daily incidence. We use these timeseries of realizations, along with a family of generation interval distributions specified by the user, to compute $\mathcal{R}_t$ in an ensemble of realizations.
 
 To compute a single realization for the $\mathcal{R}_t$ ensemble, we draw one realization out of the ensemble of inferred daily incidence as well as one generation interval distribution out of the user-specified family, and feed both of these components into `EpiEstim::estimate_R()`. Once all realizations of $\mathcal{R}_t$ have been computed, the ensemble is summarized by day with a mean and with confidence interval bounds.
 
-# Step 1: Using the input data to infer daily incidence
+## Using the input data to infer daily incidence
 
 How we infer daily incidence from the input depends on the input data source.
 
-## Wastewater input data
+### Wastewater input data
 
 We convert the viral concentration in wastewater over time to a daily disease incidence by performing a deconvolution with a fecal shedding distribution, which describes the distribution of virus shed in feces by an infected individual during their disease course.
 
-## Clinical input data
+### Clinical input data
 
 We convert the count of _daily_ clinical reports over time to daily disease incidence in the following way:
 
@@ -63,7 +63,9 @@ We convert the count of _daily_ clinical reports over time to daily disease inci
 
 If the input reports are not daily, `ern` assumes that they are aggregated over the time between report dates and infer the daily count of cases using a Markov Chain Monte-Carlo simulation. More details can be found in `vignette('daily-report-inference', package = 'ern')`.
 
-# Wastewater demo
+---
+
+# Estimating $\mathcal{R}_t$ with wastewater data {#rt-ww}
 
 `estimate_R_ww()` takes several [inputs](#ww-inputs) and [parameters](#ww-params), described in the next two sections.
 
@@ -197,7 +199,9 @@ g = ern::plot_diagnostic_ww(r.estim)
 plot(g)
 ```
 
-# Clinical demo
+---
+
+# Estimating $\mathcal{R}_t$ with clinical data {#rt-cl}
 
 `estimate_R_cl()` takes several [inputs](#cl-inputs) and [parameters](#cl-params), described in the next two sections.
 
