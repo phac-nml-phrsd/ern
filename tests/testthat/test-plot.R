@@ -102,3 +102,11 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
     "ggplot"
   )
 })
+
+test_that("plot_dist returns a ggplot object",{
+  g = plot_dist(dist.gi)
+  expect_s3_class(
+    g,
+    "ggplot"
+  )
+})
