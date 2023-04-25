@@ -16,19 +16,6 @@ check_prm.daily <- function(x, silent){
     assertthat::assert_that(assertthat::is.count(x[[name]]))
   }
 
-  # Check config.EpiEstim
-  if(!is.null(x$config.EpiEstim)){
-    if(!silent){
-      warning("\n-----
-You are passing your own config for EpiEstim::estimate_R().
-Please note that ern always uses method = 'non_parametric_si',
-and thus any method specified in your config will be ignored.
-Also, any config parameters that are specific to
-method = 'non_parametric_si' (like si_distr) cannot be modified and
-will also be ignored.\n")
-    }
-}
-
   # Check optional arguments
   if(!is.null(x$first.agg.period)){
     assertthat::assert_that(assertthat::is.count((x$first.agg.period)))

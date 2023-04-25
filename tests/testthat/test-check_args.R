@@ -23,16 +23,6 @@ test_that("check_prm.daily() returns NULL when all checks are passed", {
   expect_null(check_prm.daily(prm.daily))
 })
 
-test_that("check_prm.daily() returns warning when an EpiEstim config is passed", {
-  expect_warning(
-    check_prm.daily(
-      purrr::list_modify(prm.daily,
-                         config.EpiEstim = EpiEstim::make_config()),
-      silent = FALSE
-    )
-  )
-})
-
 # prm.daily.check ---------------------------------------------------------
 
 prm.daily.check <- eval(defaults$prm.daily.check)
@@ -178,6 +168,12 @@ test_that("check_dist() returns an error when invalid distributions are passed, 
   out <- capture_output(expect_error(
     check_dist(dist.gamma.sd)
   ))
+  out <- capture_output(expect_error(
+    check_dist(norm.invalid.sd)
+  ))
+  out <- capture_output(expect_error(
+    check_dist(lnorm.invalid.sdlog)
+  ))
   expect_equal(
     check_dist(dist.gamma),
     NULL
@@ -185,6 +181,23 @@ test_that("check_dist() returns an error when invalid distributions are passed, 
 
   # norm
 
+  invalid.norm = purrr::list_modify(dist.norm, sd = -10)
+  invalid.lnorm = purrr::list_modify(dist.lnorm, sdlog = -10)
+
+  out <- capture.output(expect_error(
+    check_dist(invalid.norm)
+  ))
+  out <- capture.output(expect_error(
+    check_dist(invalid.lnorm)
+  ))
+  expect_equal(
+    check_dist(dist.norm),
+    NULL
+  )
+  expect_equal(
+    check_dist(dist.lnorm),
+    NULL
+  )
 })
 
 

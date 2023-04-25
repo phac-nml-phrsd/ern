@@ -28,7 +28,7 @@ test_that("distributions that require pathogen are initialized correctly,
   )
 })
 
-test_that("gamma and lnorm distributions get specified correctly", {
+test_that("gamma, norm, and lnorm distributions get specified correctly", {
   mean = 1
   sd = 2
   max = 100
@@ -51,6 +51,13 @@ test_that("gamma and lnorm distributions get specified correctly", {
     max = max
   )
 
+  pars.norm <- list(
+    dist = "norm",
+    mean = mean,
+    sd = sd,
+    max = max
+  )
+
   pars.lnorm <- list(
     dist = "lnorm",
     meanlog = log(mean),
@@ -64,6 +71,12 @@ test_that("gamma and lnorm distributions get specified correctly", {
   ),
     get_discrete_dist(
       pars.shape
+    )
+  )
+
+  expect_no_error(
+    get_discrete_dist(
+      pars.norm
     )
   )
 
