@@ -160,7 +160,7 @@ plot_diagnostic_cl <- function(
       ggplot2::geom_pointrange(
         ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
         color= 'red2', alpha=0.6) +
-      ggplot2::labs(subtitle = 'Aggregated incidence: observed vs. inferred (red)') +
+      ggplot2::labs(subtitle = 'Aggregated case reports: observed vs. inferred (red)') +
       th
   }
 
