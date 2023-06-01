@@ -55,6 +55,7 @@ estimate_R_cl <- function(
     agg.reldiff.tol = 10
   ),
   prm.smooth = list(
+    method = 'rollmean',
     window = 7
   ),
   prm.R = list(
