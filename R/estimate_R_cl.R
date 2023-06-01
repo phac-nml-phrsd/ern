@@ -56,6 +56,7 @@ estimate_R_cl <- function(
   ),
   prm.smooth = list(
     method = 'rollmean',
+    align  = 'right',
     window = 7
   ),
   prm.R = list(
