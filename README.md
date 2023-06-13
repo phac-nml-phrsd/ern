@@ -20,7 +20,9 @@ devtools::install_github('phac-nml-phrsd/ern')
 
 ### Note on JAGS
 
-`rjags` is a dependency for `ern`, specifically for Rt calculations performed on clinical testing data. `rjags` is the R interface for the [`JAGS` Bayesian modelling library](https://mcmc-jags.sourceforge.io/). Installation of `JAGS` is required and the latest version can be found [here](https://sourceforge.net/projects/mcmc-jags/files/). It is recommended that you are using the latest version of R and `JAGS` for optimal usage of `ern`.
+`rjags` is a dependency for `ern`, specifically for Rt calculations performed on clinical testing data. If you are only performing calculatings using wastewater data, you do not need to worry about installing `rjags` and can skip this section.
+
+`rjags` is the R interface for the [`JAGS` Bayesian modelling library](https://mcmc-jags.sourceforge.io/). Installation of `JAGS` is required and the latest version can be found [here](https://sourceforge.net/projects/mcmc-jags/files/). It is recommended that you are using the latest version of R and `JAGS` for optimal usage of `ern`.
 
 * For users who are only unable to install the latest version of `JAGS`, we recommend downgrading to an R version that is less than 4.2. More details can be found [here](https://martynplummer.wordpress.com/2022/04/12/windows-update-jags-4-3-1-is-released/)
 * For users who are having issues installing or running `JAGS` or `rjags`, we recommend consulting the [`JAGS` discussion board](https://sourceforge.net/p/mcmc-jags/discussion/610037/). 
