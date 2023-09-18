@@ -77,6 +77,7 @@ citation('ern')
 #>   the Effective Reproduction Number Using Clinical and Wastewater
 #>   Surveillance Data_. National Microbiology Laboratory, Public Health
 #>   Agency of Canada, Government of Canada.
+#>   <https://github.com/phac-nml-phrsd/ern>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -85,5 +86,6 @@ citation('ern')
 #>     author = {David Champredon and Irena Papst and Warsame Yusuf},
 #>     organization = {National Microbiology Laboratory, Public Health Agency of Canada, Government of Canada},
 #>     year = {2023},
+#>     url = {https://github.com/phac-nml-phrsd/ern},
 #>   }
 ```
