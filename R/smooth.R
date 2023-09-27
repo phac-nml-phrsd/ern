@@ -79,7 +79,7 @@ smooth_with_rollmean <- function(df, prm.smooth){
     %>% dplyr::mutate(
       value_smooth = zoo::rollapply(
         value, width = prm.smooth$window,
-        FUN = mean, align = prm.smooth$align,
+        FUN = mean, na.rm = TRUE, align = prm.smooth$align,
         partial = TRUE
     ))
     # standardize output
