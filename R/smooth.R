@@ -104,6 +104,9 @@ smooth_with_loess <- function(df, prm.smooth) {
   # extract time index and fitted values
   t = z$x[,"t"]
   v = z$fitted
+  
+  # determine if concentration floor specified
+  floor = ifelse(!is.null(prm.smooth$floor), TRUE, FALSE)
 
   # interpolate in case of missing values
   d = (stats::approx(x = t, y = v, xout = 1:max(t))
@@ -111,7 +114,10 @@ smooth_with_loess <- function(df, prm.smooth) {
     # standardize output
     %>% dplyr::transmute(
       t = x,
-      value_smooth = y,
+      value_smooth = ifelse(isTRUE(floor),
+                            case_when(y < prm.smooth$floor ~ prm.smooth$floor,
+                                      y >= prm.smooth$floor ~ y),
+                            y),
       date = lubridate::ymd(min(df$date)) + t
     )
     %>% dplyr::select(
