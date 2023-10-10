@@ -16,6 +16,8 @@ test_that("distributions that require pathogen are initialized correctly,
     expect_type(
       def_dist_fecal_shedding(pathogen = p), "list")
   }
+  expect_type(
+    def_dist_reporting_delay(pathogen = pathogens[[1]]), "list")
   p.error = "sick"
   expect_error(
     def_dist_incubation_period(pathogen = p.error)
@@ -25,6 +27,9 @@ test_that("distributions that require pathogen are initialized correctly,
   )
   expect_error(
     def_dist_fecal_shedding(pathogen = p.error)
+  )
+  expect_error(
+    def_dist_reporting_delay(pathogen = p.error)
   )
 })
 
