@@ -114,10 +114,11 @@ smooth_with_loess <- function(df, prm.smooth) {
     # standardize output
     %>% dplyr::transmute(
       t = x,
-      value_smooth = ifelse(isTRUE(floor),
-                            case_when(y < prm.smooth$floor ~ prm.smooth$floor,
-                                      y >= prm.smooth$floor ~ y),
-                            y),
+      value_smooth = 
+        if(isTRUE(floor))
+          case_when(y < prm.smooth$floor ~ prm.smooth$floor,
+                    y >= prm.smooth$floor ~ y)
+        else y,
       date = lubridate::ymd(min(df$date)) + t
     )
     %>% dplyr::select(
