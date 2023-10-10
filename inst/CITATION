@@ -1,0 +1,8 @@
+bibentry(
+  bibtype  = "Manual",
+  title    = "ern: An R Package to Estimate the Effective Reproduction Number Using Clinical and Wastewater Surveillance Data",
+  author   = "David Champredon, Irena Papst, Warsame Yusuf",
+  organization = "National Microbiology Laboratory, Public Health Agency of Canada, Government of Canada",
+  year     = 2023,
+  url = "https://github.com/phac-nml-phrsd/ern"
+)

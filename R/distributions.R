@@ -207,20 +207,27 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
 #' Define a family of reporting delay distributions
 #'
+#' Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in [ern::cl.agg]
+#'
 #' @template return-dist
+#' @template param-pathogen
 #'
 #' @export
-def_dist_reporting_delay <- function(){
-  # for SARS-CoV-2 in Canada
-  # TODO: this is just a dummy distribution, get real thing from linelist
-  list(
-    dist = 'gamma',
-    mean = 5,
-    mean_sd = 1,
-    sd = 1,
-    sd_sd = 0.1,
-    max = 10
-  )
+def_dist_reporting_delay <- function(pathogen = 'sarscov2'){
+  if(!(pathogen %in% c('sarscov2'))){
+    stop(paste0("No default reporting delay distribution for pathogen `", pathogen,"`. Aborting!"))
+  }
+
+  if(pathogen == 'sarscov2'){
+    list(
+      dist = 'gamma',
+      mean = 6.99,
+      mean_sd = 0.2211,
+      sd = 3.663,
+      sd_sd = 0.1158,
+      max = 21
+    )
+  }
 }
 
 # - - - - - - - - - - - - - - - - -

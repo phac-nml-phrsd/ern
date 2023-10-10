@@ -20,6 +20,7 @@ specified as followed:
 \item \code{window}: for \verb{method = 'rollmean} only; width of smoothing window in days
 \item \code{align}: for \verb{method = 'rollmean} only; smoothing alignment, either \code{'center'}, \code{'left'}, \code{'right'}
 \item \code{span}: for \code{method = 'loess'} only; smoothing span (see the documentation for \code{stats::loess()} for details)
+\item \code{floor}: optional call for wastewater concentration smoothing with \code{method = 'loess'} only; user defined minimum smoothing concentration
 }
 Set this entire list to \code{NULL} to turn off smoothing}
 

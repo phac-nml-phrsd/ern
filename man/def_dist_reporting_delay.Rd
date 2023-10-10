@@ -4,7 +4,10 @@
 \alias{def_dist_reporting_delay}
 \title{Define a family of reporting delay distributions}
 \usage{
-def_dist_reporting_delay()
+def_dist_reporting_delay(pathogen = "sarscov2")
+}
+\arguments{
+\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
 }
 \value{
 List with components
@@ -19,5 +22,5 @@ List with components
 }
 }
 \description{
-Define a family of reporting delay distributions
+Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in \link{cl.agg}
 }

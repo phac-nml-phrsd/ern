@@ -79,7 +79,7 @@ smooth_with_rollmean <- function(df, prm.smooth){
     %>% dplyr::mutate(
       value_smooth = zoo::rollapply(
         value, width = prm.smooth$window,
-        FUN = mean, align = prm.smooth$align,
+        FUN = mean, na.rm = TRUE, align = prm.smooth$align,
         partial = TRUE
     ))
     # standardize output
@@ -104,6 +104,9 @@ smooth_with_loess <- function(df, prm.smooth) {
   # extract time index and fitted values
   t = z$x[,"t"]
   v = z$fitted
+  
+  # determine if concentration floor specified
+  floor = ifelse(!is.null(prm.smooth$floor), TRUE, FALSE)
 
   # prevent negative values for smoothed concentrations
   tiny = 1e-3
@@ -115,7 +118,11 @@ smooth_with_loess <- function(df, prm.smooth) {
     # standardize output
     %>% dplyr::transmute(
       t = x,
-      value_smooth = y,
+      value_smooth = 
+        if(isTRUE(floor))
+          case_when(y < prm.smooth$floor ~ prm.smooth$floor,
+                    y >= prm.smooth$floor ~ y)
+        else y,
       date = lubridate::ymd(min(df$date)) + t
     )
     %>% dplyr::select(
