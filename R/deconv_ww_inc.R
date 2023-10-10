@@ -9,6 +9,8 @@
 #' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #'
 #' @return Data frame with deconvoluted incidence
+#'
+#' @export
 deconv_ww_inc <- function(d, fec, scaling.factor, silent, RL.max.iter){
 
   d$obs_scal = d$obs * scaling.factor

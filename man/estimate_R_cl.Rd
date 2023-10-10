@@ -13,7 +13,7 @@ estimate_R_cl(
   popsize,
   prm.daily = list(burn = 500, iter = 2000, chains = 3, first.agg.period = NULL),
   prm.daily.check = list(agg.reldiff.tol = 10),
-  prm.smooth = list(window = 7),
+  prm.smooth = list(method = "rollmean", align = "right", window = 7),
   prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
   RL.max.iter = 10,
   silent = FALSE
