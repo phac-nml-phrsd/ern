@@ -143,7 +143,7 @@ prm.smooth = list(
   align  = 'center', # smoothing alignment
   method = 'loess',  # smoothing method
   span   = 0.29,     # smoothing span (used for loess smoothing only)
-  floor  = 5,         # minimum smoothed concentration value (optional, loess smoothing only)
+  floor  = 5         # minimum smoothed concentration value (optional, loess smoothing only)
 )
 
 # Initialzing Rt settings

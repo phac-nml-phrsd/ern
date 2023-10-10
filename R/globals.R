@@ -6,5 +6,5 @@ utils::globalVariables(c(
   "upr","upr.agg","use","use.cumm","val","val_smooth",
   "value","value_smooth","y",
   "t.diff", "t.diff.check", "check",
-  "silent", "x"
+  "silent", "x", "case_when"
 ))
