@@ -108,10 +108,6 @@ smooth_with_loess <- function(df, prm.smooth) {
   # determine if concentration floor specified
   floor = ifelse(!is.null(prm.smooth$floor), TRUE, FALSE)
 
-  # prevent negative values for smoothed concentrations
-  tiny = 1e-3
-  v[v < 0] <- tiny
-
   # interpolate in case of missing values
   d = (stats::approx(x = t, y = v, xout = 1:max(t))
     %>% as.data.frame()
