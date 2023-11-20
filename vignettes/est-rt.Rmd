@@ -82,20 +82,11 @@ The function `estimate_R_ww()` estimates $R_t$ from pathogen concentration measu
   - `dist.fec`: fecal shedding rate
   - `dist.gi`: generation interval
   
-Here, we estimate $\mathcal{R}_t$ for a synthetic dataset:
+Here, we estimate $\mathcal{R}_t$ from a subset of wastewater data from the Iona Island wastewater treatment plant in Vancouver.
 
-```{r create sample data}
-# Creating sample SARS-CoV-2 wastewater data
-set.seed(1234)
-n=60
-x=1:n
-
-value = x * (40 - x) * rnorm(n, mean=1, sd=0.20)
-value = value[value>0]
-
-dd = ymd('2022-11-01') + 1:length(value)
-
-ww.conc = data.frame(date = dd, value = value)
+```{r load sample data}
+# Loading sample SARS-CoV-2 wastewater data
+ww.conc = ern::ww.input
 
 head(ww.conc)
 ```
@@ -142,7 +133,7 @@ scaling.factor = 1
 prm.smooth = list(
   align  = 'center', # smoothing alignment
   method = 'loess',  # smoothing method
-  span   = 0.29,     # smoothing span (used for loess smoothing only)
+  span   = 0.30,     # smoothing span (used for loess smoothing only)
   floor  = 5         # minimum smoothed concentration value (optional, loess smoothing only)
 )
 
