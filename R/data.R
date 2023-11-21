@@ -15,3 +15,14 @@
 #' `estimate_R_cl(cl.input = dplyr::filter(cl.input, pt == 'bc'), ...)`
 "cl.input"
 
+#' Sample of wastewater concentration
+#'
+#' A subset of COVID-19 concentration data from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
+#'
+#' @format ## `ww.input`
+#' A data frame with 47 rows and 3 columns:
+#' \itemize{
+#'   \item `date`: report date
+#'   \item `value`: mean sample concentration between multiple replicates
+#' }
+"ww.input"
