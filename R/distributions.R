@@ -207,7 +207,7 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 
 #' Define a family of reporting delay distributions
 #'
-#' Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in [ern::cl.agg]
+#' Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in [ern::cl.input]
 #'
 #' @template return-dist
 #' @template param-pathogen
