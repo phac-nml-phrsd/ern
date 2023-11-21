@@ -25,3 +25,4 @@
 #'   \item `date`: report date
 #'   \item `value`: mean sample concentration between multiple replicates
 #' }
+"ww.input"
