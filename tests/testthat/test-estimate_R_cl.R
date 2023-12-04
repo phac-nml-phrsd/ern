@@ -5,7 +5,7 @@ popsize = 14.7e6
 
 test_that("estimate_R_cl() returns output of the expected type", {
 res <- estimate_R_cl(
-  cl.input %>% dplyr::filter(pt == "on"),
+  cl.input |> dplyr::filter(pt == "on"),
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -43,7 +43,7 @@ test_output_tibble(
 
 test_that("estiamte_R_cl() returns a message when prm.daily.check is not NULL, input data is not daily, and silent mode is off", {
   expect_message(estimate_R_cl(
-    cl.input %>% dplyr::filter(pt == "on"),
+    cl.input |> dplyr::filter(pt == "on"),
     dist.repdelay,
     dist.repfrac,
     dist.incub,
@@ -63,7 +63,7 @@ reporting schedule")
 # daily input data --------------------------------------------------------
 
 cl.daily.test <- (cl.daily
-%>% dplyr::select(date, value)
+|> dplyr::select(date, value)
 )
 
 test_that("estimate_R_cl() skips JAGS step and smoothing if input data is already daily and prm.smooth is NULL", {
@@ -91,7 +91,7 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
 
     expect_identical(
       res$cl.input,
-      res$cl.daily %>% dplyr::select(date, value)
+      res$cl.daily |> dplyr::select(date, value)
     )
 
     # verify this is still OK if popsize, prm.daily and prm.daily.check are NULL
@@ -111,7 +111,7 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
 
     expect_identical(
       res2$cl.input,
-      res2$cl.daily %>% dplyr::select(date, value)
+      res2$cl.daily |> dplyr::select(date, value)
     )
 })
 

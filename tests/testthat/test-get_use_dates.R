@@ -12,13 +12,13 @@ cl.daily.test <- tibble::tibble(
 )
 
 cl.input.test <- (cl.daily.test
-  %>% dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
+  |> dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
             rownum = 1:nrow(.))
-  %>% dplyr::group_by(group)
-  %>% dplyr::mutate(value = sum(value))
-  %>% dplyr::ungroup()
-  %>% dplyr::filter(rownum %% agg.window == 0)
-  %>% dplyr::select(date, value, t)
+  |> dplyr::group_by(group)
+  |> dplyr::mutate(value = sum(value))
+  |> dplyr::ungroup()
+  |> dplyr::filter(rownum %% agg.window == 0)
+  |> dplyr::select(date, value, t)
 )
 
 test_that("get_use_dates() works when dates.only = TRUE", {

@@ -149,7 +149,7 @@ deconvolution_RL <- function(
 
   # Return
   return(
-    data.frame(time = times, imputed = lambda) %>%
+    data.frame(time = times, imputed = lambda) |>
       stats::setNames(c('time', out_col_name))
   )
 }

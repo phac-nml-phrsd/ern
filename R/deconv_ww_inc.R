@@ -23,14 +23,14 @@ deconv_ww_inc <- function(d, fec, scaling.factor, silent, RL.max.iter){
                          times    = d$t,
                          p_delay  = f,
                          verbose  = !silent,
-                         max_iter = RL.max.iter) %>%
+                         max_iter = RL.max.iter) |>
     # Forces incidence to be a positive integer:
     dplyr::mutate(
       inc.deconvol = as.integer(ifelse(
-        RL_result>0, RL_result, 0))) %>%
+        RL_result>0, RL_result, 0))) |>
     # Retrieve corresponding dates:
-    dplyr::rename(t = time) %>%
-    dplyr::filter(t > 0) %>%
+    dplyr::rename(t = time) |>
+    dplyr::filter(t > 0) |>
     dplyr::mutate(date = start_date + t)
 
   res = list(

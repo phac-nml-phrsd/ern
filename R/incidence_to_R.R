@@ -71,9 +71,9 @@ incidence_to_R <- function(
   # ==== prep output ====
 
   res = (R
-         %>% dplyr::left_join(incidence, by = c("t_end" = "t"))
-         %>% dplyr::select(-dplyr::starts_with("t_"))
-         %>% dplyr::transmute(
+         |> dplyr::left_join(incidence, by = c("t_end" = "t"))
+         |> dplyr::select(-dplyr::starts_with("t_"))
+         |> dplyr::transmute(
            date,
            mean = `Mean(R)`,
            lo   = `Quantile.0.025(R)`,

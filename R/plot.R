@@ -20,8 +20,8 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
                lubridate::ymd(date.end))
   )
 
-  g.ww = r.estim$ww.conc %>%
-    dplyr::filter(date >= date.start) %>%
+  g.ww = r.estim$ww.conc |>
+    dplyr::filter(date >= date.start) |>
     ggplot2::ggplot(ggplot2::aes(x = date, y = value)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
@@ -37,7 +37,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
       x='collection date', y='concentration'
     )
 
-  g.inc = r.estim$inc %>%
+  g.inc = r.estim$inc |>
     ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
     ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line()+
@@ -45,7 +45,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
                   x = 'infection date', y='cases')+
     xsc
 
-  g.r = r.estim$R %>%
+  g.r = r.estim$R |>
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
     ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
@@ -97,13 +97,13 @@ plot_diagnostic_cl <- function(
   # ==== Rt plot ====
 
   ylim <- (r.estim$R
-   %>% dplyr::filter(use)
-   %>% tidyr::pivot_longer(c(lwr, upr))
-   %>% dplyr::pull(value)
-   %>% range()
+   |> dplyr::filter(use)
+   |> tidyr::pivot_longer(c(lwr, upr))
+   |> dplyr::pull(value)
+   |> range()
   )
 
-  df1 = r.estim$R %>%
+  df1 = r.estim$R |>
     tidyr::drop_na(date)
 
   p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
@@ -125,7 +125,7 @@ plot_diagnostic_cl <- function(
 
   p2 <- (ggplot2::ggplot(
     (r.estim$cl.input
-     %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
+     |> dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
      ggplot2::aes(x = date, y = value))
      + ggplot2::geom_col(na.rm = TRUE)
      + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
@@ -135,8 +135,8 @@ plot_diagnostic_cl <- function(
 
   # inferred input (smoothed daily cases)
 
-  tmp = r.estim$cl.daily %>%
-    summarise_by_date_iters() %>%
+  tmp = r.estim$cl.daily |>
+    summarise_by_date_iters() |>
     dplyr::filter(dplyr::between(date,
                                  min(r.estim$R$date, na.rm = TRUE),
                                  max(r.estim$R$date, na.rm = TRUE)))
@@ -152,7 +152,7 @@ plot_diagnostic_cl <- function(
   # Comparison observations vs aggregated data from inferred daily incidence (provided this inference was even done)
 
   if(!is.null(r.estim$inferred.agg)){
-    p4 <- r.estim$inferred.agg %>%
+    p4 <- r.estim$inferred.agg |>
       ggplot2::ggplot(ggplot2::aes(x=date)) +
       ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
       ggplot2::geom_line(ggplot2::aes(y=obs)) +

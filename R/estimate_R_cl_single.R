@@ -20,7 +20,7 @@ estimate_R_cl_single <- function(
   id.list <- unique(cl.daily$id)
   the_id  <- sample(id.list, size = 1)
   df.draw <- (cl.daily
-     %>% dplyr::filter(id == the_id)
+     |> dplyr::filter(id == the_id)
   )
 
   # sample reporting fraction
@@ -51,7 +51,7 @@ estimate_R_cl_single <- function(
     reporting.delay,
     incubation.period,
     silent = silent,
-    max.iter = RL.max.iter  ) %>%
+    max.iter = RL.max.iter  ) |>
     # attach time index to incidence
     dplyr::mutate(t = 1:nrow(.))
 
@@ -77,7 +77,7 @@ correct_underreporting <- function(
     reporting.fraction
 ){
   (reports.daily
-   %>% dplyr::mutate(value = value/reporting.fraction)
+   |> dplyr::mutate(value = value/reporting.fraction)
   )
 }
 
@@ -137,13 +137,13 @@ reports_to_incidence <- function(
     t = 1:nrow(reports.daily)
   )
 
-  res = incidence %>%
+  res = incidence |>
     # filter out first x days, where x is the sum of
     # the max reporting delay and the max incubation period
     # (i.e. disregard reports before a full observation period is complete)
-    # %>% dplyr::filter(t >= incubation.period$max + reporting.delay$max)
-    dplyr::left_join(date.lookup, by = "t") %>%
-    dplyr::transmute(date, I = y) %>%
+    # |> dplyr::filter(t >= incubation.period$max + reporting.delay$max)
+    dplyr::left_join(date.lookup, by = "t") |>
+    dplyr::transmute(date, I = y) |>
     tibble::as_tibble()
 
   return(res)
@@ -175,8 +175,8 @@ deconv <- function(
     max_iter = max.iter,
     verbose = !silent
   )
-  %>% tidyr::drop_na()
-  %>% dplyr::rename(
+  |> tidyr::drop_na()
+  |> dplyr::rename(
     t = time,
     y = RL_result)
   )
