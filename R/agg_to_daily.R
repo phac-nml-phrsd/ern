@@ -212,7 +212,7 @@ Running MCMC model to infer daily reports from aggregated reports...
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    |> dplyr::bind_rows()
-   |> dplyr::mutate(iteration = 1:nrow(.))
+   |> (\(x){dplyr::mutate(x, iteration = 1:nrow(x))})()
    |> tidyr::pivot_longer(-iteration)
    |> tidyr::separate(
      name,
@@ -242,7 +242,7 @@ get_realizations <- function(
     |> attach_startdate_agg()
     |> dplyr::select(date)
     |> tidyr::complete(date = seq(min(date), max(date), by = "days"))
-    |> dplyr::mutate(t = 1:nrow(.))
+    |> (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
   )
 
   # extract fitted daily reports

@@ -12,8 +12,9 @@ cl.daily.test <- tibble::tibble(
 )
 
 cl.input.test <- (cl.daily.test
-  |> dplyr::mutate(group = rep(1:(n/agg.window), each = agg.window),
-            rownum = 1:nrow(.))
+  |> (\(x){dplyr::mutate(x, 
+                         group = rep(1:(n/agg.window), each = agg.window),
+                         rownum = 1:nrow(x))})()
   |> dplyr::group_by(group)
   |> dplyr::mutate(value = sum(value))
   |> dplyr::ungroup()

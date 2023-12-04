@@ -53,7 +53,7 @@ estimate_R_cl_single <- function(
     silent = silent,
     max.iter = RL.max.iter  ) |>
     # attach time index to incidence
-    dplyr::mutate(t = 1:nrow(.))
+    (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
 
   # estimate Rt
   res = incidence_to_R(
