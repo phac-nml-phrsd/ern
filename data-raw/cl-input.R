@@ -4,7 +4,7 @@
 pt.list <- c("bc", "ab", "sk", "mb", "on", "qc")
 
 # date horizon of data
-date.lim <- as.Date(c("2022-12-24", "2023-04-08"))
+date.lim <- as.Date(c("2022-07-01", "2023-04-01"))
 
 # lookup table for provice names
 pt.lookup <- tibble::tribble(
@@ -28,24 +28,24 @@ pt.lookup <- tibble::tribble(
 # raw data
 cl.input <- (
    readr::read_csv("https://health-infobase.canada.ca/src/data/covidLive/covid19-download.csv",
-                   show_col_types = FALSE)
-   %>% dplyr::transmute(
+                   show_col_types = FALSE, na = c("", "NA", "-"))
+   |> dplyr::transmute(
      province_en = .data$prname,
      .data$date,
      value_cumm = .data$totalcases
    )
-   %>% dplyr::left_join(pt.lookup, by = "province_en")
-   %>% dplyr::filter(pt %in% pt.list)
-   %>% dplyr::group_by(pt)
-   %>% dplyr::mutate(value = dplyr::case_when(
+   |> dplyr::left_join(pt.lookup, by = "province_en")
+   |> dplyr::filter(pt %in% pt.list)
+   |> dplyr::group_by(pt)
+   |> dplyr::mutate(value = dplyr::case_when(
      .data$date == min(.data$date) ~ .data$value_cumm,
      T ~ .data$value_cumm - dplyr::lag(value_cumm)
    ))
-   %>% dplyr::select(pt, date, value)
-   %>% tidyr::drop_na()
-   %>% dplyr::filter(dplyr::between(.data$date, date.lim[1], date.lim[2]))
-   %>% dplyr::arrange(.data$date)
-   %>% dplyr::ungroup()
+   |> dplyr::select(pt, date, value)
+   |> tidyr::drop_na()
+   |> dplyr::filter(dplyr::between(.data$date, date.lim[1], date.lim[2]))
+   |> dplyr::arrange(.data$date)
+   |> dplyr::ungroup()
 )
 
 usethis::use_data(cl.input, overwrite = TRUE)
