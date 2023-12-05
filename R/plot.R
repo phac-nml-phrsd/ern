@@ -95,6 +95,9 @@ plot_diagnostic_cl <- function(
     plot.margin = ggplot2::margin(t=5, r=0, b=5, l=0, unit="pt")
   )
   
+  # to maintain consistent x-axis between panels
+  date.range <- range(r.estim$R$date)
+  
   # ==== Observed data (optionally vs inferred aggregates) ====
   p1 <- (r.estim$cl.input
          |> ggplot2::ggplot(ggplot2::aes(x=date, y=value)) 
@@ -165,13 +168,6 @@ plot_diagnostic_cl <- function(
   
   # ==== Rt plot ====
   
-  # ylim <- (r.estim$R
-  #  |> dplyr::filter(use)
-  #  |> tidyr::pivot_longer(c(lwr, upr))
-  #  |> dplyr::pull(value)
-  #  |> range()
-  # )
-  
   p3 <- (r.estim$R 
          |> tidyr::drop_na(date)
          |> ggplot2::ggplot(ggplot2::aes(x = date))
@@ -180,10 +176,6 @@ plot_diagnostic_cl <- function(
                                 alpha = alpha,
                                 na.rm = TRUE)
          + ggplot2::geom_line(ggplot2::aes(y = mean), na.rm = TRUE)
-         # + ggplot2::scale_alpha_manual(values = alpha_scale)
-         # + ggplot2::scale_linetype_manual(values = linetype_scale)
-         # + ggplot2::coord_cartesian(ylim = ylim)
-         # + ggplot2::guides(alpha = "none", linetype = "none")
          + ggplot2::labs(
            title = "Effective Reproduction Number",
            x = 'date',
