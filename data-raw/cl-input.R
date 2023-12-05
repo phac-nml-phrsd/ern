@@ -4,7 +4,7 @@
 pt.list <- c("bc", "ab", "sk", "mb", "on", "qc")
 
 # date horizon of data
-date.lim <- as.Date(c("2022-07-01", "2023-04-01"))
+date.lim <- as.Date(c("2020-02-01", "2023-04-01"))
 
 # lookup table for provice names
 pt.lookup <- tibble::tribble(
