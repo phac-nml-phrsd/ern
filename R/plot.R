@@ -107,7 +107,7 @@ plot_diagnostic_cl <- function(
            x = 'report date',
            y = 'cases'
          )
-         + coord_cartesian(xlim = date.range)
+         + ggplot2::coord_cartesian(xlim = date.range)
          + th
   )
   
@@ -119,7 +119,7 @@ plot_diagnostic_cl <- function(
          + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
                                 alpha = alpha) 
          + ggplot2::geom_line(ggplot2::aes(y = mean)) 
-         + coord_cartesian(xlim = date.range)
+         + ggplot2::coord_cartesian(xlim = date.range)
          + th
   )
   
@@ -134,7 +134,7 @@ plot_diagnostic_cl <- function(
            + ggplot2::geom_pointrange(
              ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
              color= 'red2', alpha=0.6)
-           + coord_cartesian(xlim = date.range)
+           + ggplot2::coord_cartesian(xlim = date.range)
            + ggplot2::labs(
              title = 'Aggregated case reports: observed (black) vs. inferred (red)',
              x = 'report date',
