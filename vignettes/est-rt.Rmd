@@ -218,7 +218,11 @@ plot(g)
 Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 reports in the province of Quebec:
 
 ```{r load-data}
-dat <- ern::cl.input %>% filter(pt == "qc") %>% slice(1:6)
+dat <- (ern::cl.input 
+    |> dplyr::filter(
+      pt == "qc",
+      dplyr::between(date, as.Date("2021-06-01"), as.Date("2021-11-01"))
+))
 ```
 
 `ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.

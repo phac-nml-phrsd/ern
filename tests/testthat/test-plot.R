@@ -24,7 +24,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   # aggregate data
   # - - - - - - - - - - - - - - - - -
-  dat <- ern::cl.input %>% dplyr::filter(pt == "bc") %>% dplyr::slice(1:4)
+  dat <- cl.input
   pathogen = 'sarscov2'
   max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
@@ -76,7 +76,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   # daily data
   # - - - - - - - - - - - - - - - - -
-  dat <- cl.daily %>% dplyr::select(date, value)
+  dat <- cl.daily |> dplyr::select(date, value)
 
   r.obj = ern::estimate_R_cl(
     cl.input      = dat,

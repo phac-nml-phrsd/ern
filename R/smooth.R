@@ -18,11 +18,11 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
   # rollmean
   if(prm.smooth$method == 'rollmean'){
     d = (ww.conc
-     %>% tidyr::complete(date =
+     |> tidyr::complete(date =
                            seq.Date(dplyr::first(date),
                                     dplyr::last(date),
                                     by = "day"))
-     %>% smooth_with_rollmean(prm.smooth = prm.smooth)
+     |> smooth_with_rollmean(prm.smooth = prm.smooth)
     )
   }
 
@@ -33,11 +33,11 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
 
   # format output
   d <- (d
-    %>% as.data.frame()
+    |> as.data.frame()
     # re-attach time-index in case of interpolation
-    %>% attach_t()
+    |> attach_t()
     # change output to suit ww methods
-    %>% dplyr::transmute(
+    |> dplyr::transmute(
       t,
       obs = value_smooth,
       date
@@ -62,12 +62,12 @@ smooth_cl <- function(cl.daily, prm.smooth){
   if(prm.smooth$method == 'loess') smooth_fun <- smooth_with_loess
 
   (cl.daily
-    %>% dplyr::group_by(id)
+    |> dplyr::group_by(id)
     # perform smoothing
-    %>% smooth_fun(prm.smooth = prm.smooth)
-    %>% dplyr::ungroup()
+    |> smooth_fun(prm.smooth = prm.smooth)
+    |> dplyr::ungroup()
     # standardize output
-    %>% dplyr::rename(value = value_smooth)
+    |> dplyr::rename(value = value_smooth)
   )
 }
 
@@ -76,15 +76,15 @@ smooth_cl <- function(cl.daily, prm.smooth){
 
 smooth_with_rollmean <- function(df, prm.smooth){
   d <- (df
-    %>% dplyr::mutate(
+    |> dplyr::mutate(
       value_smooth = zoo::rollapply(
         value, width = prm.smooth$window,
         FUN = mean, na.rm = TRUE, align = prm.smooth$align,
         partial = TRUE
     ))
     # standardize output
-    %>% attach_t()
-    %>% dplyr::transmute(
+    |> attach_t()
+    |> dplyr::transmute(
       date,
       value_smooth,
       t
@@ -110,18 +110,19 @@ smooth_with_loess <- function(df, prm.smooth) {
 
   # interpolate in case of missing values
   d = (stats::approx(x = t, y = v, xout = 1:max(t))
-    %>% as.data.frame()
+    |> as.data.frame()
     # standardize output
-    %>% dplyr::transmute(
+    |> dplyr::transmute(
       t = x,
       value_smooth = 
         if(isTRUE(floor))
-          case_when(y < prm.smooth$floor ~ prm.smooth$floor,
-                    y >= prm.smooth$floor ~ y)
+          dplyr::case_when(
+            y < prm.smooth$floor ~ prm.smooth$floor,
+            y >= prm.smooth$floor ~ y)
         else y,
       date = lubridate::ymd(min(df$date)) + t
     )
-    %>% dplyr::select(
+    |> dplyr::select(
       date, value_smooth, t
     )
     )

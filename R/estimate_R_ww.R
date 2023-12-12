@@ -74,8 +74,8 @@ to obtain accurate Rt estimates using wastewater data.\n")
 
     # format
     ww.smooth <- (ww.conc
-      %>% attach_t()
-      %>% dplyr::transmute(
+      |> attach_t()
+      |> dplyr::transmute(
         t,
         obs = value,
         date
@@ -97,13 +97,13 @@ to obtain accurate Rt estimates using wastewater data.\n")
     RL.max.iter = RL.max.iter
   )
 
-  inc = lapply(r, `[[`, 'inc') %>%
-    dplyr::bind_rows() %>%
-    dplyr::transmute(value = I, date) %>%
+  inc = lapply(r, `[[`, 'inc') |>
+    dplyr::bind_rows() |>
+    dplyr::transmute(value = I, date) |>
     summarise_by_date_iters()
 
-  rt = lapply(r, `[[`, 2) %>%
-    dplyr::bind_rows() %>%
+  rt = lapply(r, `[[`, 2) |>
+    dplyr::bind_rows() |>
     summarise_by_date_ens(CI = prm.R$CI)
 
   return(list(
@@ -141,15 +141,15 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                       silent         = silent,
                       RL.max.iter    = RL.max.iter)
 
-  i.df = inc[["inc"]] %>%
-    dplyr::mutate(I = inc.deconvol) %>%
-    dplyr::select(date,I, t) %>%
-    tidyr::drop_na() %>%
+  i.df = inc[["inc"]] |>
+    dplyr::mutate(I = inc.deconvol) |>
+    dplyr::select(date,I, t) |>
+    tidyr::drop_na() |>
     dplyr::mutate(iter = i)
 
   rt = incidence_to_R(incidence = i.df,
                       generation.interval = sample.gi,
-                      prm.R = prm.R) %>%
+                      prm.R = prm.R) |>
     dplyr::mutate(iter = i)
 
   r = list(

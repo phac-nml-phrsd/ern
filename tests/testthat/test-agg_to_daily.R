@@ -77,11 +77,11 @@ test_that("internal time index is correctly specified", {
   window = 8 # date spacing
 
   check <- all((df
-      %>% dplyr::slice(which(dplyr::row_number() %% window == 1))
-      %>% attach_t_agg(silent = TRUE)
-      %>% dplyr::mutate(t.diff.check = as.numeric(date - dplyr::lag(date)))
-      %>% tidyr::drop_na()
-      %>% dplyr::mutate(check = t.diff.check == window)
+      |> dplyr::slice(which(dplyr::row_number() %% window == 1))
+      |> attach_t_agg(silent = TRUE)
+      |> dplyr::mutate(t.diff.check = as.numeric(date - dplyr::lag(date)))
+      |> tidyr::drop_na()
+      |> dplyr::mutate(check = t.diff.check == window)
     )$check
   )
 
@@ -90,15 +90,15 @@ test_that("internal time index is correctly specified", {
   # randomly spaced dates
   check <- all(
   suppressMessages(df
-      %>% dplyr::slice_sample(n = 20)
-      %>% dplyr::arrange(date)
-      %>% dplyr::mutate(window = as.numeric(date - lag(date)))
-      %>% attach_t_agg()
-      %>% dplyr::mutate(
+      |> dplyr::slice_sample(n = 20)
+      |> dplyr::arrange(date)
+      |> dplyr::mutate(window = as.numeric(date - lag(date)))
+      |> attach_t_agg()
+      |> dplyr::mutate(
         window.t = t - lag(t),
         check = window == window.t
       )
-      %>% tidyr::drop_na()
+      |> tidyr::drop_na()
     )$check
   )
 

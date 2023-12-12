@@ -28,8 +28,6 @@
 #' @template param-prm.R
 #' @template param-silent
 #'
-#' @importFrom magrittr %>%
-#'
 #' @return List. Elements include:
 #' \itemize{
 #'  \item `cl.input`: original aggregated reports signal
@@ -89,8 +87,8 @@ See README for more details.")
   if(is.daily){
     # ==== Data is already daily ====
     cl.daily.raw <- (cl.input
-      %>% attach_t()
-      %>% dplyr::transmute(
+      |> attach_t()
+      |> dplyr::transmute(
        id = as.integer(1),
        date,
        t,
@@ -133,7 +131,7 @@ The clinical testing data you input is not daily. `ern` requires daily data to c
   )} else {
   # match format
     cl.daily <- (cl.daily.raw
-     %>% dplyr::select(
+     |> dplyr::select(
        id, date, value, t
      )
     )
@@ -169,7 +167,7 @@ with inferred aggregates outside of the specified tolerance of ",
   - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
     }
     cl.daily = (cl.daily
-       %>% dplyr::filter(date %in% cl.use.dates)
+       |> dplyr::filter(date %in% cl.use.dates)
     )
   }
 
@@ -198,8 +196,8 @@ with inferred aggregates outside of the specified tolerance of ",
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
     )
-    %>% dplyr::filter(!is.na(obs))
-    %>% dplyr::select(date, obs, dplyr::matches('agg$'))
+    |> dplyr::filter(!is.na(obs))
+    |> dplyr::select(date, obs, dplyr::matches('agg$'))
     )
   }
 

@@ -39,8 +39,8 @@ estimate_R_cl_rep <- function(
   R = dplyr::bind_rows(tmp)
 
   # Return summary of ensembles
-  res = R %>%
-    summarise_by_date_ens(CI = prm.R$CI) %>%  
+  res = R |>
+    summarise_by_date_ens(CI = prm.R$CI) |>  
     # flag which points to trust or not
     # beginning of estimate takes a bit to converge
     # use one max generation interval as rule of thumb

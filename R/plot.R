@@ -20,8 +20,8 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
                lubridate::ymd(date.end))
   )
 
-  g.ww = r.estim$ww.conc %>%
-    dplyr::filter(date >= date.start) %>%
+  g.ww = r.estim$ww.conc |>
+    dplyr::filter(date >= date.start) |>
     ggplot2::ggplot(ggplot2::aes(x = date, y = value)) +
     ggplot2::geom_step() +
     ggplot2::geom_line(
@@ -37,15 +37,15 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
       x='collection date', y='concentration'
     )
 
-  g.inc = r.estim$inc %>%
+  g.inc = r.estim$inc |>
     ggplot2::ggplot(ggplot2::aes(x=date, y = mean)) +
     ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
     ggplot2::geom_line()+
     ggplot2::labs(title ='Inferred incidence',
-                  x = 'infection date', y='cases')+
+                  x = 'infection date', y='infections')+
     xsc
 
-  g.r = r.estim$R %>%
+  g.r = r.estim$R |>
     ggplot2::ggplot(ggplot2::aes(x=date, y=mean)) +
     ggplot2::geom_hline(yintercept = 1, color = 'grey50', linetype='dashed')+
     ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr), alpha=0.2)+
@@ -75,15 +75,16 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 plot_diagnostic_cl <- function(
     r.estim
 ){
-
-  alpha_scale <- c(0.1, 0.3)
-  linetype_scale <- c("dotted", "solid")
-  names(alpha_scale) <- names(linetype_scale) <- c("FALSE", "TRUE")
-
+  
+  # ==== plot setup ====
+  
+  alpha <- 0.3 # for CI ribbons
+  # linetype_scale <- c("dotted", "solid")
+  # names(alpha_scale) <- names(linetype_scale) <- c("FALSE", "TRUE")
+  
   ggplot2::theme_set(ggplot2::theme_bw())
-
+  
   th <- ggplot2::theme(
-    axis.title = ggplot2::element_blank(),
     legend.position = "top",
     legend.title = ggplot2::element_blank(),
     legend.key = ggplot2::element_rect(fill = NA),
@@ -93,85 +94,99 @@ plot_diagnostic_cl <- function(
     panel.spacing = ggplot2::unit(5, units = "pt"),
     plot.margin = ggplot2::margin(t=5, r=0, b=5, l=0, unit="pt")
   )
-
-  # ==== Rt plot ====
-
-  ylim <- (r.estim$R
-   %>% dplyr::filter(use)
-   %>% tidyr::pivot_longer(c(lwr, upr))
-   %>% dplyr::pull(value)
-   %>% range()
+  
+  # to maintain consistent x-axis between panels
+  date.range <- range(r.estim$R$date)
+  
+  # ==== Observed data (optionally vs inferred aggregates) ====
+  p1 <- (r.estim$cl.input
+         |> ggplot2::ggplot(ggplot2::aes(x=date, y=value)) 
+         + ggplot2::geom_col() 
+         + ggplot2::labs(
+           title = 'Observed case reports',
+           x = 'report date',
+           y = 'cases'
+         )
+         + ggplot2::coord_cartesian(xlim = date.range)
+         + th
   )
-
-  df1 = r.estim$R %>%
-    tidyr::drop_na(date)
-
-  p1 <- (ggplot2::ggplot(df1, ggplot2::aes(x = date))
-   + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
-   + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr,
-                          alpha = use),
-                          na.rm = TRUE)
-   + ggplot2::geom_line(ggplot2::aes(y = mean, linetype = use),
-                        linewidth = 1, na.rm = TRUE)
-   + ggplot2::scale_alpha_manual(values = alpha_scale)
-   + ggplot2::scale_linetype_manual(values = linetype_scale)
-   + ggplot2::coord_cartesian(ylim = ylim)
-   + ggplot2::guides(alpha = "none", linetype = "none")
-   + ggplot2::labs(title = paste0("Effective reproduction number"))
-   + th
+  
+  # ==== Modified input (smoothed daily cases, optionally inferred) ====
+  
+  p2 <- (r.estim$cl.daily 
+         |> summarise_by_date_iters()
+         |> ggplot2::ggplot(ggplot2::aes(x = date)) 
+         + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
+                                alpha = alpha) 
+         + ggplot2::geom_line(ggplot2::aes(y = mean)) 
+         + ggplot2::coord_cartesian(xlim = date.range)
+         + th
   )
-
-  # ==== original input (aggregated cases) =====
-
-  p2 <- (ggplot2::ggplot(
-    (r.estim$cl.input
-     %>% dplyr::filter(dplyr::between(date, min(r.estim$R$date), max(r.estim$R$date)))),
-     ggplot2::aes(x = date, y = value))
-     + ggplot2::geom_col(na.rm = TRUE)
-     + ggplot2::scale_x_date(limits = c(min(r.estim$R$date), max(r.estim$R$date)))
-     + ggplot2::labs(subtitle = "Original signal: aggregated case reports")
-     + th
-  )
-
-  # inferred input (smoothed daily cases)
-
-  tmp = r.estim$cl.daily %>%
-    summarise_by_date_iters() %>%
-    dplyr::filter(dplyr::between(date,
-                                 min(r.estim$R$date, na.rm = TRUE),
-                                 max(r.estim$R$date, na.rm = TRUE)))
-
-  p3 <- ggplot2::ggplot(tmp, ggplot2::aes(x = date)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
-                         alpha = alpha_scale[2]) +
-    ggplot2::geom_line(ggplot2::aes(y = mean), linewidth = 1) +
-    ggplot2::labs(subtitle = "Inferred signal: daily case reports (smoothed)") +
-    th
-
-
-  # Comparison observations vs aggregated data from inferred daily incidence (provided this inference was even done)
-
+  
   if(!is.null(r.estim$inferred.agg)){
-    p4 <- r.estim$inferred.agg %>%
-      ggplot2::ggplot(ggplot2::aes(x=date)) +
-      ggplot2::geom_point(ggplot2::aes(y=obs), size=2) +
-      ggplot2::geom_line(ggplot2::aes(y=obs)) +
-      ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3) +
-      ggplot2::geom_pointrange(
-        ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
-        color= 'red2', alpha=0.6) +
-      ggplot2::labs(subtitle = 'Aggregated case reports: observed vs. inferred (red)') +
-      th
-  }
-
-
-  # ==== composite plot ====
-  if(!is.null(r.estim$inferred.agg)){
-    g = patchwork::wrap_plots(p1,p3,p4, ncol=1)
+    
+    # add diagnostic plot
+    p3 <- (r.estim$inferred.agg 
+           |> ggplot2::ggplot(ggplot2::aes(x=date)) 
+           + ggplot2::geom_point(ggplot2::aes(y=obs), size=2) 
+           + ggplot2::geom_line(ggplot2::aes(y=obs))
+           + ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3)
+           + ggplot2::geom_pointrange(
+             ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
+             color= 'red2', alpha=0.6)
+           + ggplot2::coord_cartesian(xlim = date.range)
+           + ggplot2::labs(
+             title = 'Aggregated case reports: observed (black) vs. inferred (red)',
+             x = 'report date',
+             y = 'cases'
+           ) 
+           + th
+    )
+    
+    p2 <- ((p2 
+            + ggplot2::labs(
+              title = "Daily case reports (smoothed and inferred)",
+              x = 'report date',
+              y = "cases"
+            )
+    ) / p3)
+    
+    # panel heights for final plot
+    heights <- c(1,2.5,1)
   } else {
-    g = patchwork::wrap_plots(p1,p3, ncol=1)
+    p2 <- (p2 
+           + ggplot2::labs(
+             title = "Daily case reports (smoothed)",
+             x = 'report date',
+             y = "cases"
+           )
+    )
+    
+    # panel heights for final plot
+    heights <- rep(1,3)
   }
-
+  
+  # ==== Rt plot ====
+  
+  p3 <- (r.estim$R 
+         |> tidyr::drop_na(date)
+         |> ggplot2::ggplot(ggplot2::aes(x = date))
+         + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
+         + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
+                                alpha = alpha,
+                                na.rm = TRUE)
+         + ggplot2::geom_line(ggplot2::aes(y = mean), na.rm = TRUE)
+         + ggplot2::labs(
+           title = "Effective Reproduction Number",
+           x = 'date',
+           y = "mean"
+         )
+         + th
+  )
+  
+  # ==== composite plot ====
+  g = patchwork::wrap_plots(p1,p2,p3, ncol=1, heights = heights)
+  
   return(g)
 }
 

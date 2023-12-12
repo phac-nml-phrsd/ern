@@ -92,7 +92,7 @@ test_that("smoothing is turned off for `estimate_R_ww()` when `prm.smooth = NULL
   load("../testdata/ww_test_params.RData")
 
   # make daily data for checks where smoothing (and therefore interpolation) is turned off
-  ww.conc.daily <- (ww.conc %>% dplyr::select(date, value) %>% tidyr::complete(date = seq(min(date), max(date), by = "days")) %>% tidyr::fill(value))
+  ww.conc.daily <- (ww.conc |> dplyr::select(date, value) |> tidyr::complete(date = seq(min(date), max(date), by = "days")) |> tidyr::fill(value))
 
   expect_warning(
     res <- estimate_R_ww(

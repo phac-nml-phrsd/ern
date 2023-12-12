@@ -5,5 +5,5 @@
 #' @return Tibble.
 attach_t <- function(df) {
   (df
-   %>% dplyr::mutate(t = as.integer(date - min(date, na.rm = TRUE)+1)))
+   |> dplyr::mutate(t = as.integer(date - min(date, na.rm = TRUE)+1)))
 }

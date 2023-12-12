@@ -22,8 +22,8 @@ agg_to_daily <- function(
     obs.times = cl.input$t,
     Y = cl.input$value,
     prm.daily = prm.daily,
-    silent = silent) %>%
-    reshape_fit_jags() %>%
+    silent = silent) |>
+    reshape_fit_jags() |>
     get_realizations(cl.input)
 
   return(df.daily.inc)
@@ -66,8 +66,8 @@ in this parameter list)."))
 
   date.min = min(cl.input$date)
 
-  res = cl.input %>%
-    dplyr::mutate(t = as.numeric(date - date.min) + fa) %>%
+  res = cl.input |>
+    dplyr::mutate(t = as.numeric(date - date.min) + fa) |>
     dplyr::arrange(t)
 
   return(res)
@@ -211,17 +211,17 @@ Running MCMC model to infer daily reports from aggregated reports...
 #' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
-   %>% dplyr::bind_rows()
-   %>% dplyr::mutate(iteration = 1:nrow(.))
-   %>% tidyr::pivot_longer(-iteration)
-   %>% tidyr::separate(
+   |> dplyr::bind_rows()
+   |> (\(x){dplyr::mutate(x, iteration = 1:nrow(x))})()
+   |> tidyr::pivot_longer(-iteration)
+   |> tidyr::separate(
      name,
      into = c("var", "t", "trash"),
      sep = "\\[|\\]",
      fill = "right"
    )
-   %>% dplyr::select(-trash)
-   %>% dplyr::mutate(t = as.integer(t))
+   |> dplyr::select(-trash)
+   |> dplyr::mutate(t = as.integer(t))
   )
 }
 
@@ -239,24 +239,24 @@ get_realizations <- function(
 ){
 
   date_lookup <- (reports
-    %>% attach_startdate_agg()
-    %>% dplyr::select(date)
-    %>% tidyr::complete(date = seq(min(date), max(date), by = "days"))
-    %>% dplyr::mutate(t = 1:nrow(.))
+    |> attach_startdate_agg()
+    |> dplyr::select(date)
+    |> tidyr::complete(date = seq(min(date), max(date), by = "days"))
+    |> (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
   )
 
   # extract fitted daily reports
   # and mark each iteration (across iter #, batch #, rep #)
   # with unique id variable
   (fit.reports.daily
-    %>% dplyr::filter(var == "I")
-    %>% dplyr::left_join(date_lookup, by = "t")
-    %>% dplyr::group_by(iteration)
-    %>% dplyr::mutate(
+    |> dplyr::filter(var == "I")
+    |> dplyr::left_join(date_lookup, by = "t")
+    |> dplyr::group_by(iteration)
+    |> dplyr::mutate(
       id = dplyr::cur_group_id(),
     )
-    %>% dplyr::ungroup()
-    %>% dplyr::select(
+    |> dplyr::ungroup()
+    |> dplyr::select(
       id, date, t, value
     )
   )
@@ -268,10 +268,10 @@ get_realizations <- function(
 #' @param x dataframe. only has columns `date`, `value`, and `t`
 attach_startdate_agg <- function(x){
   start_date <- (x
-   %>% dplyr::arrange(date)
-   %>% dplyr::slice(1)
-   %>% dplyr::mutate(start_date = date - lubridate::days(t-1))
-   %>% dplyr::pull(start_date)
+   |> dplyr::arrange(date)
+   |> dplyr::slice(1)
+   |> dplyr::mutate(start_date = date - lubridate::days(t-1))
+   |> dplyr::pull(start_date)
   )
 
   dplyr::bind_rows(
@@ -280,6 +280,6 @@ attach_startdate_agg <- function(x){
       value = NA,
       t = 1
     ),
-    (x %>% dplyr::arrange(date))
+    (x |> dplyr::arrange(date))
   )
 }
