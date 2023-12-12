@@ -248,11 +248,13 @@ draw_from_gamma <- function(par, dist){
   shape = mean^2 / sd_2
   scale = sd_2 / mean
 
-  return( stats::rgamma(n = 1, shape = shape, scale = scale) )
+  res = stats::rgamma(n = 1, shape = shape, scale = scale)
+  return( res )
 }
 
 #' Sample parameters for a single distribution from
-#' a family of distributions, assuming parameters come from a Gamma distribution
+#' a family of distributions, assuming parameters come 
+#' from a Gamma distribution.
 #'
 #' @param dist List. A list of distribution parameters, as defined by the
 #'  `def_dist_*()` functions.
@@ -277,6 +279,24 @@ sample_a_dist <- function(dist){
                              function(x) paste0(x, c("", "_sd"))))
   names(out) <- out_names
 
+  # Check that the std dev is not too small.
+  # An extremely small std dev :
+  #   - is not in the spirit of a genuinely _random_ parameter
+  #   - has the `dgamma`, `dnorm`, etc. to throw all zeros densities
+  #     which breaks the program as we divide by sum(densities)
+  #     to normalize the density function to 1 (to have a probability)
+  
+  # To scale the minimum value to the mean of the parameter,
+  # we impose a minimum value to the coefficient of variation:
+  
+  if('sd' %in% names(out)){
+    cv.min = 0.01
+    sd.min = out[['mean']] * cv.min
+    if(out[['sd']] < sd.min) {
+      out[['sd']] <- sd.min
+    }
+  }
+  
   # return final list
   res = c(
     list(dist = dist$dist),
