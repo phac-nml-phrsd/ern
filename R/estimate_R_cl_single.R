@@ -55,7 +55,15 @@ estimate_R_cl_single <- function(
     # attach time index to incidence
     (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
 
-  # estimate Rt
+  
+  # The RL deconvolution can be unstable at
+  # the start of the deconvoluted function,
+  # so we remove the first points based on 
+  # the mean of the kernels (this is heuristic):
+  incidence = dplyr::filter(incidence,
+                     t > (dist.repdelay$mean + dist.incub$mean))
+  
+  # Estimate Rt
   res = incidence_to_R(
     incidence,
     generation.interval,
