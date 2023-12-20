@@ -60,7 +60,7 @@ estimate_R_cl_single <- function(
   # the start of the deconvoluted function,
   # so we remove the first points based on 
   # the mean of the kernels (this is heuristic):
-  incidence = filter(incidence,
+  incidence = dplyr::filter(incidence,
                      t > (dist.repdelay$mean + dist.incub$mean))
   
   # Estimate Rt
