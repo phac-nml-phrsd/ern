@@ -1,9 +1,9 @@
-#' Get dates for which to use (trust) inferred daily reports
+# Get dates for which to use (trust) inferred daily reports
 #'
 #' @inheritParams smooth_cl
 #' @inheritParams estimate_R_cl
 #' @param dates.only Logical. Return use dates only or all columns of `cl.daily`.
-#'
+#'  @keywords internal
 #' @return Data frame or vector, depending on `dates.only`
 #'
 get_use_dates <- function(
@@ -52,10 +52,11 @@ get_use_dates <- function(
 
 # helpers -----------------------------------------------------------------
 
-#' Summarise observations by date for raw iterations from an ensemble
+# Summarise observations by date for raw iterations from an ensemble
 #'
 #' @param df Data frame. Must have `date` and `value` columns.
-#'
+#'  @keywords internal
+#'  
 summarise_by_date_iters <- function(df){
   res = df |>
     dplyr::group_by(date) |>
@@ -68,11 +69,11 @@ summarise_by_date_iters <- function(df){
   return(res)
 }
 
-#' Summarise observations by date for several ensembles
+# Summarise observations by date for several ensembles
 #'
 #' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
 #' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
-#'
+#' @keywords internal
 summarise_by_date_ens <- function(df, CI = 0.95){
   res = df |>
     dplyr::group_by(date) |>
@@ -89,12 +90,12 @@ summarise_by_date_ens <- function(df, CI = 0.95){
   return(res)
 }
 
-#' Summarise daily inferred reports
-#' based on original reporting schedule and calculate error
+# Summarise daily inferred reports
+# based on original reporting schedule and calculate error
 #'
 #' @param df Data frame. As output by [`get_use_dates()`].
 #' @inheritParams estimate_R_cl
-#'
+#' @keywords internal
 #' @return Data frame
 #'
 summarise_report_counts <- function(df, prm.daily.check){

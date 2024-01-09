@@ -116,16 +116,16 @@ to obtain accurate Rt estimates using wastewater data.\n")
 
 
 
-#' Helper function.
-#' Converts wastewater to Rt after sampling one fecal shedding and
-#'  one generation interval distribution.
+# Helper function.
+# Converts wastewater to Rt after sampling one fecal shedding and
+#  one generation interval distribution.
 #'
 #' @param i Numeric. Iteration index. (not used but required when using
 #'  `lapply()`)
 #' @inheritParams estimate_R_ww
 #' @template param-silent
 #' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
-#'
+#' @keywords internal
 #' @return List. Elements include `inc` (incidence) and `rt`
 #'  (reproduction number)
 inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,

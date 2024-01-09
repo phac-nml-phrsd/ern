@@ -1,7 +1,7 @@
-#' Attach internal time index column
+# Attach internal time index column
 #'
 #' @param df Data frame. Must have column `date`.
-#'
+#' @keywords internal
 #' @return Tibble.
 attach_t <- function(df) {
   (df

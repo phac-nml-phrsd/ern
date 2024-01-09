@@ -234,11 +234,11 @@ def_dist_reporting_delay <- function(pathogen = 'sarscov2'){
 # Distribution utilities
 # - - - - - - - - - - - - - - - - -
 
-#' Draw from gamma for a parameter specified in a distribution family list.
+# Draw from gamma for a parameter specified in a distribution family list.
 #'
 #' @param par Character. Name of the parameter to sample.
 #' @param dist List. Distribution definition, as output by a `def_dist_*()` function.
-#'
+#' @keywords internal
 #' @return Numeric. The sampled parameter value.
 #'
 draw_from_gamma <- function(par, dist){
@@ -252,12 +252,14 @@ draw_from_gamma <- function(par, dist){
   return( res )
 }
 
-#' Sample parameters for a single distribution from
-#' a family of distributions, assuming parameters come 
-#' from a Gamma distribution.
-#'
+# Sample parameters for a single distribution from
+# a family of distributions, assuming parameters come 
+# from a Gamma distribution.
+#
+#' @keywords internal
 #' @param dist List. A list of distribution parameters, as defined by the
 #'  `def_dist_*()` functions.
+#'
 sample_a_dist <- function(dist){
 
   # get parameter names that we're sampling
@@ -360,9 +362,9 @@ get_discrete_dist <- function(params){
   return(x/sum(x))
 }
 
-#' Sample from a distribution
-#' (currently only implemented for a uniform distribution)
-#'
+# Sample from a distribution
+# (currently only implemented for a uniform distribution)
+#' @keywords internal
 #' @param n number of samples to draw
 #' @param params distribution parameters
 sample_from_dist <- function(n, params){

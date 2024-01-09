@@ -1,11 +1,11 @@
-#' @title Richardson-Lucy Deconvolution.
-#'
-#' @description  This function inputs observed incidence
-#' (numbers of cases, deaths, hospitalizations, etc. per day),
-#' and uses an adaptation of  Richardson-Lucy deconvolution
-#' to recover the underlying incidence curve.
-#' This implementation is taken from the R package EpiNow2 and follows methods
-#'  in Goldstein et al.(https://www.pnas.org/content/pnas/106/51/21825.full.pdf)
+# @title Richardson-Lucy Deconvolution.
+#
+# @description  This function inputs observed incidence
+# (numbers of cases, deaths, hospitalizations, etc. per day),
+# and uses an adaptation of  Richardson-Lucy deconvolution
+# to recover the underlying incidence curve.
+# This implementation is taken from the R package EpiNow2 and follows methods
+#  in Goldstein et al.(https://www.pnas.org/content/pnas/106/51/21825.full.pdf)
 #'
 #' @param observed A vector of the number of observed cases, deaths,
 #' hospitalizations, etc. per day
@@ -27,7 +27,7 @@
 #' @param verbose Logical. Verbose mode.
 #' @param out_col_name String giving the name of the column
 #' in which to output the imputed times of infection
-#'
+#' @keywords internal
 #' @return A data frame with columns time and out_col_name
 #' (which gives the imputed number of infections per timestep)
 
@@ -154,10 +154,11 @@ deconvolution_RL <- function(
   )
 }
 
-#' @title Replace NAs with 0s in vector
+# Replace NAs with 0s in vector
 #'
 #' @param vec Vector.
-#'
+#' @keywords internal
+#' 
 na_to_0 <- function(vec){
   if(any(is.na(vec))){
     warning(sprintf('WARNING: Replacing NAs in %s with 0s\n',

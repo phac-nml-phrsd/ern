@@ -31,12 +31,12 @@ agg_to_daily <- function(
 
 # helpers -----------------------------------------------------------------
 
-#' Attach time index (number of days) column
-#' Exclude first day since we don't necessarily know over which period
-#' of time that data was aggregated
+# Attach time index (number of days) column
+# Exclude first day since we don't necessarily know over which period
+# of time that data was aggregated
 #'
 #' @inheritParams estimate_R_cl
-#'
+#' @keywords internal
 #' @return Data frame
 attach_t_agg <- function(cl.input, prm.daily = NULL, silent = FALSE){
 
@@ -73,7 +73,7 @@ in this parameter list)."))
   return(res)
 }
 
-#' Fit JAGS model to aggregated data
+# Fit JAGS model to aggregated data
 #'
 #' @param obs.times Numeric. Vector of observation times.
 #' @param Y Numeric. Vector of aggregated counts.
@@ -81,6 +81,7 @@ in this parameter list)."))
 #' @param N Numeric. Scalar population size.
 #' @param n.days Numeric. Total number of days. if `NULL`, use `max(obs.times)`
 #' @inheritParams estimate_R_cl
+#' @keywords internal
 fit_jags_aggreg <- function(
     obs.times,
     Y, g, N,
@@ -203,12 +204,11 @@ Running MCMC model to infer daily reports from aggregated reports...
   return(mod_sim)
 }
 
-#' Reshape JAGS fit object
+# Reshape JAGS fit object
 #'
 #' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
+#' @keywords internal
 #'
-#'
-#' @seealso [`fit_jags_aggreg()`]
 reshape_fit_jags <- function(x){
   (lapply(x, tibble::as_tibble)
    |> dplyr::bind_rows()
@@ -225,13 +225,13 @@ reshape_fit_jags <- function(x){
   )
 }
 
-#' Retrieve realizations for aggregated to daily inference
+# Retrieve realizations for aggregated to daily inference
 #'
 #' @param fit.reports.daily Data frame. Realizations from daily report inference. Must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
 #' @param reports Data frame. Original aggregated reports. Must at least have `date` column.
 #'
 #' @seealso [agg_to_daily()]
-#'
+#' @keywords internal
 #'
 #' @return Data frame
 get_realizations <- function(
@@ -262,9 +262,9 @@ get_realizations <- function(
   )
 }
 
-#' Attach start date from first observation for aggregated data
-#' from time (day number)
-#'
+# Attach start date from first observation for aggregated data
+# from time (day number)
+#' @keywords internal
 #' @param x dataframe. only has columns `date`, `value`, and `t`
 attach_startdate_agg <- function(x){
   start_date <- (x
