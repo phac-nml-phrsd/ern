@@ -11,7 +11,8 @@ estimate_R_cl(
   dist.incub,
   dist.gi,
   popsize,
-  prm.daily = list(burn = 500, iter = 2000, chains = 3, first.agg.period = NULL),
+  prm.daily = list(burn = 500, iter = 2000, chains = 3, first.agg.period = NULL,
+    prior_R0_shape = 2, prior_R0_rate = 0.6, prior_alpha_shape = 1, prior_alpha_rate = 1),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(method = "rollmean", align = "right", window = 7),
   prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
@@ -42,6 +43,10 @@ estimate_R_cl(
 \item \code{iter}: Numeric. Number of iterations after burn-in period (number of days).
 \item \code{chains}: Numeric. Number of chains to simulate.
 \item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+\item \code{prior_R0_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
+\item \code{prior_R0_rate}: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
+\item \code{prior_alpha_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
+\item \code{prior_alpha_rate}: Rate of the (hyper-)parameter for the prior Gamma distribution for alpha.
 }}
 
 \item{prm.daily.check}{List. Parameters for checking aggregated to daily report inference. Elements include:

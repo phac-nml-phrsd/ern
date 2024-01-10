@@ -12,6 +12,10 @@
 #'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
 #'  \item `chains`: Numeric. Number of chains to simulate.
 #'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+#'  \item `prior_R0_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
+#'  \item `prior_R0_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
+#'  \item `prior_alpha_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
+#'  \item `prior_alpha_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for alpha.
 #' }
 #' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
 #' \itemize{
@@ -47,7 +51,11 @@ estimate_R_cl <- function(
     burn = 500,
     iter = 2e3,
     chains = 3,
-    first.agg.period = NULL
+    first.agg.period = NULL,
+    prior_R0_shape = 2,
+    prior_R0_rate = 0.6,
+    prior_alpha_shape = 1,
+    prior_alpha_rate = 1
   ),
   prm.daily.check = list(
     agg.reldiff.tol = 10
