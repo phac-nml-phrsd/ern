@@ -32,6 +32,7 @@ agg_to_daily <- function(
 # helpers -----------------------------------------------------------------
 
 # Attach time index (number of days) column
+#' @title Attach time index (number of days) column
 # Exclude first day since we don't necessarily know over which period
 # of time that data was aggregated
 #'
@@ -104,15 +105,19 @@ fit_jags_aggreg <- function(
 
   data_jags = list(
     obs.times = obs.times,
-    n.days = n.days,
-    Y = Y,
-    g = g,
-    N = N,
-    nobs = length(obs.times),
-    ng = length(g),
-    Iinit = Iinit
+    n.days    = n.days,
+    Y         = Y,
+    g         = g,
+    N         = N,
+    nobs      = length(obs.times),
+    ng        = length(g),
+    Iinit     = Iinit,
+    prior_R0_shape    = prm.daily[['prior_R0_shape']],
+    prior_R0_rate     = prm.daily[['prior_R0_rate']],
+    prior_alpha_shape = prm.daily[['prior_alpha_shape']],
+    prior_alpha_rate  = prm.daily[['prior_alpha_rate']]
   )
-
+  
   params = c("R0", "alpha", "I")
 
   inits <- function() {
@@ -164,8 +169,8 @@ fit_jags_aggreg <- function(
 
     # === priors ===
 
-    R0 ~ dgamma(2,0.6)
-    alpha ~ dgamma(1,1)
+    R0    ~ dgamma(prior_R0_shape, prior_R0_rate)
+    alpha ~ dgamma(prior_alpha_shape, prior_alpha_rate)
   }"
 
   if(!silent){
