@@ -116,9 +116,9 @@ to obtain accurate Rt estimates using wastewater data.\n")
 
 
 
-# Helper function.
-# Converts wastewater to Rt after sampling one fecal shedding and
-#  one generation interval distribution.
+#' @title Helper function.
+#' Converts wastewater to Rt after sampling one fecal shedding and
+#'  one generation interval distribution.
 #'
 #' @param i Numeric. Iteration index. (not used but required when using
 #'  `lapply()`)

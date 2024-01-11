@@ -1,4 +1,4 @@
-# @title Richardson-Lucy Deconvolution.
+#' @title Richardson-Lucy Deconvolution.
 #
 # @description  This function inputs observed incidence
 # (numbers of cases, deaths, hospitalizations, etc. per day),
@@ -154,7 +154,7 @@ deconvolution_RL <- function(
   )
 }
 
-# Replace NAs with 0s in vector
+#' @title Replace NAs with 0s in vector
 #'
 #' @param vec Vector.
 #' @keywords internal

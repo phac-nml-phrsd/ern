@@ -1,4 +1,4 @@
-#' Infer daily counts from aggregates
+#' @title Infer daily counts from aggregates
 #'
 #' @inheritParams estimate_R_cl
 #'
@@ -31,10 +31,7 @@ agg_to_daily <- function(
 
 # helpers -----------------------------------------------------------------
 
-# Attach time index (number of days) column
-#' @title Attach time index (number of days) column
-# Exclude first day since we don't necessarily know over which period
-# of time that data was aggregated
+#' @title Attach time index (number of days) column. Exclude first day since we don't necessarily know over which period of time that data was aggregated
 #'
 #' @inheritParams estimate_R_cl
 #' @keywords internal
@@ -74,7 +71,7 @@ in this parameter list)."))
   return(res)
 }
 
-# Fit JAGS model to aggregated data
+#' @title Fit JAGS model to aggregated data
 #'
 #' @param obs.times Numeric. Vector of observation times.
 #' @param Y Numeric. Vector of aggregated counts.
@@ -209,7 +206,7 @@ Running MCMC model to infer daily reports from aggregated reports...
   return(mod_sim)
 }
 
-# Reshape JAGS fit object
+#' @title Reshape JAGS fit object
 #'
 #' @param x Data frame. JAGS output from [`fit_jags_aggreg()`].
 #' @keywords internal
@@ -230,7 +227,7 @@ reshape_fit_jags <- function(x){
   )
 }
 
-# Retrieve realizations for aggregated to daily inference
+#' @title Retrieve realizations for aggregated to daily inference
 #'
 #' @param fit.reports.daily Data frame. Realizations from daily report inference. Must at least have `t` (time index), `var` (variable name), `iteration` (realization number), and `value` (inferred count) columns.
 #' @param reports Data frame. Original aggregated reports. Must at least have `date` column.
@@ -267,8 +264,7 @@ get_realizations <- function(
   )
 }
 
-# Attach start date from first observation for aggregated data
-# from time (day number)
+#' @title Attach start date from first observation for aggregated data from time (day number)
 #' @keywords internal
 #' @param x dataframe. only has columns `date`, `value`, and `t`
 attach_startdate_agg <- function(x){
