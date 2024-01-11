@@ -1,4 +1,4 @@
-# Attach internal time index column
+#' @title Attach internal time index column
 #'
 #' @param df Data frame. Must have column `date`.
 #' @keywords internal

@@ -2,7 +2,7 @@
 # Distribution definitions
 # - - - - - - - - - - - - - - - - -
 
-#' Define a family of incubation period distributions
+#' @title Define a family of incubation period distributions
 #'
 #' @template param-pathogen
 #' @template return-dist
@@ -55,7 +55,7 @@ def_dist_incubation_period <- function(pathogen = 'sarscov2'){
   return(res)
 }
 
-#' Define a family of generation interval distributions
+#' @title Define a family of generation interval distributions
 #'
 #' @template param-pathogen
 #' @template return-dist
@@ -234,7 +234,7 @@ def_dist_reporting_delay <- function(pathogen = 'sarscov2'){
 # Distribution utilities
 # - - - - - - - - - - - - - - - - -
 
-# Draw from gamma for a parameter specified in a distribution family list.
+#' @title Draw from gamma for a parameter specified in a distribution family list.
 #'
 #' @param par Character. Name of the parameter to sample.
 #' @param dist List. Distribution definition, as output by a `def_dist_*()` function.
@@ -252,9 +252,8 @@ draw_from_gamma <- function(par, dist){
   return( res )
 }
 
-# Sample parameters for a single distribution from
-# a family of distributions, assuming parameters come 
-# from a Gamma distribution.
+#' @title Sample parameters for a single distribution from a family of 
+#' distributions, assuming parameters come from a Gamma distribution.
 #
 #' @keywords internal
 #' @param dist List. A list of distribution parameters, as defined by the
@@ -362,8 +361,8 @@ get_discrete_dist <- function(params){
   return(x/sum(x))
 }
 
-# Sample from a distribution
-# (currently only implemented for a uniform distribution)
+#' @title Sample from a distribution 
+#' (currently only implemented for a uniform distribution)
 #' @keywords internal
 #' @param n number of samples to draw
 #' @param params distribution parameters
