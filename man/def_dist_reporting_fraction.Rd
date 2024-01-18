@@ -21,3 +21,9 @@ List with components
 \description{
 Define a reporting fraction distribution
 }
+\examples{
+d = def_dist_reporting_fraction()
+print(d)
+
+
+}

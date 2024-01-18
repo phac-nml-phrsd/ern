@@ -60,6 +60,11 @@ def_dist_incubation_period <- function(pathogen = 'sarscov2'){
 #' @template param-pathogen
 #' @template return-dist
 #' @export
+#' 
+#' @examples 
+#' d = def_dist_generation_interval(pathogen = 'sarscov2')
+#' print(d)
+#' 
 def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 
   x = NULL
@@ -113,6 +118,12 @@ def_dist_generation_interval <- function(pathogen = 'sarscov2'){
 #'
 #' @template return-dist
 #' @export
+#' 
+#' @examples 
+#' d = def_dist_reporting_fraction()
+#' print(d)
+#' 
+#' 
 def_dist_reporting_fraction <- function(){
 
   if(TRUE){
@@ -213,6 +224,11 @@ def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
 #' @template param-pathogen
 #'
 #' @export
+#' 
+#' @examples 
+#' d = def_dist_reporting_delay(pathogen = 'sarscov2')
+#' print(d)
+#' 
 def_dist_reporting_delay <- function(pathogen = 'sarscov2'){
   if(!(pathogen %in% c('sarscov2'))){
     stop(paste0("No default reporting delay distribution for pathogen `", pathogen,"`. Aborting!"))
