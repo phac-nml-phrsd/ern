@@ -329,6 +329,20 @@ sample_a_dist <- function(dist){
 #'
 #' @return Numeric. Vector with discretized density.
 #' @export
+#' 
+#' @examples 
+#' 
+#' # Define distributions
+#' fec = def_dist_fecal_shedding(pathogen = 'sarscov2')
+#' gi  = def_dist_generation_interval(pathogen = 'influenza')
+#' 
+#' # Get their (discretized) densities
+#' d.fec = get_discrete_dist(fec)
+#' d.gi  = get_discrete_dist(gi)
+#' 
+#' print(d.fec)
+#' print(d.gi)
+#' 
 get_discrete_dist <- function(params){
 
   # --- check args

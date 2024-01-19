@@ -199,7 +199,16 @@ plot_diagnostic_cl <- function(
 #'
 #' @return A ggplot object.
 #' @export
-#'
+#' 
+#' @examples 
+#' # Define a `ern` distribution:
+#' gi  = def_dist_generation_interval(pathogen = 'influenza')
+#' 
+#' # Plot can be customized like any `ggplot` object:
+#' g = plot_dist(gi) + ggplot2::labs(subtitle = 'your subtitle')
+#' plot(g)
+#' 
+#' 
 plot_dist <- function(d) {
 
   a = get_discrete_dist(d)

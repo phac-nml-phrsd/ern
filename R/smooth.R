@@ -1,11 +1,10 @@
-#' @title Smooth wastewater data
-#' @description Function takes pre-processed wastewater data and smooths it
+#' @title Smooth wastewater data (using pre-processed wastewater)
 #'
 #' @inheritParams estimate_R_ww
 #'
+#' @keywords internal
 #' @return Data frame
 #'
-#' @export
 smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
   # check args
   check_prm.smooth(prm.smooth)
@@ -47,13 +46,13 @@ smooth_ww <- function(ww.conc, prm.smooth, silent = FALSE){
   return(d)
 }
 
-#' Smooth realizations from estimating daily reports
+#' @title Smooth realizations from estimating daily reports
 #'
 #' @param cl.daily Data frame. Output of [`agg_to_daily()`].
 #' @inheritParams estimate_R_cl
 #'
+#' @keywords internal
 #' @return Data frame
-#' @export
 smooth_cl <- function(cl.daily, prm.smooth){
 
   check_prm.smooth(prm.smooth)

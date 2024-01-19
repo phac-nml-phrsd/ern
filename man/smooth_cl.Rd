@@ -22,3 +22,4 @@ Data frame
 \description{
 Smooth realizations from estimating daily reports
 }
+\keyword{internal}

@@ -25,10 +25,10 @@
 #'   popsize = 14e6, 
 #'   prm.daily = list(
 #'   # MCMC parameters.
-#'   # small values for computation speed
-#'   # for this example. Increase for better accuracy
-#'   burn = 300,
-#'   iter = 300,
+#'   # small values for computation speed for this example.
+#'   # Increase for better accuracy
+#'   burn = 100,
+#'   iter = 100,
 #'   chains = 1,
 #'   # - - - - - 
 #'   prior_R0_shape = 2,
