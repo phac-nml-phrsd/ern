@@ -15,6 +15,43 @@ A \code{ggplot} object
 \description{
 Diagnostic plot for R estimation from clinical report data
 }
+\examples{
+
+#' # -- THIS EXAMPLE TAKES ABOUT 30 SECONDS TO RUN --
+
+# Load SARS-CoV-2 reported cases in Ontario
+# during the Omicron wave
+data('cl.input')
+dat = cl.input[cl.input$pt == 'on' & 
+                 cl.input$date > as.Date('2021-11-30') & 
+                 cl.input$date < as.Date('2022-01-31'),] 
+
+# Estimate Rt
+x = estimate_R_cl(
+  cl.input = dat,
+  dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
+  dist.repfrac = def_dist_reporting_fraction(),
+  dist.incub = def_dist_incubation_period(pathogen = 'sarscov2'),
+  dist.gi = def_dist_generation_interval(pathogen = 'sarscov2'),
+  popsize = 14e6, # population of Ontario in 2023
+  prm.daily = list(
+    # Very low number of MCMC iterations
+    # for this example to run fast.
+    # Increase `burn`, `iter` and `chains` 
+    # for better accuracy
+    burn = 50, iter = 50, chains = 1, 
+    # first.agg.period = NULL,
+    prior_R0_shape = 2, prior_R0_rate = 0.6, 
+    prior_alpha_shape = 1, prior_alpha_rate = 1),
+  silent = TRUE
+)
+
+# Diagnostic plot for Rt estimates 
+# from clinical data
+plot_diagnostic_cl(x)
+
+
+}
 \seealso{
 \code{\link[=estimate_R_cl]{estimate_R_cl()}}
 }
