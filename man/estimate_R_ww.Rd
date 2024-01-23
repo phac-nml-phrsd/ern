@@ -71,3 +71,27 @@ List. Elements include:
 Estimate the effective reproduction from wastewater concentration
 data.
 }
+\examples{
+
+ # Load data of viral concentration in wastewater
+data("ww.input")
+
+# Run the estimation of Rt based on the wastewater data
+x = estimate_R_ww(
+  ww.conc  = ww.input,
+  dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
+  dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+  silent   = TRUE
+)
+
+# Rt estimates
+head(x$R)
+
+# inferred daily incidence
+head(x$inc)
+
+
+}
+\seealso{
+\code{\link[=plot_diagnostic_ww]{plot_diagnostic_ww()}} \code{\link[=estimate_R_cl]{estimate_R_cl()}}
+}
