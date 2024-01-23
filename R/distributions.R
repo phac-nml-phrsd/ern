@@ -7,6 +7,11 @@
 #' @template param-pathogen
 #' @template return-dist
 #' @export
+#' 
+#' @examples 
+#' d = def_dist_incubation_period(pathogen = 'influenza')
+#' print(d)
+#' 
 def_dist_incubation_period <- function(pathogen = 'sarscov2'){
 
   res = NULL

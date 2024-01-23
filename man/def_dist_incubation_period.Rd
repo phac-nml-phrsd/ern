@@ -24,3 +24,8 @@ List with components
 \description{
 Define a family of incubation period distributions
 }
+\examples{
+d = def_dist_incubation_period(pathogen = 'influenza')
+print(d)
+
+}
