@@ -1,4 +1,4 @@
-#' Estimate Rt using EpiEstim
+#' @title Estimate Rt using EpiEstim
 #'
 #' @param incidence Data frame. Estimated incidence. Must include at least
 #'  `date`, `I`, and `t` columns.
@@ -6,6 +6,8 @@
 #' @template param-prm.R
 #'
 #' @importFrom stats time var
+#' 
+#' @keywords internal
 #'
 #' @seealso [def_dist_generation_interval()]
 #' @seealso [EpiEstim::make_config()]

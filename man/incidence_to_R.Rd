@@ -33,3 +33,4 @@ Estimate Rt using EpiEstim
 
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}
 }
+\keyword{internal}
