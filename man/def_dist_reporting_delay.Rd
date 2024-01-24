@@ -24,3 +24,8 @@ List with components
 \description{
 Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in \link{cl.input}
 }
+\examples{
+d = def_dist_reporting_delay(pathogen = 'sarscov2')
+print(d)
+
+}

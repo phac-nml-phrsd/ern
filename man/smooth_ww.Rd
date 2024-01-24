@@ -2,7 +2,7 @@
 % Please edit documentation in R/smooth.R
 \name{smooth_ww}
 \alias{smooth_ww}
-\title{Smooth wastewater data}
+\title{Smooth wastewater data (using pre-processed wastewater)}
 \usage{
 smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 }
@@ -30,5 +30,6 @@ Set this entire list to \code{NULL} to turn off smoothing}
 Data frame
 }
 \description{
-Function takes pre-processed wastewater data and smooths it
+Smooth wastewater data (using pre-processed wastewater)
 }
+\keyword{internal}

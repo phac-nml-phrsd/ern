@@ -55,7 +55,7 @@ get_use_dates <- function(
 #' @title Summarise observations by date for raw iterations from an ensemble
 #'
 #' @param df Data frame. Must have `date` and `value` columns.
-#'  @keywords internal
+#' @keywords internal
 #'  
 summarise_by_date_iters <- function(df){
   res = df |>

@@ -17,6 +17,25 @@ A \code{ggplot} object.
 \description{
 Diagnostic plot for R estimation from wastewater data
 }
+\examples{
+
+# Load data of viral concentration in wastewater
+data("ww.input")
+
+# Estimate Rt based on wastewater data
+x = estimate_R_ww(
+  ww.conc  = ww.input,
+  dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
+  dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+  silent   = TRUE
+)
+
+# Diagnostic plot
+g = plot_diagnostic_ww(x)
+plot(g)
+
+
+}
 \seealso{
-\code{\link[=estimate_R_ww]{estimate_R_ww()}}
+\code{\link[=estimate_R_ww]{estimate_R_ww()}} \code{\link[=plot_diagnostic_cl]{plot_diagnostic_cl()}}
 }

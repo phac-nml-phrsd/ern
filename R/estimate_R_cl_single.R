@@ -2,9 +2,8 @@
 #'
 #' @param cl.daily Dataframe of inferred daily incidence.
 #' @inheritParams estimate_R_cl
+#' @keywords internal
 #'
-#'
-#' @export
 estimate_R_cl_single <- function(
     cl.daily,
     dist.repfrac,

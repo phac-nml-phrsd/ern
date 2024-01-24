@@ -2,10 +2,10 @@
 #'
 #' @param cl.daily Dataframe of inferred daily incidence.
 #' @inheritParams estimate_R_cl
-#'
+#' @keywords internal
 #' @return A summary of individual Rt realizations with 95% confidence intervals
-#' @export
 #' @seealso [EpiEstim::make_config()]
+#' 
 estimate_R_cl_rep <- function(
     cl.daily,
     dist.repfrac,

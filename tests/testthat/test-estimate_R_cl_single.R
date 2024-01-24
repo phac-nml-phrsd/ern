@@ -8,7 +8,7 @@ reports.daily <- tibble::tibble(
 # estimate_R_cl_single() --------------------------------------------------
 
 test_that("estimate_R_cl_single() returns output of the expected format", {
-  res <- ern::estimate_R_cl_single(
+  res <- estimate_R_cl_single(
     cl.daily = cl.daily,
     dist.repfrac = dist.repfrac,
     dist.repdelay = dist.repdelay,

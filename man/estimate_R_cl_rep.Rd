@@ -52,3 +52,4 @@ Ensemble estimate of Rt
 \seealso{
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}
 }
+\keyword{internal}

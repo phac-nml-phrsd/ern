@@ -7,9 +7,9 @@
 summarise_by_date_iters(df)
 }
 \arguments{
-\item{df}{Data frame. Must have \code{date} and \code{value} columns.
-@keywords internal}
+\item{df}{Data frame. Must have \code{date} and \code{value} columns.}
 }
 \description{
 Summarise observations by date for raw iterations from an ensemble
 }
+\keyword{internal}

@@ -23,6 +23,29 @@
 #' }
 #'
 #' @export
+#' 
+#' @seealso [plot_diagnostic_ww()] [estimate_R_cl()]
+#' 
+#' @examples 
+#'
+#'  # Load data of viral concentration in wastewater
+#' data("ww.input")
+#'
+#' # Run the estimation of Rt based on the wastewater data
+#' x = estimate_R_ww(
+#'   ww.conc  = ww.input,
+#'   dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
+#'   dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+#'   silent   = TRUE
+#' )
+#' 
+#' # Rt estimates
+#' head(x$R)
+#' 
+#' # inferred daily incidence
+#' head(x$inc)
+#' 
+#' 
 estimate_R_ww <- function(
     ww.conc,
     dist.fec,

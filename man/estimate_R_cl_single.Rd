@@ -46,3 +46,4 @@ estimates after sampling uncertain distributions.
 \description{
 A single realization of the Rt estimate
 }
+\keyword{internal}

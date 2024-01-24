@@ -37,3 +37,43 @@ Data frame with individual realizations of daily reported cases
 \description{
 Infer daily counts from aggregates
 }
+\examples{
+
+# Importing data attached to the `ern` package
+# and selecting the Omicron wave in Ontario, Canada.
+# This is *weekly* incidence.
+data(cl.input)
+data = cl.input[cl.input$pt == 'on' & 
+                  cl.input$date > as.Date('2021-11-30') & 
+                  cl.input$date < as.Date('2021-12-31'),] 
+head(data)
+dist.gi = def_dist_generation_interval('sarscov2')
+
+a = agg_to_daily(
+cl.input = data, 
+dist.gi = dist.gi, 
+  popsize = 14e6, 
+  prm.daily = list(
+  # MCMC parameters.
+  # small values for computation speed for this example.
+  # Increase for better accuracy
+  burn = 100,
+  iter = 100,
+  chains = 1,
+  # - - - - - 
+  prior_R0_shape = 2,
+  prior_R0_rate = 0.6,
+  prior_alpha_shape = 1,
+  prior_alpha_rate = 1
+))
+# This is a Bayesian inference, so we 
+# have a posterior distribution of  
+# daily incidences. Here we just plot
+# one single draw:
+a1 = a[a$id==1,]
+plot(x = a1$t, y = a1$value, typ = 'o',
+     xlab = 'days', ylab = 'daily incidence',
+     main = 'Posterior daily incidence infered from weekly incidence')
+      
+
+}

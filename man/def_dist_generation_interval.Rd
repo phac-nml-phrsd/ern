@@ -24,3 +24,8 @@ List with components
 \description{
 Define a family of generation interval distributions
 }
+\examples{
+d = def_dist_generation_interval(pathogen = 'sarscov2')
+print(d)
+
+}

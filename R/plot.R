@@ -7,7 +7,25 @@
 #'
 #' @export
 #'
-#' @seealso [estimate_R_ww()]
+#' @seealso [estimate_R_ww()] [plot_diagnostic_cl()]
+#'
+#' @examples 
+#' 
+#' # Load data of viral concentration in wastewater
+#' data("ww.input")
+#' 
+#' # Estimate Rt based on wastewater data
+#' x = estimate_R_ww(
+#'   ww.conc  = ww.input,
+#'   dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
+#'   dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+#'   silent   = TRUE
+#' )
+#' 
+#' # Diagnostic plot
+#' g = plot_diagnostic_ww(x)
+#' plot(g)
+#'
 #'
 plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 
@@ -72,6 +90,45 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 # need this to get the S3 method "/"
 #'
 #' @seealso [estimate_R_cl()]
+#' 
+#' 
+#' 
+#' @examples 
+#' 
+#' #' # -- THIS EXAMPLE TAKES ABOUT 30 SECONDS TO RUN --
+#' 
+#' # Load SARS-CoV-2 reported cases in Ontario
+#' # during the Omicron wave
+#' data('cl.input')
+#' dat = cl.input[cl.input$pt == 'on' & 
+#'                  cl.input$date > as.Date('2021-11-30') & 
+#'                  cl.input$date < as.Date('2022-01-31'),] 
+#' 
+#' # Estimate Rt
+#' x = estimate_R_cl(
+#'   cl.input = dat,
+#'   dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
+#'   dist.repfrac = def_dist_reporting_fraction(),
+#'   dist.incub = def_dist_incubation_period(pathogen = 'sarscov2'),
+#'   dist.gi = def_dist_generation_interval(pathogen = 'sarscov2'),
+#'   popsize = 14e6, # population of Ontario in 2023
+#'   prm.daily = list(
+#'     # Very low number of MCMC iterations
+#'     # for this example to run fast.
+#'     # Increase `burn`, `iter` and `chains` 
+#'     # for better accuracy
+#'     burn = 50, iter = 50, chains = 1, 
+#'     # first.agg.period = NULL,
+#'     prior_R0_shape = 2, prior_R0_rate = 0.6, 
+#'     prior_alpha_shape = 1, prior_alpha_rate = 1),
+#'   silent = TRUE
+#' )
+#' 
+#' # Diagnostic plot for Rt estimates 
+#' # from clinical data
+#' plot_diagnostic_cl(x)
+#' 
+#' 
 plot_diagnostic_cl <- function(
     r.estim
 ){
@@ -199,7 +256,16 @@ plot_diagnostic_cl <- function(
 #'
 #' @return A ggplot object.
 #' @export
-#'
+#' 
+#' @examples 
+#' # Define a `ern` distribution:
+#' gi  = def_dist_generation_interval(pathogen = 'influenza')
+#' 
+#' # Plot can be customized like any `ggplot` object:
+#' g = plot_dist(gi) + ggplot2::labs(subtitle = 'your subtitle')
+#' plot(g)
+#' 
+#' 
 plot_dist <- function(d) {
 
   a = get_discrete_dist(d)
