@@ -221,7 +221,7 @@ Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 repor
 dat <- (ern::cl.input 
     |> dplyr::filter(
       pt == "qc",
-      dplyr::between(date, as.Date("2021-06-01"), as.Date("2021-11-01"))
+      dplyr::between(date, as.Date("2021-07-01"), as.Date("2021-09-01"))
 ))
 ```
 
@@ -296,9 +296,13 @@ prm.daily = list(
    # should be significantly increased (e.g., 10,000).
    # Also, the number of chains should be at least 3 
    # (instead of 1 here) for real-world applications.
-  burn = 250,  
-  iter = 500,
-  chains = 1
+  burn = 100,
+  iter = 200,
+  chains = 1,
+  prior_R0_shape = 2,
+  prior_R0_rate = 0.6,
+  prior_alpha_shape = 1,
+  prior_alpha_rate = 1
 )
 
 # settings for checks of daily inferred reports

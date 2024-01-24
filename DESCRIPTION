@@ -1,12 +1,15 @@
 Package: ern
 Title: Effective Reproduction Number Estimation
-Version: 1.2.2
+Version: 1.3.0
 Authors@R: c(
     person("David", "Champredon", , "david.champredon@canada.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7090-8757")),
-    person("Warsame", "Yusuf", , "warsame.yusuf@canada.ca", role = "aut"),
-    person("Irena", "Papst", , "irena.papst@canada.ca", role = "aut")
+    person("Warsame", "Yusuf", , "warsame.yusuf@canada.ca", role = "aut",
+           comment = c(ORCID = "0000-0001-5571-8122")),
+    person("Irena", "Papst", , "irena.papst@canada.ca", role = "aut",
+           comment = c(ORCID = "0000-0001-5901-7585"))
   )
+Maintainer: David Champredon <david.champredon@canada.ca>  
 Description: Estimate the effective reproduction number from wastewater
     and clinical data sources.
 License: MIT + file LICENSE
