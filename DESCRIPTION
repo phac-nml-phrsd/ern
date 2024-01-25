@@ -41,5 +41,4 @@ RoxygenNote: 7.2.3
 Depends: 
     R (>= 4.1.0)
 LazyData: true
-Remotes:  
-    mrc-ide/EpiEstim
+
