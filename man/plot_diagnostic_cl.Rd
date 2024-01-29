@@ -27,6 +27,7 @@ dat = cl.input[cl.input$pt == 'on' &
                  cl.input$date < as.Date('2022-01-31'),] 
 
 # Estimate Rt
+\dontrun{
 x = estimate_R_cl(
   cl.input = dat,
   dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
@@ -49,7 +50,7 @@ x = estimate_R_cl(
 # Diagnostic plot for Rt estimates 
 # from clinical data
 plot_diagnostic_cl(x)
-
+}
 
 }
 \seealso{

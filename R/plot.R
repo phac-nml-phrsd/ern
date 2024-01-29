@@ -105,6 +105,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #'                  cl.input$date < as.Date('2022-01-31'),] 
 #' 
 #' # Estimate Rt
+#' \dontrun{
 #' x = estimate_R_cl(
 #'   cl.input = dat,
 #'   dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
@@ -127,7 +128,7 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #' # Diagnostic plot for Rt estimates 
 #' # from clinical data
 #' plot_diagnostic_cl(x)
-#' 
+#' }
 #' 
 plot_diagnostic_cl <- function(
     r.estim

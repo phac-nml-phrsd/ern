@@ -18,6 +18,6 @@ A data frame with 47 rows and 3 columns:
 ww.input
 }
 \description{
-A subset of COVID-19 concentration data from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
+A subset of SARS-CoV-2 (N2 gene) concentration data in wastewater sampled from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
 }
 \keyword{datasets}

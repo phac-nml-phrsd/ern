@@ -57,6 +57,7 @@
 #'                  cl.input$date < as.Date('2022-01-31'),] 
 #' 
 #' # Estimate Rt
+#' \dontrun{
 #' x = estimate_R_cl(
 #'   cl.input = dat,
 #'   dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
@@ -78,6 +79,7 @@
 #' 
 #' # Rt estimates
 #' print(x$R)
+#' }
 #' 
 #'  
 #' 
