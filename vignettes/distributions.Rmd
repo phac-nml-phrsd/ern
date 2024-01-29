@@ -6,6 +6,10 @@ output:
       fig_caption: true
       number_sections: false
       global_numbering: true
+  rmarkdown::html_vignette:
+    md_extensions: [ 
+      "-autolink_bare_uris" 
+    ]
 vignette: >
   %\VignetteIndexEntry{distributions}
   %\VignetteEngine{knitr::rmarkdown}
@@ -42,9 +46,9 @@ Here, we give an example on estimating the different distributions for COVID-19 
 
 ### Available data
 
-For COVID-19 in Canada, the most relevant distribution estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron. [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405) assume both the incubation period and generation interval are gamma distributed, and then they use Omicron infection data to estimate distribution parameters for each quantity, along with measures of uncertainty for each parameter. (Note that Manica _et al._ estimate distributions for two different generation intervals but we will use the **intrinsic generation interval**)
+For COVID-19 in Canada, the most relevant distribution estimates come from analyzing Omicron infection data as the majority of lineages circulating in the country since January 2021 have been descendants of Omicron. (Manica _et al._ 2022) assume both the incubation period and generation interval are gamma distributed, and then they use Omicron infection data to estimate distribution parameters for each quantity, along with measures of uncertainty for each parameter. (Note that Manica _et al._ estimate distributions for two different generation intervals but we will use the **intrinsic generation interval**)
 
-```{r manica-table, echo = FALSE, fig.align="center", fig.cap='**Table 2 from [Manica _et al._ 2022](https://www.sciencedirect.com/science/article/pii/S2666776222001405)**. Original caption: "Estimates for the incubation period, diagnostic delay, intrinsic and realized generation time, and household serial intervals of the SARS-CoV-2 Omicron variant. Reported parameters of shape and scale for the incubation period and intrinsic generation time refer to a gamma distribution. Estimates of the incubation period are dervied from the analysis of 80 participants to a single superspreading event in Norway. Data taken from Brandal _et al_."'}
+```{r manica-table, echo = FALSE, fig.align="center", fig.cap='**Table 2 from (Manica _et al._ 2022)**. Original caption: "Estimates for the incubation period, diagnostic delay, intrinsic and realized generation time, and household serial intervals of the SARS-CoV-2 Omicron variant. Reported parameters of shape and scale for the incubation period and intrinsic generation time refer to a gamma distribution. Estimates of the incubation period are dervied from the analysis of 80 participants to a single superspreading event in Norway. Data taken from Brandal _et al_."'}
 knitr::include_graphics("figs/manica-table.png",
                         dpi = 144)
 ```
@@ -240,7 +244,7 @@ The process we use to estimate $R_t$ from viral concentration in wastewater in t
 
 2.  Specify a **fecal shedding distribution** which describes how infected individuals shed viral particles into wastewater over time. This article focuses on how a family of fecal shedding distributions were estimated for `ern` from literature.
 
-3.  Perform a deconvolution of the pre-processed viral concentration time series using the fecal shedding distribution in order to obtain a **daily incidence time series** (see [Huisman et al, 2022](https://ehp.niehs.nih.gov/doi/10.1289/EHP10050)).
+3.  Perform a deconvolution of the pre-processed viral concentration time series using the fecal shedding distribution in order to obtain a **daily incidence time series** (see (Huisman _et al_)).
 
 4.  Specify a **generation interval distribution**, which describes the time interval between an individual's infection and their transmission to another person. The way in which parameters for the family of generation intervals used in `ern` are estimated is described in the `distributions` vignette.
 
@@ -250,15 +254,15 @@ The process we use to estimate $R_t$ from viral concentration in wastewater in t
 
 Individuals infected with respiratory illnesses (such as SARS-CoV-2, influenza, and RSV) shed viral particles into wastewater through their stool. In order to estimate the fecal shedding distributions needed for the $R_t$ calculation described [above](#sec-est-Rt), we must assume a model for the fecal shedding kinetics, which refers to the change of the individual's shedding amount in stools as a function of time since infection.
 
-Research has been done to understand fecal shedding kinetics. In [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
+Research has been done to understand fecal shedding kinetics. In (Nourbakhsh _et al._ 2021), a SEIR compartmental model was created to simulate and forecast SARS-CoV-2 viral concentration in wastewater. In this model, SARS-CoV-2 fecal shedding in wastewater comes from individuals of different clinical profiles: infectious symptomatic (denoted as $I$), infectious asymptomatic (denoted as $A$), infectious symptomatic that requires hospitalization (denoted as $J$), and noninfectious (denoted as $Z$). A diagram illustrating how individuals move through the compartmental model and contribute to wastewater fecal shedding is shown below.
 
 ![](figs/WWFig1.PNG){width="90%"}
 
-In this diagram, individuals begin in the susceptible compartment ($S$). Once exposed to SARS-CoV-2, they move into the exposed compartment ($E$) where they can then move into 3 unique compartments: infectious symptomatic ($I$), infectious asymptomatic ($A$), and infectious symptomatic that requires hospitalization ($J$). Individuals in the $I$ and $A$ compartments contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals in the $J$ compartment do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized ($H$). See [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1) for more details on the compartment model.
+In this diagram, individuals begin in the susceptible compartment ($S$). Once exposed to SARS-CoV-2, they move into the exposed compartment ($E$) where they can then move into 3 unique compartments: infectious symptomatic ($I$), infectious asymptomatic ($A$), and infectious symptomatic that requires hospitalization ($J$). Individuals in the $I$ and $A$ compartments contribute to fecal shedding in their respective compartments along with when they enter the noninfectious compartment ($Z$). Individuals in the $J$ compartment do not enter into the $Z$ compartment as it is inferred that they do not contribute to fecal shedding while hospitalized ($H$). See (Nourbakhsh *et al.* 2021) for more details on the compartment model.
 
 ### Fitting a distribution based on fecal shedding kinetics
 
-Within each of the 4 compartments that contribute to fecal shedding lies a number of subcompartments of $n_c$ (c: compartment name). According to [Nourbakhsh *et al.* 2021](https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
+Within each of the 4 compartments that contribute to fecal shedding lies a number of subcompartments of $n_c$ (c: compartment name). According to (Nourbakhsh *et al.* 2021), each subcompartment sheds a different amount of viral SARS-CoV-2 into wastewater. The following figures illustrate the log fecal shedding kinetics of individuals in $I$, $A$, $J$, and $Z$ compartments.
 
 ```{r, echo=FALSE, fig.width = 6, fig.height = 4}
 shed.i = data.frame(
@@ -351,7 +355,7 @@ plot(x = df$x,
      ylab = "log viral load", typ='b')
 ```
 
-Using the [`stats4`](https://stat.ethz.ch/R-manual/R-patched/library/stats4/html/mle.html) package, a maximum likelihood estimation can be used to estimate a gamma distribution that fits the fecal shedding distribution along with standard error parameters. This gamma distribution can then be used in `ern` to obtain incidence estimates needed to generate $R_t$. The code below illustrates how the fitted fecal shedding gamma distribution for SARS-CoV-2 was obtained for `ern`.
+Using the `stats4` package, a maximum likelihood estimation can be used to estimate a gamma distribution that fits the fecal shedding distribution along with standard error parameters. This gamma distribution can then be used in `ern` to obtain incidence estimates needed to generate $R_t$. The code below illustrates how the fitted fecal shedding gamma distribution for SARS-CoV-2 was obtained for `ern`.
 
 ```{r, warning=FALSE, message=FALSE}
 get_gamma_fec <- function(df){
@@ -451,3 +455,13 @@ display_table_all(
 ## Other respiratory illnesses
 
 In future releases of `ern`, parameter estimates for RSV and influenza will be estimated using data obtained from literature. SARS-CoV-2 parameter estimates will be routinely updated as more literature data is obtained.
+
+
+## Bibliography
+
+Manica _et al._ 2022: `https://www.sciencedirect.com/science/article/pii/S2666776222001405`
+
+Huisman _et al_ 2022: `https://ehp.niehs.nih.gov/doi/10.1289/EHP10050`
+
+
+Nourbakhsh _et al._ 2021: `https://www.medrxiv.org/content/10.1101/2021.07.19.21260773v1`

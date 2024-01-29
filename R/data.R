@@ -1,11 +1,11 @@
-#' Sample of aggregated clinical reports
+#' @title Sample of aggregated clinical reports
 #'
-#' A subset of COVID-19 weekly reports in the Government of Canada Health Infobase
+#' @description A subset of COVID-19 weekly reports in the Government of Canada Health Infobase
 #'
 #' @format ## `cl.input`
 #' A data frame with 96 rows and 3 columns:
 #' \itemize{
-#'   \item `pt`: standard two-character abbreviation (lowercase) of the province name (based on \href{https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/tab/index-eng.cfm?ID=T1_8}{Statcan 2021 census abbreviations})
+#'   \item `pt`: standard two-character abbreviation (lowercase) of the province name (based on Statcan 2021 census abbreviations)
 #'   \item `date`: report date
 #'   \item `value`: count of reported cases for the previous week
 #' }
@@ -15,9 +15,9 @@
 #' `estimate_R_cl(cl.input = dplyr::filter(cl.input, pt == 'bc'), ...)`
 "cl.input"
 
-#' Sample of wastewater concentration
+#' @title Sample of wastewater concentration
 #'
-#' A subset of COVID-19 concentration data from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
+#' @description A subset of SARS-CoV-2 (N2 gene) concentration data in wastewater sampled from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
 #'
 #' @format ## `ww.input`
 #' A data frame with 47 rows and 3 columns:
