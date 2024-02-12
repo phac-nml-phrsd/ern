@@ -4,251 +4,133 @@
 
 #' @title Define a family of incubation period distributions
 #'
-#' @template param-pathogen
+#' @template param-dist
 #' @template return-dist
 #' @export
 #' 
 #' @examples 
-#' d = def_dist_incubation_period(pathogen = 'influenza')
+#' d = def_dist_incubation_period(
+#'   dist     = "gamma",
+#'   mean     = 3.49,
+#'   mean_sd  = 0.1477,
+#'   shape    = 8.5,
+#'   shape_sd = 1.8945,
+#'   max      = 8
+#' )
 #' print(d)
 #' 
-def_dist_incubation_period <- function(pathogen = 'sarscov2'){
-
-  res = NULL
-  p = tolower(pathogen)
-
-  if(p %in% c('sarscov2', 'cov2', 'sars2')){
-    res = list(
-      dist     = "gamma",
-      mean     = 3.49,
-      mean_sd  = 0.1477,
-      shape    = 8.5,
-      shape_sd = 1.8945,
-      max      = 8
+def_dist_incubation_period <- function(dist, ...){
+  return(
+    list(
+      dist,
+      ...
     )
-    # see docs/distribution-params.html for refs
-  }
-
-  if(p %in% c('influenza', 'flua', 'flub')){
-    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
-    # https://doi.org/10.1016/S1473-3099(09)70069-6
-    res = list(
-      dist     = "gamma",
-      mean     = 2.5,
-      mean_sd  = 0.5,
-      sd       = 1.0,
-      sd_sd    = 0.2,
-      max      = 6
-    )
-  }
-
-  if(p %in% c('rsv', 'rsva', 'rsvb')){
-    # reference: Lessler et al. The Lancet Infectious Diseases. 2009.
-    # https://doi.org/10.1016/S1473-3099(09)70069-6
-    res = list(
-      dist     = "gamma",
-      mean     = 5.0,
-      mean_sd  = 1.0,
-      sd       = 1.0,
-      sd_sd    = 0.2,
-      max      = 6
-    )
-  }
-  if(is.null(res)){
-    stop(paste0("Unkown incubation period distribution for pathogen `", pathogen,"` not found. Aborting!"))
-  }
-  return(res)
+  )
 }
 
 #' @title Define a family of generation interval distributions
 #'
-#' @template param-pathogen
+#' @template param-dist
 #' @template return-dist
 #' @export
 #' 
 #' @examples 
-#' d = def_dist_generation_interval(pathogen = 'sarscov2')
+#' d = def_dist_generation_interval(
+#'   dist     = "gamma",
+#'   mean     = 6.84,
+#'   mean_sd  = 0.7486,
+#'   shape    = 2.39,
+#'   shape_sd = 0.3573,
+#'   max      = 15
+#' )
 #' print(d)
 #' 
-def_dist_generation_interval <- function(pathogen = 'sarscov2'){
-
-  x = NULL
-  p = tolower(pathogen)
-
-  if(p %in% c('sarscov2', 'cov2', 'sars2')){
-    # see docs/distribution-params.html for refs
-    x <- list(
-      dist     = "gamma",
-      mean     = 6.84,
-      mean_sd  = 0.7486,
-      shape    = 2.39,
-      shape_sd = 0.3573,
-      max      = 15)
-  }
-
-  if(p %in% c('influenza', 'flua', 'flub')){
-    # ref: te Beest et al. Epidemiology. 2013
-    # https://www.jstor.org/stable/23487826
-    x <- list(
-      dist     = "gamma",
-      mean     = 2.5,
-      mean_sd  = 0.5,
-      sd       = 1.0,
-      sd_sd    = 0.3,
-      max      = 8)
-  }
-
-  if(p %in% c('rsv', 'rsva', 'rsvb')){
-    # ref: Otomaru et al. Open Forum Infectious Diseases. 2019.
-    # https://doi.org/10.1093/ofid/ofz045
-    # TODO: explore more the literature...
-    x <- list(
-      dist     = "gamma",
-      mean     = 3.2,
-      mean_sd  = 0.5,
-      sd       = 1.1,
-      sd_sd    = 0.1,
-      max      = 8)
-  }
-
-  # Check if pathogen was found
-  if(is.null(x)){
-    stop(paste0("Unkown generation interval distribution for pathogen `", pathogen,"` not found. Aborting!"))
-  }
-
-  return(x)
+def_dist_generation_interval <- function(dist, ...){
+  return(
+    list(
+      dist,
+      ...
+    )
+  )
 }
 
 #' Define a reporting fraction distribution
 #'
+#' @template param-dist
 #' @template return-dist
 #' @export
 #' 
 #' @examples 
-#' d = def_dist_reporting_fraction()
+#' d = def_dist_reporting_fraction(
+#'   dist = "unif",
+#'   min = 0.1,
+#'   max = 0.3
+#' )
 #' print(d)
 #' 
 #' 
-def_dist_reporting_fraction <- function(){
-
-  if(TRUE){
-    res = list(
-      dist = "unif",
-      min = 0.1,
-      max = 0.3
+def_dist_reporting_fraction <- function(dist, ...){
+  return(
+    list(
+      dist,
+      ...
     )
-  }
-
-  warning('def_dist_reporting_fraction is NOT defined. Using Unif(0.1,0.3) by defaut!')
-
-  return(res)
+  )
 }
 
 #' @title Define a family of fecal shedding distributions
 #'
-#' @template param-pathogen
-#' @param subtype Character. Pathogen sub-type label.
-#'
+#' @template param-dist
 #' @template return-dist
 #' @export
 #'
 #' @examples
-#' fec = def_dist_fecal_shedding('sarscov2')
+#' fec = def_dist_fecal_shedding(
+#'   dist = "gamma",
+#'   mean = 12.90215,
+#'   mean_sd = 1.136829,
+#'   shape = 1.759937,
+#'   shape_sd = 0.2665988,
+#'   max = 33
+#' )
 #' print(fec)
 #'
-def_dist_fecal_shedding <- function(pathogen = 'sarscov2', subtype = '') {
-
-  p   = tolower(pathogen)
-
-  # Check if correct pathogen specified
-  if(!isTRUE(p %in% c('sarscov2', 'influenza', 'rsv'))){
-    stop("Pathogen not found. Aborting!")
-  }
-
-  fec = NULL
-
-  if(p == 'sarscov2'){
-    # ref: Nourbakhsh et. al. (Epidemics, 2021)
-    # https://doi.org/10.1016/j.epidem.2022.100560
-
-    fec = list(
-      dist = "gamma",
-      mean = 12.90215,
-      mean_sd = 1.136829,
-      shape = 1.759937,
-      shape_sd = 0.2665988,
-      max = 33
+def_dist_fecal_shedding <- function(dist, ...) {
+  return(
+    list(
+      dist,
+      ...
     )
-
-    if(subtype == 'foo'){
-      # TO DO...
-    }
-  }
-
-
-  if(p == 'influenza'){
-    # This is a dummy distribution
-    # TODO: look at the literature to inform those values
-    fec = list(
-      dist    = "gamma",
-      mean    = 9,
-      mean_sd = 1,
-      sd      = 6,
-      sd_sd   = 1,
-      max     = 29
-    )
-    if(subtype == 'foo'){
-      # TO DO...
-    }
-  }
-
-  if(p == 'rsv'){
-    # This is a dummy distribution
-    # TODO: look at the literature to inform those values
-    fec = list(
-      dist    = "gamma",
-      mean    = 12,
-      mean_sd = 3,
-      sd      = 7,
-      sd_sd   = 2,
-      max     = 29
-    )
-    if(subtype == 'foo'){
-      # TO DO...
-    }
-  }
-
-  return(fec)
+  )
 }
 
 #' Define a family of reporting delay distributions
 #'
 #' Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in [ern::cl.input]
 #'
+#' @template param-dist
 #' @template return-dist
-#' @template param-pathogen
 #'
 #' @export
 #' 
 #' @examples 
-#' d = def_dist_reporting_delay(pathogen = 'sarscov2')
+#' d = def_dist_reporting_delay(
+#'   dist = 'gamma',
+#'   mean = 6.99,
+#'   mean_sd = 0.2211,
+#'   sd = 3.663,
+#'   sd_sd = 0.1158,
+#'   max = 21
+#' )
 #' print(d)
 #' 
-def_dist_reporting_delay <- function(pathogen = 'sarscov2'){
-  if(!(pathogen %in% c('sarscov2'))){
-    stop(paste0("No default reporting delay distribution for pathogen `", pathogen,"`. Aborting!"))
-  }
-
-  if(pathogen == 'sarscov2'){
+def_dist_reporting_delay <- function(dist, ...){
+  return(
     list(
-      dist = 'gamma',
-      mean = 6.99,
-      mean_sd = 0.2211,
-      sd = 3.663,
-      sd_sd = 0.1158,
-      max = 21
+      dist,
+      ...
     )
-  }
+  )
 }
 
 # - - - - - - - - - - - - - - - - -

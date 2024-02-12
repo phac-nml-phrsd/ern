@@ -4,28 +4,36 @@
 \alias{def_dist_reporting_delay}
 \title{Define a family of reporting delay distributions}
 \usage{
-def_dist_reporting_delay(pathogen = "sarscov2")
+def_dist_reporting_delay(dist, ...)
 }
 \arguments{
-\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
+\item{...}{a series of distribution parameters. Included should be the following:
+\itemize{
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif}).
+\item \code{max} maximum value of the random variable modelled by this distribution.
+}}
+
+\item{`dist`}{distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform).}
 }
 \value{
-List with components
-\itemize{
-\item \code{dist} distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform)
-\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif})
-\item \code{max} maximum value of the random variable modelled by this distribution
-}
+List with components specified in @template param-dist
 }
 \description{
 Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in \link{cl.input}
 }
 \examples{
-d = def_dist_reporting_delay(pathogen = 'sarscov2')
+d = def_dist_reporting_delay(
+  dist = 'gamma',
+  mean = 6.99,
+  mean_sd = 0.2211,
+  sd = 3.663,
+  sd_sd = 0.1158,
+  max = 21
+)
 print(d)
 
 }

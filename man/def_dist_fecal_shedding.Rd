@@ -4,30 +4,36 @@
 \alias{def_dist_fecal_shedding}
 \title{Define a family of fecal shedding distributions}
 \usage{
-def_dist_fecal_shedding(pathogen = "sarscov2", subtype = "")
+def_dist_fecal_shedding(dist, ...)
 }
 \arguments{
-\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
+\item{...}{a series of distribution parameters. Included should be the following:
+\itemize{
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif}).
+\item \code{max} maximum value of the random variable modelled by this distribution.
+}}
 
-\item{subtype}{Character. Pathogen sub-type label.}
+\item{`dist`}{distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform).}
 }
 \value{
-List with components
-\itemize{
-\item \code{dist} distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform)
-\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif})
-\item \code{max} maximum value of the random variable modelled by this distribution
-}
+List with components specified in @template param-dist
 }
 \description{
 Define a family of fecal shedding distributions
 }
 \examples{
-fec = def_dist_fecal_shedding('sarscov2')
+fec = def_dist_fecal_shedding(
+  dist = "gamma",
+  mean = 12.90215,
+  mean_sd = 1.136829,
+  shape = 1.759937,
+  shape_sd = 0.2665988,
+  max = 33
+)
 print(fec)
 
 }

@@ -4,28 +4,36 @@
 \alias{def_dist_incubation_period}
 \title{Define a family of incubation period distributions}
 \usage{
-def_dist_incubation_period(pathogen = "sarscov2")
+def_dist_incubation_period(dist, ...)
 }
 \arguments{
-\item{pathogen}{String. Name of the pathogen ('sarscov2', 'influenza')}
+\item{...}{a series of distribution parameters. Included should be the following:
+\itemize{
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif}).
+\item \code{max} maximum value of the random variable modelled by this distribution.
+}}
+
+\item{`dist`}{distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform).}
 }
 \value{
-List with components
-\itemize{
-\item \code{dist} distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform)
-\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif})
-\item \code{max} maximum value of the random variable modelled by this distribution
-}
+List with components specified in @template param-dist
 }
 \description{
 Define a family of incubation period distributions
 }
 \examples{
-d = def_dist_incubation_period(pathogen = 'influenza')
+d = def_dist_incubation_period(
+  dist     = "gamma",
+  mean     = 3.49,
+  mean_sd  = 0.1477,
+  shape    = 8.5,
+  shape_sd = 1.8945,
+  max      = 8
+)
 print(d)
 
 }

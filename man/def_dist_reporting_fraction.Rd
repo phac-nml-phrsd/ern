@@ -4,25 +4,33 @@
 \alias{def_dist_reporting_fraction}
 \title{Define a reporting fraction distribution}
 \usage{
-def_dist_reporting_fraction()
+def_dist_reporting_fraction(dist, ...)
+}
+\arguments{
+\item{...}{a series of distribution parameters. Included should be the following:
+\itemize{
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif}).
+\item \code{max} maximum value of the random variable modelled by this distribution.
+}}
+
+\item{`dist`}{distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform).}
 }
 \value{
-List with components
-\itemize{
-\item \code{dist} distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform)
-\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma})
-\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif})
-\item \code{max} maximum value of the random variable modelled by this distribution
-}
+List with components specified in @template param-dist
 }
 \description{
 Define a reporting fraction distribution
 }
 \examples{
-d = def_dist_reporting_fraction()
+d = def_dist_reporting_fraction(
+  dist = "unif",
+  min = 0.1,
+  max = 0.3
+)
 print(d)
 
 
