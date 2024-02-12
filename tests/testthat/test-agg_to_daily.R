@@ -26,7 +26,7 @@ test_that("agg_to_daily() returns a data frame with the right format", {
 
   # check output
   test_output_tibble(
-    res,
+    res[['df']],
     col_name = c("id", "date", "t", "value"),
     col_class = c("integer", "Date", "integer", "numeric")
   )
@@ -112,5 +112,4 @@ test_that("message is returned if first aggregation period not specified for agg
 test_that("message is returned when first aggregation period is specified explicitly", {
   expect_message(attach_t_agg(df, prm.daily = list(first.agg.period = 1)))
 })
-
 

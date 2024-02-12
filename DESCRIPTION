@@ -1,6 +1,6 @@
 Package: ern
 Title: Effective Reproduction Number Estimation
-Version: 1.3.1
+Version: 1.3.2
 Authors@R: c(
     person("David", "Champredon", , "david.champredon@canada.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7090-8757")),
@@ -15,6 +15,7 @@ Description: Estimate the effective reproduction number from wastewater
 License: MIT + file LICENSE
 Imports: 
     assertthat,
+    coda,
     dplyr,
     EpiEstim,
     ggplot2,
@@ -23,6 +24,7 @@ Imports:
     rjags,
     runjags,
     stats,
+    stringr,
     tibble,
     tidyr,
     zoo
@@ -37,8 +39,7 @@ VignetteBuilder:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends: 
     R (>= 4.1.0)
 LazyData: true
-
