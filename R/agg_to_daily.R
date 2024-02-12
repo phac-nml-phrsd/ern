@@ -4,7 +4,8 @@
 #'
 #' @importFrom utils capture.output
 #'
-#' @return Data frame with individual realizations of daily reported cases
+#' @return A list containing a data frame with individual realizations of 
+#' daily reported cases and the JAGS object.
 #' @export
 #' 
 #' @examples 
@@ -29,7 +30,7 @@
 #'   # Increase for better accuracy
 #'   burn = 100,
 #'   iter = 100,
-#'   chains = 1,
+#'   chains = 2,
 #'   # - - - - - 
 #'   prior_R0_shape = 2,
 #'   prior_R0_rate = 0.6,
@@ -41,12 +42,18 @@
 #' # have a posterior distribution of  
 #' # daily incidences. Here we just plot
 #' # one single draw:
-#' a1 = a[a$id==1,]
-#' plot(x = a1$t, y = a1$value, typ = 'o',
-#'      xlab = 'days', ylab = 'daily incidence',
-#'      main = 'Posterior daily incidence infered from weekly incidence')
 #'       
-#' 
+#'  df = a$df
+#'  df1 = df[df$id==1,]
+#'  plot(x = df1$t, y = df1$value, typ = 'o',
+#'       xlab = 'days', ylab = 'daily incidence',
+#'       main = 'Posterior daily incidence infered from weekly incidence')
+#'  
+#'  # Extract of the parameters values from the first chain
+#'  a$jags.object[[1]][1:9,1:9]
+#'  
+
+
 agg_to_daily <- function(
   cl.input,
   dist.gi,
@@ -64,17 +71,21 @@ agg_to_daily <- function(
     warning('`agg_to_daily()`: time variable not supplied in data, deducting it from the dates.')
   }
 
-  df.daily.inc = fit_jags_aggreg(
+  jags.fit = fit_jags_aggreg(
     g = gi,
     N = popsize,
     obs.times = cl.input$t,
     Y = cl.input$value,
     prm.daily = prm.daily,
-    silent = silent) |>
+    silent = silent) 
+  
+  df.daily.inc = jags.fit |>
     reshape_fit_jags() |>
     get_realizations(cl.input)
 
-  return(df.daily.inc)
+  return(list(
+    jags.object = jags.fit, 
+    df = df.daily.inc))
 }
 
 # helpers -----------------------------------------------------------------
@@ -234,6 +245,11 @@ Running MCMC model to infer daily reports from aggregated reports...
 
 
   # --- MCMC run
+  
+  message('MCMC paramters:',
+          '\n  Number of chains   : ', prm.daily$chains,
+          '\n  Burn-in iterations : ', prm.daily$burn,
+          '\n  MCMC iterations    : ', prm.daily$iter        )
 
   # Burn-in period:
   n.iter = prm.daily$burn
@@ -250,7 +266,7 @@ Running MCMC model to infer daily reports from aggregated reports...
   if(!silent) mod_sim <- rjags::coda.samples(model = mod,
                                              variable.names = params,
                                              n.iter = n.iter)
-
+  
   return(mod_sim)
 }
 
