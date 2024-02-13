@@ -246,11 +246,12 @@ Running MCMC model to infer daily reports from aggregated reports...
 
   # --- MCMC run
   
-  message('MCMC paramters:',
-          '\n  Number of chains   : ', prm.daily$chains,
-          '\n  Burn-in iterations : ', prm.daily$burn,
-          '\n  MCMC iterations    : ', prm.daily$iter        )
-
+  if(!silent){
+    message('MCMC paramters:',
+            '\n  Number of chains   : ', prm.daily$chains,
+            '\n  Burn-in iterations : ', prm.daily$burn,
+            '\n  MCMC iterations    : ', prm.daily$iter        )
+  }
   # Burn-in period:
   n.iter = prm.daily$burn
   if(!silent) stats::update(mod, n.iter = n.iter)
