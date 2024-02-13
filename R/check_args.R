@@ -10,11 +10,16 @@
 #' @return NULL
 check_prm.daily <- function(x, silent){
 
-  # Check that mandatory elements are present and of the right type
-  for (name in c("burn", "iter", "chains")){
-    # Check presence of element
-    assertthat::assert_that(assertthat::has_name(x, name))
-    assertthat::assert_that(assertthat::is.count(x[[name]]))
+  assertthat::assert_that(assertthat::has_name(x, "method"))
+  
+  if(x$method == "renewal"){
+    # Check that mandatory elements are 
+    # present and of the right type for this model
+    for (name in c("burn", "iter", "chains")){
+      # Check presence of element
+      assertthat::assert_that(assertthat::has_name(x, name))
+      assertthat::assert_that(assertthat::is.count(x[[name]]))
+    }
   }
 
   # Check optional arguments

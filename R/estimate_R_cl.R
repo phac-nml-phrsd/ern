@@ -91,6 +91,7 @@ estimate_R_cl <- function(
   dist.gi,
   popsize,
   prm.daily = list(
+    method = 'linear',  # c('linear', 'renewal')
     burn = 500,
     iter = 2e3,
     chains = 3,
@@ -120,8 +121,9 @@ estimate_R_cl <- function(
 
   # Checking if JAGS is installed on machine. Stop function if not found
   suppressWarnings(j <- runjags::testjags(silent = TRUE))
+  
   if(isFALSE(j$JAGS.found)){
-stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
+    stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
 To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
 or request JAGS to be installed by your network administrator.
 See README for more details.")
@@ -168,84 +170,110 @@ See README for more details.")
       silent    = silent
     )
 
-    # estimate daily reports using JAGS model
-     a = agg_to_daily(
-      cl.input  = cl.input,
-      dist.gi   = dist.gi,
-      popsize   = popsize,
-      prm.daily = prm.daily,
-      silent    = silent
-    )
-    cl.daily.raw = a[['df']]
-    jags.obj     = a[['jags.object']]
-    
-    plot.gelmanrubin = NULL 
-    
-    if(prm.daily$chains > 1){
-      gelrub = coda::gelman.diag(jags.obj)
-      plot.gelmanrubin = plot_gelman_rubin(jags.obj)
-      if(gelrub$mpsrf > 1.025) 
-        warning("\n * * * MCMC warning * * * \n",
-                "The MCMC may not have properly converged according to ",
-                "the Gelman-Rubin R statistic (R_GelmanRubin = ",
-                round(gelrub$mpsrf,3),"> 1.025). \nConsider increasing the ",
-                "number of burn-in and iterations (`prm.daily` argument of `ern::estimate_R_cl()`).")
+    if(prm.daily$method == 'renewal'){
+      # estimate daily reports using 
+      # the epidemic model based on
+      # the renewal equation and 
+      # the JAGS software for inference.
+      a = agg_to_daily(
+        cl.input  = cl.input,
+        dist.gi   = dist.gi,
+        popsize   = popsize,
+        prm.daily = prm.daily,
+        silent    = silent
+      )
+      
+      cl.daily.raw = a[['df']]
+      jags.obj     = a[['jags.object']]
+      
+      plot.gelmanrubin = NULL 
+      
+      if(prm.daily$chains > 1){
+        gelrub = coda::gelman.diag(jags.obj)
+        plot.gelmanrubin = plot_gelman_rubin(jags.obj)
+        if(gelrub$mpsrf > 1.025) 
+          warning("\n * * * MCMC warning * * * \n",
+                  "The MCMC may not have properly converged according to ",
+                  "the Gelman-Rubin R statistic (R_GelmanRubin = ",
+                  round(gelrub$mpsrf,3),"> 1.025). \nConsider increasing the ",
+                  "number of burn-in and iterations (`prm.daily` argument of `ern::estimate_R_cl()`).")
+      }
+      
+      diagnostic.mcmc = list(
+        plot.traces      = plot_traces(jags.obj),
+        plot.gelmanrubin = plot.gelmanrubin,
+        jags.obj         = jags.obj
+      )
     }
     
-    diagnostic.mcmc = list(
-      plot.traces      = plot_traces(jags.obj),
-      plot.gelmanrubin = plot.gelmanrubin,
-      jags.obj         = jags.obj
-    )
-  }
+    if(prm.daily$method == 'linear'){
+     cl.daily.raw = linear_int_daily(cl.input)
+     diagnostic.mcmc = NULL
+    }
+    
+  } # end if not daily
 
+     
   # ==== Smooth daily reports =====
 
   if(!is.null(prm.smooth)){
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
     cl.daily   = cl.daily.raw,
-    prm.smooth = prm.smooth
-  )} else {
+    prm.smooth = prm.smooth)
+  } else {
   # match format
     cl.daily <- cl.daily.raw |> 
       dplyr::select(id, date, value, t)
   }
-
-  # Trim smoothed reports based on relative error criterion
-
-  if(!is.daily & !is.null(prm.daily.check)){
-    if(!silent){
-      message("-----
-- Aggregating inferred daily reports back using the original
-reporting schedule, and calculating relative difference with
-original reports...")
-    }
-
-    cl.use.dates = get_use_dates(
-      cl.daily = cl.daily,
-      cl.input = cl.input,
-      prm.daily.check = prm.daily.check
-    )
-
-    if(!silent){
-      message(paste0("- Filtering out any daily inferred reports associated
-with inferred aggregates outside of the specified tolerance of ",
-                   prm.daily.check$agg.reldiff.tol, "%..."
-    ))
-      dates.before = unique(cl.daily$date)
-    message(paste0("Before filtering: ", length(dates.before), " daily reports"))
-    message(paste0("After filtering:  ", length(cl.use.dates), " daily reports"))
-    message("To reduce the number of observations dropped in filtering, either:
-  - adjust MCMC parameters in prm.daily (burn, iter, chains) to
-      improve chances of MCMC convergence,
-  - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
-    }
-    cl.daily = (cl.daily
-       |> dplyr::filter(date %in% cl.use.dates)
-    )
+  
+  if(0){ # DEBUG 
+  cl.daily.raw |> ggplot(aes(x=date, y=value))+
+    geom_point()+
+    geom_line(data = cl.daily)
   }
+  
 
+  # Trim smoothed reports based on 
+  # relative error criterion
+
+  if(prm.daily$method == 'renewal'){
+    
+    if(!is.daily & !is.null(prm.daily.check)){
+      
+      if(!silent){
+        message("Aggregating inferred daily reports back ",
+                "using the original reporting schedule, ",
+                "and calculating relative difference ",
+                "with original reports...")
+      }
+      
+      cl.use.dates = get_use_dates(
+        cl.daily = cl.daily,
+        cl.input = cl.input,
+        prm.daily.check = prm.daily.check
+      )
+      
+      if(!silent){
+        message("Filtering out any daily inferred reports associated ",
+                "with inferred aggregates outside of the specified ",
+                "tolerance of ", prm.daily.check$agg.reldiff.tol, "%...")
+        
+        dates.before = unique(cl.daily$date)
+        message("Before filtering: ", length(dates.before), " daily reports")
+        message("After filtering:  ", length(cl.use.dates), " daily reports")
+        message("To reduce the number of observations dropped in filtering,",
+                "either:\n",
+                "- adjust MCMC parameters in prm.daily (burn, iter, chains)",
+                " to improve chances of MCMC convergence,\n",
+                "- increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
+      }
+      cl.daily = cl.daily |> 
+        dplyr::filter(date %in% cl.use.dates)
+    }
+  } # end if method == 'renewal'
+  
+  
   # Estimate Rt in an ensemble and return summary
 
   R = estimate_R_cl_rep(
