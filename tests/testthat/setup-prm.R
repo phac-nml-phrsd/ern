@@ -1,6 +1,7 @@
 # prm lists used in testing
 
 prm.daily = list(
+  method = "renewal",
   burn = 5,
   iter = 5,
   chains = 1,
