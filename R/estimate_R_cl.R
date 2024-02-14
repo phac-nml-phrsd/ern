@@ -155,6 +155,7 @@ See README for more details.")
       message("-----\nThe clinical testing data you input is not daily.",
               "\n`ern` requires daily data to compute Rt,",
               " so it will infer daily reports from your inputs.",
+              "\nInference method for daily incidence: `", prm.daily$method,"`",
               "\nSee `prm.daily` and `prm.daily.check` arguments of ",
               "`estimate_R_cl()` for daily inference options.\n-----")
     }

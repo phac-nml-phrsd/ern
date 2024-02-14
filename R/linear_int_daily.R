@@ -11,7 +11,7 @@ linear_int_daily <- function(cl.input) {
   df    = cl.input
   tau   = df$t
   A     = df$value
-  delta = diff(ta)
+  delta = diff(tau)
   tmax  = max(tau)
   y     = numeric(tmax)
   
@@ -26,7 +26,7 @@ linear_int_daily <- function(cl.input) {
     m = 2 * (A[k+1] - delta[k] * y[tau[k]]) / delta[k] / (delta[k]+1)
     idx = 1:(tau[k+1]-tau[k])
     y[tau[k] + idx] = y[tau[k]] + m * idx
-    # message("DEBUG: sum_y = ", sum(y[tau[k] + idx]), "\t; A = ", A[k+1])
+    # message(k, " DEBUG: sum_y = ", sum(y[tau[k] + idx]), "\t; A = ", A[k+1])
   }
   
   # Result
