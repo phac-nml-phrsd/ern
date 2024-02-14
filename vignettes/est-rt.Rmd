@@ -290,6 +290,7 @@ All of these parameters have defaults, but they can also be adjusted by the user
 ```{r init-prms}
 # settings for daily report inference
 prm.daily = list(
+  method = "renewal",
    # Here, low value for `burn` and `iter` 
    # to have a fast compilation of the vignette.
    # For real-world applications, both `burn` and `iter`
