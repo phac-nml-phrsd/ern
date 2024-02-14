@@ -236,13 +236,6 @@ See README for more details.")
       dplyr::select(id, date, value, t)
   }
   
-  if(0){ # DEBUG 
-  cl.daily.raw |> ggplot(aes(x=date, y=value))+
-    geom_point()+
-    geom_line(data = cl.daily)
-  }
-  
-
   # Trim smoothed reports based on 
   # relative error criterion
   if(!is.daily & 
