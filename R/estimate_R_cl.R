@@ -8,10 +8,19 @@
 #' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
+#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+#'  \item `method`: String. Method name to infer the daily incidence reports from aggregated ones. 
+#'  Either \code{linear} or \code{renewal} is currently implemented. 
+#'  The \code{linear} method simply performs a linear interpolation that matches the aggregated values.
+#'  The \code{renewal} method fits a SIR-like model using a renewal equation to infer the daily incidence. 
+#'  In this case, the fitting algorithm is a Markov Chain Monte Carlo (MCMC) implemented in JAGS
+#'  and needs the parameter below (e.g., \code{burn,iter,chains,...}). 
+#'  The \code{renewal} method is more adapted for short single wave epidemics as this models
+#'  i) naturally fits a single wave and ii) has longer computing time. 
+#'  For longer time series, user may perfer the \code{linear} method.  
 #'  \item `burn`: Numeric. Length of burn-in period (number of days).
 #'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
 #'  \item `chains`: Numeric. Number of chains to simulate.
-#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #'  \item `prior_R0_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
 #'  \item `prior_R0_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
 #'  \item `prior_alpha_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
@@ -41,9 +50,7 @@
 #' }
 #' @export
 #' 
-#' 
 #' @seealso [plot_diagnostic_cl()] [estimate_R_ww()]
-#' 
 #' 
 #' @examples 
 #' 
@@ -66,6 +73,7 @@
 #'   dist.gi = def_dist_generation_interval(pathogen = 'sarscov2'),
 #'   popsize = 14e6, # population of Ontario in 2023
 #'   prm.daily = list(
+#'     method = 'renewal',
 #'     # Very low number of MCMC iterations
 #'     # for this example to run fast.
 #'     # Increase `burn`, `iter` and `chains` 
@@ -162,7 +170,7 @@ See README for more details.")
     # ==== Aggregated -> daily reports ====
 
     # check daily inference params
-    check_prm.daily(prm.daily, silent = silent)
+    check_prm.daily(prm.daily)
 
     # attach time-index column to observed aggregated reports
     cl.input <- attach_t_agg(
@@ -237,10 +245,10 @@ See README for more details.")
 
   # Trim smoothed reports based on 
   # relative error criterion
-
-  if(prm.daily$method == 'renewal'){
+  if(!is.daily & 
+     !is.null(prm.daily.check) ){
     
-    if(!is.daily & !is.null(prm.daily.check)){
+    if(prm.daily$method == 'renewal'){
       
       if(!silent){
         message("Aggregating inferred daily reports back ",
@@ -252,8 +260,7 @@ See README for more details.")
       cl.use.dates = get_use_dates(
         cl.daily = cl.daily,
         cl.input = cl.input,
-        prm.daily.check = prm.daily.check
-      )
+        prm.daily.check = prm.daily.check )
       
       if(!silent){
         message("Filtering out any daily inferred reports associated ",
@@ -261,8 +268,8 @@ See README for more details.")
                 "tolerance of ", prm.daily.check$agg.reldiff.tol, "%...")
         
         dates.before = unique(cl.daily$date)
-        message("Before filtering: ", length(dates.before), " daily reports")
-        message("After filtering:  ", length(cl.use.dates), " daily reports")
+        message("  Before filtering : ", length(dates.before), " daily reports")
+        message("  After filtering  :  ", length(cl.use.dates), " daily reports")
         message("To reduce the number of observations dropped in filtering,",
                 "either:\n",
                 "- adjust MCMC parameters in prm.daily (burn, iter, chains)",
@@ -271,9 +278,8 @@ See README for more details.")
       }
       cl.daily = cl.daily |> 
         dplyr::filter(date %in% cl.use.dates)
-    }
-  } # end if method == 'renewal'
-  
+    } # end if method == 'renewal'
+  }
   
   # Estimate Rt in an ensemble and return summary
 

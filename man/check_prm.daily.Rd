@@ -4,7 +4,7 @@
 \alias{check_prm.daily}
 \title{Check parameters for daily data inference}
 \usage{
-check_prm.daily(x, silent)
+check_prm.daily(x)
 }
 \arguments{
 \item{x}{List. Parameters for daily data inference.}

@@ -19,10 +19,19 @@ agg_to_daily(cl.input, dist.gi, popsize, prm.daily, silent = FALSE)
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+\item \code{method}: String. Method name to infer the daily incidence reports from aggregated ones.
+Either \code{linear} or \code{renewal} is currently implemented.
+The \code{linear} method simply performs a linear interpolation that matches the aggregated values.
+The \code{renewal} method fits a SIR-like model using a renewal equation to infer the daily incidence.
+In this case, the fitting algorithm is a Markov Chain Monte Carlo (MCMC) implemented in JAGS
+and needs the parameter below (e.g., \code{burn,iter,chains,...}).
+The \code{renewal} method is more adapted for short single wave epidemics as this models
+i) naturally fits a single wave and ii) has longer computing time.
+For longer time series, user may perfer the \code{linear} method.
 \item \code{burn}: Numeric. Length of burn-in period (number of days).
 \item \code{iter}: Numeric. Number of iterations after burn-in period (number of days).
 \item \code{chains}: Numeric. Number of chains to simulate.
-\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 \item \code{prior_R0_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
 \item \code{prior_R0_rate}: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
 \item \code{prior_alpha_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
