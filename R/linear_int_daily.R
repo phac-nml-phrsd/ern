@@ -25,8 +25,8 @@ linear_int_daily <- function(cl.input) {
   for(k in 1:(length(A)-1)){
     m = 2 * (A[k+1] - delta[k] * y[tau[k]]) / delta[k] / (delta[k]+1)
     idx = 1:(tau[k+1]-tau[k])
-    y[tau[k] + idx] = y[tau[k]] + m * idx
-    # message(k, " DEBUG: sum_y = ", sum(y[tau[k] + idx]), "\t; A = ", A[k+1])
+    y[tau[k] + idx] = pmax(0, y[tau[k]] + m * idx)
+    # message(k, " DEBUG: sum_y = ", round(sum(y[tau[k] + idx]),2), "\t; A = ", A[k+1])
   }
   
   # Result
