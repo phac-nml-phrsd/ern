@@ -2,14 +2,14 @@
 # Distribution definitions
 # - - - - - - - - - - - - - - - - -
 
-#' @title Define a family of incubation period distributions
+#' @title Define a family of distributions.
 #'
 #' @template param-dist
 #' @template return-dist
 #' @export
 #' 
 #' @examples 
-#' d = def_dist_incubation_period(
+#' d = def_dist(
 #'   dist     = "gamma",
 #'   mean     = 3.49,
 #'   mean_sd  = 0.1477,
@@ -19,118 +19,20 @@
 #' )
 #' print(d)
 #' 
-def_dist_incubation_period <- function(dist, ...){
-  return(
-    list(
-      dist,
-      ...
-    )
+def_dist <- function(dist, ...){
+  # Tests to see if correct distributions specified
+  stopifnot(is.character(dist))
+  stopifnot(dist %in% c("gamma", "norm", "lnorm", "unif"))
+  
+  d = list(
+    dist = dist,
+    ...
   )
-}
-
-#' @title Define a family of generation interval distributions
-#'
-#' @template param-dist
-#' @template return-dist
-#' @export
-#' 
-#' @examples 
-#' d = def_dist_generation_interval(
-#'   dist     = "gamma",
-#'   mean     = 6.84,
-#'   mean_sd  = 0.7486,
-#'   shape    = 2.39,
-#'   shape_sd = 0.3573,
-#'   max      = 15
-#' )
-#' print(d)
-#' 
-def_dist_generation_interval <- function(dist, ...){
-  return(
-    list(
-      dist,
-      ...
-    )
-  )
-}
-
-#' Define a reporting fraction distribution
-#'
-#' @template param-dist
-#' @template return-dist
-#' @export
-#' 
-#' @examples 
-#' d = def_dist_reporting_fraction(
-#'   dist = "unif",
-#'   min = 0.1,
-#'   max = 0.3
-#' )
-#' print(d)
-#' 
-#' 
-def_dist_reporting_fraction <- function(dist, ...){
-  return(
-    list(
-      dist,
-      ...
-    )
-  )
-}
-
-#' @title Define a family of fecal shedding distributions
-#'
-#' @template param-dist
-#' @template return-dist
-#' @export
-#'
-#' @examples
-#' fec = def_dist_fecal_shedding(
-#'   dist = "gamma",
-#'   mean = 12.90215,
-#'   mean_sd = 1.136829,
-#'   shape = 1.759937,
-#'   shape_sd = 0.2665988,
-#'   max = 33
-#' )
-#' print(fec)
-#'
-def_dist_fecal_shedding <- function(dist, ...) {
-  return(
-    list(
-      dist,
-      ...
-    )
-  )
-}
-
-#' Define a family of reporting delay distributions
-#'
-#' Default values come from analyzing COVID-19 line list data across all of Canada for the time period matching the sample COVID-19 clinical data provided in [ern::cl.input]
-#'
-#' @template param-dist
-#' @template return-dist
-#'
-#' @export
-#' 
-#' @examples 
-#' d = def_dist_reporting_delay(
-#'   dist = 'gamma',
-#'   mean = 6.99,
-#'   mean_sd = 0.2211,
-#'   sd = 3.663,
-#'   sd_sd = 0.1158,
-#'   max = 21
-#' )
-#' print(d)
-#' 
-def_dist_reporting_delay <- function(dist, ...){
-  return(
-    list(
-      dist,
-      ...
-    )
-  )
+  
+  # Check argument parameters of distribution
+  check_dist(d)
+  
+  return(d)
 }
 
 # - - - - - - - - - - - - - - - - -
