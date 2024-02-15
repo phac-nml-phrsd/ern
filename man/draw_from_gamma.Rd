@@ -9,7 +9,7 @@ draw_from_gamma(par, dist)
 \arguments{
 \item{par}{Character. Name of the parameter to sample.}
 
-\item{dist}{List. Distribution definition, as output by a \verb{def_dist_*()} function.}
+\item{dist}{List. Distribution definition, as output by \code{def_dist()}.}
 }
 \value{
 Numeric. The sampled parameter value.

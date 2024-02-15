@@ -7,20 +7,30 @@
 def_dist(dist, ...)
 }
 \arguments{
-\item{...}{a series of distribution parameters. Included should be the following:
+\item{dist}{distribution type. Distributions currently supported are:
 \itemize{
-\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
-\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
-\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
-\item \code{sd_sd} standard deviation of the standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
-\item \code{min} minimum value of the random variable modelled by this distribution (only for \code{dist} = \code{unif}).
-\item \code{max} maximum value of the random variable modelled by this distribution.
+\item \code{norm} = normal,
+\item \code{lnorm} = log-normal,
+\item \code{gamma} = Gamma,
+\item \code{unif} = uniform
 }}
 
-\item{`dist`}{distribution type (\emph{e.g.} \code{lnorm} = log-normal, \code{gamma} = Gamma, \code{unif} = uniform).}
+\item{...}{a series of distribution parameters.
+Included should be the following:
+\itemize{
+\item \code{mean} distribution mean (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{mean_sd} standard deviation of the mean (only for \code{dist} = \code{lnorm}
+or \code{gamma}).
+\item \code{sd} standard deviation (only for \code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{sd_sd} standard deviation of the standard deviation (only for
+\code{dist} = \code{lnorm} or \code{gamma}).
+\item \code{min} minimum value of the random variable modelled by this distribution
+(only for \code{dist} = \code{unif}).
+\item \code{max} maximum value of the random variable modelled by this distribution.
+}}
 }
 \value{
-List with components specified in @template param-dist
+List with components specified in the parameters.
 }
 \description{
 Define a family of distributions.
