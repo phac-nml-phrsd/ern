@@ -9,7 +9,7 @@
 #' 
 #' @keywords internal
 #'
-#' @seealso [def_dist_generation_interval()]
+#' @seealso [def_dist()]
 #' @seealso [EpiEstim::make_config()]
 #'
 incidence_to_R <- function(

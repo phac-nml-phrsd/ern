@@ -17,7 +17,14 @@
 #'                   cl.input$date > as.Date('2021-11-30') & 
 #'                   cl.input$date < as.Date('2021-12-31'),] 
 #' head(data)
-#' dist.gi = def_dist_generation_interval('sarscov2')
+#' dist.gi = ern::def_dist(
+#'  dist     = "gamma",
+#'  mean     = 6.84,
+#'  mean_sd  = 0.7486,
+#'  shape    = 2.39,
+#'  shape_sd = 0.3573,
+#'  max      = 15
+#' )
 #' 
 #' a = agg_to_daily(
 #' cl.input = data, 

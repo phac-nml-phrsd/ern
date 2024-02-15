@@ -57,7 +57,7 @@ def_dist <- function(dist, ...){
 #' @title Draw from gamma for a parameter specified in a distribution family list.
 #'
 #' @param par Character. Name of the parameter to sample.
-#' @param dist List. Distribution definition, as output by a `def_dist_*()` function.
+#' @param dist List. Distribution definition, as output by `def_dist()`.
 #' @keywords internal
 #' @return Numeric. The sampled parameter value.
 #'
@@ -76,8 +76,8 @@ draw_from_gamma <- function(par, dist){
 #' distributions, assuming parameters come from a Gamma distribution.
 #
 #' @keywords internal
-#' @param dist List. A list of distribution parameters, as defined by the
-#'  `def_dist_*()` functions.
+#' @param dist List. A list of distribution parameters, as defined by
+#'  `def_dist()`.
 #'
 sample_a_dist <- function(dist){
 
@@ -137,8 +137,22 @@ sample_a_dist <- function(dist){
 #' @examples 
 #' 
 #' # Define distributions
-#' fec = def_dist_fecal_shedding(pathogen = 'sarscov2')
-#' gi  = def_dist_generation_interval(pathogen = 'influenza')
+#' fec = ern::def_dist(
+#'   dist = "gamma",
+#'   mean = 12.90215,
+#'   mean_sd = 1.136829,
+#'   shape = 1.759937,
+#'   shape_sd = 0.2665988,
+#'   max = 33
+#'   )
+#' gi  = ern::def_dist(
+#'   dist     = "gamma",
+#'   mean     = 6.84,
+#'   mean_sd  = 0.7486,
+#'   shape    = 2.39,
+#'   shape_sd = 0.3573,
+#'   max      = 15
+#'   )
 #' 
 #' # Get their (discretized) densities
 #' d.fec = get_discrete_dist(fec)
