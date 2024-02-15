@@ -30,7 +30,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   dist.incub.test   = dist.incub
   dist.incub.test$max = max.dists # need if we're talking fewer data points
-  dist.gi.test      = ern::def_dist_generation_interval(pathogen)
+  dist.gi.test      = dist.gi
   dist.gi.test$max = max.dists
 
   popsize = 1e7
