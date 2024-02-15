@@ -57,14 +57,13 @@ We convert the pathogen concentration in wastewater over time to a daily disease
 
 ### Clinical input data
 
-If the input clinical reports are not daily, `ern` assumes that they are aggregated over the time between report dates and infer the _daily_ count of cases using a Markov Chain Monte-Carlo algorithm implemented in the R library `rjags`. More details can be found in `vignette('daily-report-inference', package = 'ern')`.
+If the input clinical reports are not daily, `ern` assumes that they are aggregated over the time between report dates and infer the _daily_ count of cases using a Markov Chain Monte-Carlo algorithm implemented in the R library `rjags`.
 
 Then, we convert the _daily_ count of  clinical reports over time to the actual _daily incidence of infections_ in the following way:
 
 1. scale daily clinical reports up by the user-specified reporting fraction (assumed to be constant over time)
 2. take scaled clinical reports and perform a deconvolution with a reporting delay distribution to get daily scaled onsets
 3. take daily scaled onsets and perform a deconvolution with an incubation period distribution to get the daily incidence of infections
-
 
 ---
 
@@ -91,10 +90,8 @@ ww.conc = ern::ww.input
 head(ww.conc)
 ```
 
-`ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.
-
-```{r loading fec shed and gi}
-# Loading SARS-CoV-2 fecal shedding and generation interval distributions from ern
+```{r define fec shed and gi}
+# Define SARS-CoV-2 fecal shedding and generation interval distributions
 dist.fec = ern::def_dist(
   dist = "gamma",
   mean = 12.90215,
@@ -240,10 +237,8 @@ dat <- (ern::cl.input
 ))
 ```
 
-`ern` includes presets for the above families of distribution across several pathogens. See documentations for functions that start with `def_dist_*()` for more details, as well as `vignette('distirbutions', package = 'ern')` for more details on how these presets were derived from literature.
-
 ```{r load-dists}
-# reporting delay 
+# define reporting delay 
 dist.repdelay = ern::def_dist(
   dist = 'gamma',
   mean = 5,
@@ -253,14 +248,14 @@ dist.repdelay = ern::def_dist(
   max = 10
 )
 
-# reporting fraction 
+# define reporting fraction 
 dist.repfrac = ern::def_dist(
   dist = "unif",
   min = 0.1,
   max = 0.3
 )
 
-# incubation period
+# define incubation period
 dist.incub = ern::def_dist(
   dist     = "gamma",
   mean     = 3.49,
@@ -270,7 +265,7 @@ dist.incub = ern::def_dist(
   max      = 8
 )
 
-# generation interval
+# define generation interval
 dist.gi = ern::def_dist(
   dist     = "gamma",
   mean     = 6.84,
