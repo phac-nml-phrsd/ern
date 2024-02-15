@@ -32,7 +32,8 @@ agg_to_daily(cl.input, dist.gi, popsize, prm.daily, silent = FALSE)
 \item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \value{
-Data frame with individual realizations of daily reported cases
+A list containing a data frame with individual realizations of
+daily reported cases and the JAGS object.
 }
 \description{
 Infer daily counts from aggregates
@@ -66,7 +67,7 @@ dist.gi = dist.gi,
   # Increase for better accuracy
   burn = 100,
   iter = 100,
-  chains = 1,
+  chains = 2,
   # - - - - - 
   prior_R0_shape = 2,
   prior_R0_rate = 0.6,
@@ -77,10 +78,14 @@ dist.gi = dist.gi,
 # have a posterior distribution of  
 # daily incidences. Here we just plot
 # one single draw:
-a1 = a[a$id==1,]
-plot(x = a1$t, y = a1$value, typ = 'o',
-     xlab = 'days', ylab = 'daily incidence',
-     main = 'Posterior daily incidence infered from weekly incidence')
       
-
+ df = a$df
+ df1 = df[df$id==1,]
+ plot(x = df1$t, y = df1$value, typ = 'o',
+      xlab = 'days', ylab = 'daily incidence',
+      main = 'Posterior daily incidence infered from weekly incidence')
+ 
+ # Extract of the parameters values from the first chain
+ a$jags.object[[1]][1:9,1:9]
+ 
 }

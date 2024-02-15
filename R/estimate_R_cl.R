@@ -160,8 +160,9 @@ See README for more details.")
   # if not, need to do aggregated -> daily inference
   is.daily <- check_df.input_daily(cl.input)
 
+  
   if(is.daily){
-    # ==== Data is already daily ====
+    # Data is already daily 
     cl.daily.raw <- (cl.input
       |> attach_t()
       |> dplyr::transmute(
@@ -170,10 +171,15 @@ See README for more details.")
        t,
        value
     ))
+    diagnostic.mcmc = NULL # Irrelevant, no MCMC needed in this case.
+    
   } else {
     if(!silent){
-      message("-----
-The clinical testing data you input is not daily. `ern` requires daily data to compute Rt. `ern` will infer daily reports from your inputs. See `prm.daily` and `prm.daily.check` arguments of `estimate_R_cl()` for daily inference options.")
+      message("-----\nThe clinical testing data you input is not daily.",
+              "\n`ern` requires daily data to compute Rt,",
+              " so it will infer daily reports from your inputs.",
+              "\nSee `prm.daily` and `prm.daily.check` arguments of ",
+              "`estimate_R_cl()` for daily inference options.\n-----")
     }
     # ==== Aggregated -> daily reports ====
 
@@ -188,12 +194,33 @@ The clinical testing data you input is not daily. `ern` requires daily data to c
     )
 
     # estimate daily reports using JAGS model
-    cl.daily.raw = agg_to_daily(
+     a = agg_to_daily(
       cl.input  = cl.input,
       dist.gi   = dist.gi,
       popsize   = popsize,
       prm.daily = prm.daily,
       silent    = silent
+    )
+    cl.daily.raw = a[['df']]
+    jags.obj     = a[['jags.object']]
+    
+    plot.gelmanrubin = NULL 
+    
+    if(prm.daily$chains > 1){
+      gelrub = coda::gelman.diag(jags.obj)
+      plot.gelmanrubin = plot_gelman_rubin(jags.obj)
+      if(gelrub$mpsrf > 1.025) 
+        warning("\n * * * MCMC warning * * * \n",
+                "The MCMC may not have properly converged according to ",
+                "the Gelman-Rubin R statistic (R_GelmanRubin = ",
+                round(gelrub$mpsrf,3),"> 1.025). \nConsider increasing the ",
+                "number of burn-in and iterations (`prm.daily` argument of `ern::estimate_R_cl()`).")
+    }
+    
+    diagnostic.mcmc = list(
+      plot.traces      = plot_traces(jags.obj),
+      plot.gelmanrubin = plot.gelmanrubin,
+      jags.obj         = jags.obj
     )
   }
 
@@ -206,11 +233,8 @@ The clinical testing data you input is not daily. `ern` requires daily data to c
     prm.smooth = prm.smooth
   )} else {
   # match format
-    cl.daily <- (cl.daily.raw
-     |> dplyr::select(
-       id, date, value, t
-     )
-    )
+    cl.daily <- cl.daily.raw |> 
+      dplyr::select(id, date, value, t)
   }
 
   # Trim smoothed reports based on relative error criterion
@@ -283,7 +307,8 @@ with inferred aggregates outside of the specified tolerance of ",
     cl.input  = cl.input,
     cl.daily = cl.daily,
     inferred.agg = inferred.agg,
-    R = R
+    R = R,
+    diagnostic.mcmc = diagnostic.mcmc
   )
 
   return(res)

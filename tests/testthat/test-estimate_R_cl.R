@@ -25,7 +25,7 @@ expect_equal(
 
 expect_equal(
   names(res),
-  c("cl.input", "cl.daily", "inferred.agg", "R")
+  c("cl.input", "cl.daily", "inferred.agg", "R", "diagnostic.mcmc")
 )
 
 test_output_tibble(
@@ -41,7 +41,8 @@ test_output_tibble(
 )
 })
 
-test_that("estiamte_R_cl() returns a message when prm.daily.check is not NULL, input data is not daily, and silent mode is off", {
+test_that("estimate_R_cl() returns a message when prm.daily.check is not NULL, 
+ input data is not daily, and silent mode is off", {
   expect_message(estimate_R_cl(
     cl.input |> dplyr::filter(pt == "on"),
     dist.repdelay,
@@ -55,8 +56,32 @@ test_that("estiamte_R_cl() returns a message when prm.daily.check is not NULL, i
     prm.R = prm.R,
     silent = FALSE
   ),
-  regexp = "Aggregating inferred daily reports back using the original
-reporting schedule")
+  regexp = "MCMC parameters")
+})
+
+test_that("estimate_R_cl() throws a warning", {
+  
+  # This parameter values should
+  # throw at least a warning 
+  # because of bad MCMC convergence.
+  set.seed(1234)
+  prm.daily2 = prm.daily
+  prm.daily2$chains = 2
+  prm.daily2$burn = 55
+  prm.daily2$iter = 55
+  
+  expect_warning({res <- estimate_R_cl(
+    cl.input |> dplyr::filter(pt == "on"),
+    dist.repdelay,
+    dist.repfrac,
+    dist.incub,
+    dist.gi,
+    popsize = popsize,
+    prm.daily = prm.daily2,
+    prm.daily.check = prm.daily.check,
+    prm.smooth = prm.smooth,
+    prm.R = prm.R,
+    silent = FALSE)})
 })
 
 
