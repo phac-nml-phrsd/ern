@@ -95,8 +95,23 @@ head(ww.conc)
 
 ```{r loading fec shed and gi}
 # Loading SARS-CoV-2 fecal shedding and generation interval distributions from ern
-dist.fec = ern::def_dist_fecal_shedding('sarscov2')
-dist.gi  = ern::def_dist_generation_interval(pathogen = "sarscov2")
+dist.fec = ern::def_dist(
+  dist = "gamma",
+  mean = 12.90215,
+  mean_sd = 1.136829,
+  shape = 1.759937,
+  shape_sd = 0.2665988,
+  max = 33
+)
+
+dist.gi  = ern::def_dist(
+  dist     = "gamma",
+  mean     = 6.84,
+  mean_sd  = 0.7486,
+  shape    = 2.39,
+  shape_sd = 0.3573,
+  max      = 15
+)
 ```
 
 We can visualize the assumed distributions with `plot_dist()`:
@@ -229,7 +244,7 @@ dat <- (ern::cl.input
 
 ```{r load-dists}
 # reporting delay 
-dist.repdelay = list(
+dist.repdelay = ern::def_dist(
   dist = 'gamma',
   mean = 5,
   mean_sd = 1,
@@ -239,17 +254,31 @@ dist.repdelay = list(
 )
 
 # reporting fraction 
-dist.repfrac = list(
+dist.repfrac = ern::def_dist(
   dist = "unif",
   min = 0.1,
   max = 0.3
 )
 
 # incubation period
-dist.incub   = def_dist_incubation_period('sarscov2')
+dist.incub = ern::def_dist(
+  dist     = "gamma",
+  mean     = 3.49,
+  mean_sd  = 0.1477,
+  shape    = 8.5,
+  shape_sd = 1.8945,
+  max      = 8
+)
 
 # generation interval
-dist.gi      = def_dist_generation_interval('sarscov2')
+dist.gi = ern::def_dist(
+  dist     = "gamma",
+  mean     = 6.84,
+  mean_sd  = 0.7486,
+  shape    = 2.39,
+  shape_sd = 0.3573,
+  max      = 15
+)
 
 # population size for daily report inference
 popsize = 1e7
