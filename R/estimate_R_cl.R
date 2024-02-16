@@ -155,11 +155,17 @@ estimate_R_cl <- function(
   # Checking if JAGS is installed on machine. Stop function if not found
   suppressWarnings(j <- runjags::testjags(silent = TRUE))
   
-  if(isFALSE(j$JAGS.found)){
-    stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
-To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
-or request JAGS to be installed by your network administrator.
-See README for more details.")
+  if(!is.null(prm.daily)){
+    if(isFALSE(j$JAGS.found) & prm.daily[['method']] == 'renewal'){
+      stop(
+        "JAGS is not installed on this machine but is required for\n",
+        "Rt estimations on clinical testing data using ern::estimate_Rt_cl()\n",
+        "with the \"renewal\" method (argument `prm.daily(method=\'renewal\')`).\n",
+        "Your options are:\n",
+        "  - Either, install JAGS (https://sourceforge.net/projects/mcmc-jags/files/)\n",
+        "  - Or, use the \"linear\" method: `prm.daily(method=\'renewal\')`\n\n",
+        "See README for more details.\n\n")
+    }
   }
 
   # Checking argument formats
