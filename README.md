@@ -30,8 +30,7 @@ devtools::install_github('phac-nml-phrsd/ern')
 ### Note on JAGS
 
 `rjags` is a dependency for `ern`, specifically for Rt calculations
-performed on clinical testing data using the "renewal" method for  
-inference of the daily incidence from aggregated clinical data. 
+performed on clinical testing data using the "renewal" method for inference of the daily incidence from aggregated clinical data. 
 If you are only using the "linear" method, or performing
 calculations using wastewater data, you do not need to worry about
 installing `rjags` and can skip this section.
