@@ -8,8 +8,8 @@ distributions, assuming parameters come from a Gamma distribution.}
 sample_a_dist(dist)
 }
 \arguments{
-\item{dist}{List. A list of distribution parameters, as defined by the
-\verb{def_dist_*()} functions.}
+\item{dist}{List. A list of distribution parameters, as defined by
+\code{def_dist()}.}
 }
 \description{
 Sample parameters for a single distribution from a family of

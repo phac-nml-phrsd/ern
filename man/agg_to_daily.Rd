@@ -13,7 +13,7 @@ agg_to_daily(cl.input, dist.gi, popsize, prm.daily, silent = FALSE)
 \item \code{value}: count of reported cases
 }}
 
-\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
 \item{popsize}{Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.}
 
@@ -48,7 +48,14 @@ data = cl.input[cl.input$pt == 'on' &
                   cl.input$date > as.Date('2021-11-30') & 
                   cl.input$date < as.Date('2021-12-31'),] 
 head(data)
-dist.gi = def_dist_generation_interval('sarscov2')
+dist.gi = ern::def_dist(
+ dist     = "gamma",
+ mean     = 6.84,
+ mean_sd  = 0.7486,
+ shape    = 2.39,
+ shape_sd = 0.3573,
+ max      = 15
+)
 
 a = agg_to_daily(
 cl.input = data, 

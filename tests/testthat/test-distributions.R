@@ -1,35 +1,28 @@
-test_that("distributions are initialized correctly", {
-  for (f in ls(getNamespace("ern"), pattern = "def_dist_")) {
-    expect_type(suppressWarnings(get(f)()), "list")
-    expect_equal(names(suppressWarnings(get(f)()))[1], "dist")
-  }
-})
-
-test_that("distributions that require pathogen are initialized correctly,
-          and return an error when an invalid pathogen is specified", {
-  pathogens = c("sarscov2", "influenza", "rsv")
-  for (p in pathogens) {
-    expect_type(
-      def_dist_incubation_period(pathogen = p), "list")
-    expect_type(
-      def_dist_generation_interval(pathogen = p), "list")
-    expect_type(
-      def_dist_fecal_shedding(pathogen = p), "list")
-  }
-  expect_type(
-    def_dist_reporting_delay(pathogen = pathogens[[1]]), "list")
-  p.error = "sick"
-  expect_error(
-    def_dist_incubation_period(pathogen = p.error)
+test_that("get_dist can detect valid and invalid distributions", {
+  mean = 1
+  sd = 2
+  max = 100
+  
+  expect_no_error(
+    def_dist(
+      dist = "gamma",
+      mean = mean,
+      mean_sd = NA,
+      sd = sd,
+      sd_sd = NA,
+      max = max
+    )
   )
+  
   expect_error(
-    def_dist_generation_interval(pathogen = p.error)
-  )
-  expect_error(
-    def_dist_fecal_shedding(pathogen = p.error)
-  )
-  expect_error(
-    def_dist_reporting_delay(pathogen = p.error)
+    def_dist(
+      dist = "logamma",
+      mean = mean,
+      mean_sd = NA,
+      sd = sd,
+      sd_sd = NA,
+      max = max
+    )
   )
 })
 

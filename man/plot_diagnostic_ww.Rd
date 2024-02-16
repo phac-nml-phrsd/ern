@@ -25,8 +25,22 @@ data("ww.input")
 # Estimate Rt based on wastewater data
 x = estimate_R_ww(
   ww.conc  = ww.input,
-  dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
-  dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+  dist.fec = ern::def_dist(
+    dist = "gamma",
+    mean = 12.90215,
+    mean_sd = 1.136829,
+    shape = 1.759937,
+    shape_sd = 0.2665988,
+    max = 33
+    ),
+  dist.gi  = ern::def_dist(
+    dist     = "gamma",
+    mean     = 6.84,
+    mean_sd  = 0.7486,
+    shape    = 2.39,
+    shape_sd = 0.3573,
+    max      = 15
+    ), 
   silent   = TRUE
 )
 

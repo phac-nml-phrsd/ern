@@ -17,8 +17,22 @@
 #' # Estimate Rt based on wastewater data
 #' x = estimate_R_ww(
 #'   ww.conc  = ww.input,
-#'   dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
-#'   dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+#'   dist.fec = ern::def_dist(
+#'     dist = "gamma",
+#'     mean = 12.90215,
+#'     mean_sd = 1.136829,
+#'     shape = 1.759937,
+#'     shape_sd = 0.2665988,
+#'     max = 33
+#'     ),
+#'   dist.gi  = ern::def_dist(
+#'     dist     = "gamma",
+#'     mean     = 6.84,
+#'     mean_sd  = 0.7486,
+#'     shape    = 2.39,
+#'     shape_sd = 0.3573,
+#'     max      = 15
+#'     ), 
 #'   silent   = TRUE
 #' )
 #' 
@@ -108,10 +122,35 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #' \dontrun{
 #' x = estimate_R_cl(
 #'   cl.input = dat,
-#'   dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
-#'   dist.repfrac = def_dist_reporting_fraction(),
-#'   dist.incub = def_dist_incubation_period(pathogen = 'sarscov2'),
-#'   dist.gi = def_dist_generation_interval(pathogen = 'sarscov2'),
+#'   dist.repdelay = ern::def_dist(
+#'     dist = 'gamma',
+#'     mean = 6.99,
+#'     mean_sd = 0.2211,
+#'     sd = 3.663,
+#'     sd_sd = 0.1158,
+#'     max = 21
+#'     ), 
+#'   dist.repfrac = ern::def_dist(
+#'     dist = "unif",
+#'     min = 0.1,
+#'     max = 0.3
+#'     ),
+#'   dist.incub = ern::def_dist(
+#'     dist     = "gamma",
+#'     mean     = 3.49,
+#'     mean_sd  = 0.1477,
+#'     shape    = 8.5,
+#'     shape_sd = 1.8945,
+#'     max      = 8
+#'     ),
+#'   dist.gi = ern::def_dist(
+#'     dist     = "gamma",
+#'     mean     = 6.84,
+#'     mean_sd  = 0.7486,
+#'     shape    = 2.39,
+#'     shape_sd = 0.3573,
+#'     max      = 15
+#'     ),
 #'   popsize = 14e6, # population of Ontario in 2023
 #'   prm.daily = list(
 #'     # Very low number of MCMC iterations
@@ -260,7 +299,14 @@ plot_diagnostic_cl <- function(
 #' 
 #' @examples 
 #' # Define a `ern` distribution:
-#' gi  = def_dist_generation_interval(pathogen = 'influenza')
+#' gi  = ern::def_dist(
+#'   dist     = "gamma",
+#'   mean     = 6.84,
+#'   mean_sd  = 0.7486,
+#'   shape    = 2.39,
+#'   shape_sd = 0.3573,
+#'   max      = 15
+#'   )
 #' 
 #' # Plot can be customized like any `ggplot` object:
 #' g = plot_dist(gi) + ggplot2::labs(subtitle = 'your subtitle')
