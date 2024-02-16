@@ -18,8 +18,22 @@ Get a discretized, truncated version of a distribution
 \examples{
 
 # Define distributions
-fec = def_dist_fecal_shedding(pathogen = 'sarscov2')
-gi  = def_dist_generation_interval(pathogen = 'influenza')
+fec = ern::def_dist(
+  dist = "gamma",
+  mean = 12.90215,
+  mean_sd = 1.136829,
+  shape = 1.759937,
+  shape_sd = 0.2665988,
+  max = 33
+  )
+gi  = ern::def_dist(
+  dist     = "gamma",
+  mean     = 6.84,
+  mean_sd  = 0.7486,
+  shape    = 2.39,
+  shape_sd = 0.3573,
+  max      = 15
+  )
 
 # Get their (discretized) densities
 d.fec = get_discrete_dist(fec)

@@ -23,9 +23,9 @@ estimate_R_ww(
 \item \code{value}: pathogen concentration
 }}
 
-\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
+\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
 \item{scaling.factor}{Numeric. Scaling from wastewater concentration to
 prevalence. This value may be assumed or independently calibrated to data.}
@@ -79,8 +79,22 @@ data("ww.input")
 # Run the estimation of Rt based on the wastewater data
 x = estimate_R_ww(
   ww.conc  = ww.input,
-  dist.fec = def_dist_fecal_shedding(pathogen = 'sarscov2'),
-  dist.gi  = def_dist_generation_interval(pathogen = 'sarscov2'), 
+  dist.fec = ern::def_dist(
+    dist = "gamma",
+    mean = 12.90215,
+    mean_sd = 1.136829,
+    shape = 1.759937,
+    shape_sd = 0.2665988,
+    max = 33
+    ),
+  dist.gi  = ern::def_dist(
+    dist     = "gamma",
+    mean     = 6.84,
+    mean_sd  = 0.7486,
+    shape    = 2.39,
+    shape_sd = 0.3573,
+    max      = 15
+    ), 
   silent   = TRUE
 )
 

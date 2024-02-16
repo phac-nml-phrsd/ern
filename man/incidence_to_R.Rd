@@ -29,7 +29,7 @@ estimates after sampling uncertain distributions.
 Estimate Rt using EpiEstim
 }
 \seealso{
-\code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}
+\code{\link[=def_dist]{def_dist()}}
 
 \code{\link[EpiEstim:make_config]{EpiEstim::make_config()}}
 }

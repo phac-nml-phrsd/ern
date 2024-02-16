@@ -28,13 +28,13 @@ estimate_R_cl(
 \item \code{value}: count of reported cases
 }}
 
-\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
+\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
 \item{popsize}{Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.}
 
@@ -116,10 +116,35 @@ dat = cl.input[cl.input$pt == 'on' &
 \dontrun{
 x = estimate_R_cl(
   cl.input = dat,
-  dist.repdelay = def_dist_reporting_delay(pathogen = 'sarscov2'), 
-  dist.repfrac = def_dist_reporting_fraction(),
-  dist.incub = def_dist_incubation_period(pathogen = 'sarscov2'),
-  dist.gi = def_dist_generation_interval(pathogen = 'sarscov2'),
+  dist.repdelay = ern::def_dist(
+    dist = 'gamma',
+    mean = 6.99,
+    mean_sd = 0.2211,
+    sd = 3.663,
+    sd_sd = 0.1158,
+    max = 21
+    ), 
+  dist.repfrac = ern::def_dist(
+    dist = "unif",
+    min = 0.1,
+    max = 0.3
+    ),
+  dist.incub = ern::def_dist(
+    dist     = "gamma",
+    mean     = 3.49,
+    mean_sd  = 0.1477,
+    shape    = 8.5,
+    shape_sd = 1.8945,
+    max      = 8
+    ),
+  dist.gi = ern::def_dist(
+    dist     = "gamma",
+    mean     = 6.84,
+    mean_sd  = 0.7486,
+    shape    = 2.39,
+    shape_sd = 0.3573,
+    max      = 15
+    ),
   popsize = 14e6, # population of Ontario in 2023
   prm.daily = list(
     method = 'renewal',

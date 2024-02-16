@@ -21,9 +21,9 @@ inc2R_one_iter(
 \item{i}{Numeric. Iteration index. (not used but required when using
 \code{lapply()})}
 
-\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist_fecal_shedding]{def_dist_fecal_shedding()}}.}
+\item{dist.fec}{List. Parameters for the fecal shedding distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
 \item{ww.conc}{Data frame. Must have variables:
 \itemize{

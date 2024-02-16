@@ -18,13 +18,13 @@ estimate_R_cl_single(
 \arguments{
 \item{cl.daily}{Dataframe of inferred daily incidence.}
 
-\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist_reporting_fraction]{def_dist_reporting_fraction()}}.}
+\item{dist.repfrac}{List. Parameters for the reporting fraction distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist_reporting_delay]{def_dist_reporting_delay()}}.}
+\item{dist.repdelay}{List. Parameters for the reporting delay distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist_incubation_period]{def_dist_incubation_period()}}.}
+\item{dist.incub}{List. Parameters for the incubation period distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
-\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist_generation_interval]{def_dist_generation_interval()}}.}
+\item{dist.gi}{List. Parameters for the generation interval distribution in the same format as returned by \code{\link[=def_dist]{def_dist()}}.}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:
