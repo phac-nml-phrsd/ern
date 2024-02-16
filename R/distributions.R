@@ -36,8 +36,9 @@
 #' 
 def_dist <- function(dist, ...){
   # Tests to see if correct distributions specified
-  stopifnot(is.character(dist))
-  stopifnot(dist %in% c("gamma", "norm", "lnorm", "unif"))
+  assertthat::assert_that(assertthat::is.string(dist))
+  assertthat::assert_that(dist %in% c("gamma", "norm", "lnorm", "unif"),
+                          msg = "Specified distribution not supported.\nAborting!")
   
   d = list(
     dist = dist,
