@@ -23,7 +23,7 @@ test_that("agg_to_daily() returns a data frame with the right format", {
     prm.daily = prm.daily,
     silent = TRUE
   )
-
+  
   # check output
   test_output_tibble(
     res[['df']],
@@ -38,7 +38,7 @@ test_that("agg_to_daily() returns a data frame with the right format", {
 
 test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", {
   df <- cl.input
-
+  
   df[1, "value"] <- -10
   expect_error(
     agg_to_daily(
@@ -49,7 +49,7 @@ test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", 
       silent = TRUE
     )
   )
-
+  
   df[1, "value"] <- popsize*1e4
   expect_error(
     agg_to_daily(
@@ -72,36 +72,36 @@ df = tibble::tibble(
 )
 
 test_that("internal time index is correctly specified", {
-
+  
   # evenly spaced dates
   window = 8 # date spacing
-
+  
   check <- all((df
-      |> dplyr::slice(which(dplyr::row_number() %% window == 1))
-      |> attach_t_agg(silent = TRUE)
-      |> dplyr::mutate(t.diff.check = as.numeric(date - dplyr::lag(date)))
-      |> tidyr::drop_na()
-      |> dplyr::mutate(check = t.diff.check == window)
-    )$check
+                |> dplyr::slice(which(dplyr::row_number() %% window == 1))
+                |> attach_t_agg(silent = TRUE)
+                |> dplyr::mutate(t.diff.check = as.numeric(date - dplyr::lag(date)))
+                |> tidyr::drop_na()
+                |> dplyr::mutate(check = t.diff.check == window)
+  )$check
   )
-
+  
   expect_true(check)
-
+  
   # randomly spaced dates
   check <- all(
-  suppressMessages(df
-      |> dplyr::slice_sample(n = 20)
-      |> dplyr::arrange(date)
-      |> dplyr::mutate(window = as.numeric(date - lag(date)))
-      |> attach_t_agg()
-      |> dplyr::mutate(
-        window.t = t - lag(t),
-        check = window == window.t
-      )
-      |> tidyr::drop_na()
+    suppressMessages(df
+                     |> dplyr::slice_sample(n = 20)
+                     |> dplyr::arrange(date)
+                     |> dplyr::mutate(window = as.numeric(date - lag(date)))
+                     |> attach_t_agg()
+                     |> dplyr::mutate(
+                       window.t = t - lag(t),
+                       check = window == window.t
+                     )
+                     |> tidyr::drop_na()
     )$check
   )
-
+  
   expect_true(check)
 })
 
@@ -111,5 +111,25 @@ test_that("message is returned if first aggregation period not specified for agg
 
 test_that("message is returned when first aggregation period is specified explicitly", {
   expect_message(attach_t_agg(df, prm.daily = list(first.agg.period = 1)))
+})
+
+
+
+test_that("warning message is returned when deducing times from dates",{
+  
+  d =lubridate::ymd('2022-01-01')+ seq(0,40,by=7)
+  df  = data.frame(date = d,
+                  value = rpois(n=length(d), lambda = 100))
+  prm.daily$burn = 2
+  prm.daily$iter = 2
+  
+  expect_warning(
+    agg_to_daily(
+      cl.input = df,
+      dist.gi = dist.gi,
+      popsize = popsize,
+      prm.daily = prm.daily,
+      silent = TRUE
+    ) )
 })
 
