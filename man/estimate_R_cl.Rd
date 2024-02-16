@@ -11,8 +11,9 @@ estimate_R_cl(
   dist.incub,
   dist.gi,
   popsize,
-  prm.daily = list(burn = 500, iter = 2000, chains = 3, first.agg.period = NULL,
-    prior_R0_shape = 2, prior_R0_rate = 0.6, prior_alpha_shape = 1, prior_alpha_rate = 1),
+  prm.daily = list(method = "linear", burn = 500, iter = 2000, chains = 3,
+    first.agg.period = NULL, prior_R0_shape = 2, prior_R0_rate = 0.6, prior_alpha_shape =
+    1, prior_alpha_rate = 1),
   prm.daily.check = list(agg.reldiff.tol = 10),
   prm.smooth = list(method = "rollmean", align = "right", window = 7),
   prm.R = list(iter = 10, CI = 0.95, window = 7, config.EpiEstim = NULL),
@@ -39,10 +40,19 @@ estimate_R_cl(
 
 \item{prm.daily}{List. Parameters for daily report inference via MCMC. Elements include:
 \itemize{
+\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+\item \code{method}: String. Method name to infer the daily incidence reports from aggregated ones.
+Either \code{linear} or \code{renewal} is currently implemented.
+The \code{linear} method simply performs a linear interpolation that matches the aggregated values.
+The \code{renewal} method fits a SIR-like model using a renewal equation to infer the daily incidence.
+In this case, the fitting algorithm is a Markov Chain Monte Carlo (MCMC) implemented in JAGS
+and needs the parameter below (e.g., \code{burn,iter,chains,...}).
+The \code{renewal} method is more adapted for short single wave epidemics as this models
+i) naturally fits a single wave and ii) has longer computing time.
+For longer time series, user may perfer the \code{linear} method.
 \item \code{burn}: Numeric. Length of burn-in period (number of days).
 \item \code{iter}: Numeric. Number of iterations after burn-in period (number of days).
 \item \code{chains}: Numeric. Number of chains to simulate.
-\item \code{first.agg.period}: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 \item \code{prior_R0_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
 \item \code{prior_R0_rate}: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
 \item \code{prior_alpha_shape}: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
@@ -137,6 +147,7 @@ x = estimate_R_cl(
     ),
   popsize = 14e6, # population of Ontario in 2023
   prm.daily = list(
+    method = 'renewal',
     # Very low number of MCMC iterations
     # for this example to run fast.
     # Increase `burn`, `iter` and `chains` 

@@ -119,7 +119,8 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
       res$cl.daily |> dplyr::select(date, value)
     )
 
-    # verify this is still OK if popsize, prm.daily and prm.daily.check are NULL
+    # verify this is still OK if popsize, prm.daily 
+    # and prm.daily.check are NULL
     res2 <- estimate_R_cl(
       cl.daily.test,
       dist.repdelay,
@@ -177,6 +178,35 @@ test_that("estimate_R_cl() smooths daily input data (but skips JAGS step) with s
 })
 
 
-
+test_that("estimate_R_cl() works with the `linear` method", {
+  
+  res <- estimate_R_cl(
+    cl.input |> dplyr::filter(pt == "on"),
+    dist.repdelay,
+    dist.repfrac,
+    dist.incub,
+    dist.gi,
+    popsize = popsize,
+    prm.daily = list(method = "linear"),
+    prm.daily.check = prm.daily.check,
+    prm.smooth = NULL,
+    prm.R = prm.R,
+    silent = TRUE
+  )
+  
+  expect_equal(class(res), "list")
+  
+  expect_equal(
+    names(res),
+    c("cl.input", "cl.daily", "inferred.agg", "R", "diagnostic.mcmc")
+  )
+  
+  test_output_tibble(
+    res$inferred.agg,
+    col_name = c("date", "obs", "mean.agg", "lwr.agg", "upr.agg"),
+    col_class = c("Date", rep("numeric", 4))
+  )
+              
+})
 
 

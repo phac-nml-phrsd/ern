@@ -8,10 +8,19 @@
 #' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
+#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
+#'  \item `method`: String. Method name to infer the daily incidence reports from aggregated ones. 
+#'  Either \code{linear} or \code{renewal} is currently implemented. 
+#'  The \code{linear} method simply performs a linear interpolation that matches the aggregated values.
+#'  The \code{renewal} method fits a SIR-like model using a renewal equation to infer the daily incidence. 
+#'  In this case, the fitting algorithm is a Markov Chain Monte Carlo (MCMC) implemented in JAGS
+#'  and needs the parameter below (e.g., \code{burn,iter,chains,...}). 
+#'  The \code{renewal} method is more adapted for short single wave epidemics as this models
+#'  i) naturally fits a single wave and ii) has longer computing time. 
+#'  For longer time series, user may perfer the \code{linear} method.  
 #'  \item `burn`: Numeric. Length of burn-in period (number of days).
 #'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
 #'  \item `chains`: Numeric. Number of chains to simulate.
-#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #'  \item `prior_R0_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for R0.
 #'  \item `prior_R0_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
 #'  \item `prior_alpha_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
@@ -41,9 +50,7 @@
 #' }
 #' @export
 #' 
-#' 
 #' @seealso [plot_diagnostic_cl()] [estimate_R_ww()]
-#' 
 #' 
 #' @examples 
 #' 
@@ -91,6 +98,7 @@
 #'     ),
 #'   popsize = 14e6, # population of Ontario in 2023
 #'   prm.daily = list(
+#'     method = 'renewal',
 #'     # Very low number of MCMC iterations
 #'     # for this example to run fast.
 #'     # Increase `burn`, `iter` and `chains` 
@@ -116,6 +124,7 @@ estimate_R_cl <- function(
   dist.gi,
   popsize,
   prm.daily = list(
+    method = 'linear',  # c('linear', 'renewal')
     burn = 500,
     iter = 2e3,
     chains = 3,
@@ -145,8 +154,9 @@ estimate_R_cl <- function(
 
   # Checking if JAGS is installed on machine. Stop function if not found
   suppressWarnings(j <- runjags::testjags(silent = TRUE))
+  
   if(isFALSE(j$JAGS.found)){
-stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
+    stop("JAGS is not installed on this machine but is required for Rt calculations on clinical testing data using ern::estimate_Rt_cl().
 To use this functionality, please install JAGS on https://sourceforge.net/projects/mcmc-jags/files/
 or request JAGS to be installed by your network administrator.
 See README for more details.")
@@ -178,13 +188,14 @@ See README for more details.")
       message("-----\nThe clinical testing data you input is not daily.",
               "\n`ern` requires daily data to compute Rt,",
               " so it will infer daily reports from your inputs.",
+              "\nInference method for daily incidence: `", prm.daily$method,"`",
               "\nSee `prm.daily` and `prm.daily.check` arguments of ",
               "`estimate_R_cl()` for daily inference options.\n-----")
     }
     # ==== Aggregated -> daily reports ====
 
     # check daily inference params
-    check_prm.daily(prm.daily, silent = silent)
+    check_prm.daily(prm.daily)
 
     # attach time-index column to observed aggregated reports
     cl.input <- attach_t_agg(
@@ -193,84 +204,101 @@ See README for more details.")
       silent    = silent
     )
 
-    # estimate daily reports using JAGS model
-     a = agg_to_daily(
-      cl.input  = cl.input,
-      dist.gi   = dist.gi,
-      popsize   = popsize,
-      prm.daily = prm.daily,
-      silent    = silent
-    )
-    cl.daily.raw = a[['df']]
-    jags.obj     = a[['jags.object']]
-    
-    plot.gelmanrubin = NULL 
-    
-    if(prm.daily$chains > 1){
-      gelrub = coda::gelman.diag(jags.obj)
-      plot.gelmanrubin = plot_gelman_rubin(jags.obj)
-      if(gelrub$mpsrf > 1.025) 
-        warning("\n * * * MCMC warning * * * \n",
-                "The MCMC may not have properly converged according to ",
-                "the Gelman-Rubin R statistic (R_GelmanRubin = ",
-                round(gelrub$mpsrf,3),"> 1.025). \nConsider increasing the ",
-                "number of burn-in and iterations (`prm.daily` argument of `ern::estimate_R_cl()`).")
+    if(prm.daily$method == 'renewal'){
+      # estimate daily reports using 
+      # the epidemic model based on
+      # the renewal equation and 
+      # the JAGS software for inference.
+      a = agg_to_daily(
+        cl.input  = cl.input,
+        dist.gi   = dist.gi,
+        popsize   = popsize,
+        prm.daily = prm.daily,
+        silent    = silent
+      )
+      
+      cl.daily.raw = a[['df']]
+      jags.obj     = a[['jags.object']]
+      
+      plot.gelmanrubin = NULL 
+      
+      if(prm.daily$chains > 1){
+        gelrub = coda::gelman.diag(jags.obj)
+        plot.gelmanrubin = plot_gelman_rubin(jags.obj)
+        if(gelrub$mpsrf > 1.025) 
+          warning("\n * * * MCMC warning * * * \n",
+                  "The MCMC may not have properly converged according to ",
+                  "the Gelman-Rubin R statistic (R_GelmanRubin = ",
+                  round(gelrub$mpsrf,3),"> 1.025). \nConsider increasing the ",
+                  "number of burn-in and iterations (`prm.daily` argument of `ern::estimate_R_cl()`).")
+      }
+      
+      diagnostic.mcmc = list(
+        plot.traces      = plot_traces(jags.obj),
+        plot.gelmanrubin = plot.gelmanrubin,
+        jags.obj         = jags.obj
+      )
     }
     
-    diagnostic.mcmc = list(
-      plot.traces      = plot_traces(jags.obj),
-      plot.gelmanrubin = plot.gelmanrubin,
-      jags.obj         = jags.obj
-    )
-  }
+    if(prm.daily$method == 'linear'){
+     cl.daily.raw = linear_int_daily(cl.input)
+     diagnostic.mcmc = NULL
+    }
+    
+  } # end if not daily
 
+     
   # ==== Smooth daily reports =====
 
   if(!is.null(prm.smooth)){
   # smooth daily reports before deconvolutions
   cl.daily = smooth_cl(
     cl.daily   = cl.daily.raw,
-    prm.smooth = prm.smooth
-  )} else {
+    prm.smooth = prm.smooth)
+  } else {
   # match format
     cl.daily <- cl.daily.raw |> 
       dplyr::select(id, date, value, t)
   }
-
-  # Trim smoothed reports based on relative error criterion
-
-  if(!is.daily & !is.null(prm.daily.check)){
-    if(!silent){
-      message("-----
-- Aggregating inferred daily reports back using the original
-reporting schedule, and calculating relative difference with
-original reports...")
-    }
-
-    cl.use.dates = get_use_dates(
-      cl.daily = cl.daily,
-      cl.input = cl.input,
-      prm.daily.check = prm.daily.check
-    )
-
-    if(!silent){
-      message(paste0("- Filtering out any daily inferred reports associated
-with inferred aggregates outside of the specified tolerance of ",
-                   prm.daily.check$agg.reldiff.tol, "%..."
-    ))
-      dates.before = unique(cl.daily$date)
-    message(paste0("Before filtering: ", length(dates.before), " daily reports"))
-    message(paste0("After filtering:  ", length(cl.use.dates), " daily reports"))
-    message("To reduce the number of observations dropped in filtering, either:
-  - adjust MCMC parameters in prm.daily (burn, iter, chains) to
-      improve chances of MCMC convergence,
-  - increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
-    }
-    cl.daily = (cl.daily
-       |> dplyr::filter(date %in% cl.use.dates)
-    )
+  
+  # Trim smoothed reports based on 
+  # relative error criterion
+  if(!is.daily & 
+     !is.null(prm.daily.check) ){
+    
+    if(prm.daily$method == 'renewal'){
+      
+      if(!silent){
+        message("Aggregating inferred daily reports back ",
+                "using the original reporting schedule, ",
+                "and calculating relative difference ",
+                "with original reports...")
+      }
+      
+      cl.use.dates = get_use_dates(
+        cl.daily = cl.daily,
+        cl.input = cl.input,
+        prm.daily.check = prm.daily.check )
+      
+      if(!silent){
+        message("Filtering out any daily inferred reports associated ",
+                "with inferred aggregates outside of the specified ",
+                "tolerance of ", prm.daily.check$agg.reldiff.tol, "%...")
+        
+        dates.before = unique(cl.daily$date)
+        message("  Before filtering : ", length(dates.before), " daily reports")
+        message("  After filtering  :  ", length(cl.use.dates), " daily reports")
+        message("To reduce the number of observations dropped in filtering,",
+                "either:\n",
+                "- adjust MCMC parameters in prm.daily (burn, iter, chains)",
+                " to improve chances of MCMC convergence,\n",
+                "- increase tolerance for this check (prm.daily.check$agg.reldiff.tol)")
+      }
+      cl.daily = cl.daily |> 
+        dplyr::filter(date %in% cl.use.dates)
+    } # end if method == 'renewal'
   }
-
+  
   # Estimate Rt in an ensemble and return summary
 
   R = estimate_R_cl_rep(

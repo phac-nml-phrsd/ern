@@ -8,15 +8,30 @@
 #' @keywords internal
 #'
 #' @return NULL
-check_prm.daily <- function(x, silent){
+check_prm.daily <- function(x){
 
-  # Check that mandatory elements are present and of the right type
-  for (name in c("burn", "iter", "chains")){
-    # Check presence of element
-    assertthat::assert_that(assertthat::has_name(x, name))
-    assertthat::assert_that(assertthat::is.count(x[[name]]))
+  assertthat::assert_that(assertthat::has_name(x, "method"))
+  assertthat::assert_that(assertthat::is.string(x[['method']]))
+  assertthat::assert_that(x[['method']] == "renewal" | 
+                          x[['method']] == "linear")
+  
+
+  if(x$method == "renewal"){
+    # Check that mandatory elements are 
+    # present and of the right type for this model
+    for (name in c("burn", "iter", "chains")){
+      # Check presence of element
+      assertthat::assert_that(assertthat::has_name(x, name))
+      assertthat::assert_that(assertthat::is.count(x[[name]]))
+    }
+    for (name in c("prior_R0_shape", "prior_R0_rate",
+                   "prior_alpha_shape", "prior_alpha_rate")){
+      # Check presence of element
+      assertthat::assert_that(assertthat::has_name(x, name))
+      assertthat::assert_that(assertthat::is.number(x[[name]]))
+    }
   }
-
+  
   # Check optional arguments
   if(!is.null(x$first.agg.period)){
     assertthat::assert_that(assertthat::is.count((x$first.agg.period)))
