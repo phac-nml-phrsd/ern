@@ -4,10 +4,10 @@
 \alias{linear_int_daily}
 \title{Daily incidence from linear interpolation}
 \usage{
-linear_int_daily(cl.input)
+linear_int_daily(cl.data)
 }
 \arguments{
-\item{cl.input}{Aggregated incidence.}
+\item{cl.data}{Aggregated incidence.}
 }
 \value{
 A dataframe of daily incidence

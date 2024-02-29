@@ -8,7 +8,7 @@
 #'
 get_use_dates <- function(
     cl.daily,
-    cl.input,
+    cl.data,
     prm.daily.check,
     dates.only = TRUE
 ){
@@ -17,7 +17,7 @@ get_use_dates <- function(
     summarise_by_date_iters()
 
   # make unified df with observed data
-  cl.input <- (cl.input
+  cl.data <- (cl.data
     # make date of report column to track aggregation periods
     |> dplyr::mutate(date.report = date)
     # attach start date based on time index column
@@ -36,7 +36,7 @@ get_use_dates <- function(
 
   # unified data with aggregates and relative differences
   res = (cl.daily
-    |> dplyr::full_join(cl.input, by = "date")
+    |> dplyr::full_join(cl.data, by = "date")
     |> summarise_report_counts(prm.daily.check = prm.daily.check)
   )
 

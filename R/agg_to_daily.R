@@ -13,10 +13,10 @@
 #' # Importing data attached to the `ern` package
 #' # and selecting the Omicron wave in Ontario, Canada.
 #' # This is *weekly* incidence.
-#' data(cl.input)
-#' data = cl.input[cl.input$pt == 'on' & 
-#'                   cl.input$date > as.Date('2021-11-30') & 
-#'                   cl.input$date < as.Date('2021-12-31'),] 
+#' data(cl.data)
+#' data = cl.data[cl.data$pt == 'on' & 
+#'                   cl.data$date > as.Date('2021-11-30') & 
+#'                   cl.data$date < as.Date('2021-12-31'),] 
 #' head(data)
 #' dist.gi = ern::def_dist(
 #'  dist     = "gamma",
@@ -28,7 +28,7 @@
 #' )
 #' 
 #' a = agg_to_daily(
-#' cl.input = data, 
+#' cl.data = data, 
 #' dist.gi = dist.gi, 
 #'   popsize = 14e6, 
 #'   prm.daily = list(
@@ -62,7 +62,7 @@
 
 
 agg_to_daily <- function(
-  cl.input,
+  cl.data,
   dist.gi,
   popsize,
   prm.daily,
@@ -72,23 +72,23 @@ agg_to_daily <- function(
   gi = get_discrete_dist(dist.gi)
   
   # in case the data supplied does not have a time variable
-  if( ! 't' %in% names(cl.input) ){
-    dt1 = as.integer(cl.input$date[2] - cl.input$date[1])
-    cl.input$t <-  as.integer(cl.input$date - cl.input$date[1]) + dt1
+  if( ! 't' %in% names(cl.data) ){
+    dt1 = as.integer(cl.data$date[2] - cl.data$date[1])
+    cl.data$t <-  as.integer(cl.data$date - cl.data$date[1]) + dt1
     warning('`agg_to_daily()`: time variable not supplied in data, deducting it from the dates.')
   }
 
   jags.fit = fit_jags_aggreg(
     g = gi,
     N = popsize,
-    obs.times = cl.input$t,
-    Y = cl.input$value,
+    obs.times = cl.data$t,
+    Y = cl.data$value,
     prm.daily = prm.daily,
     silent = silent) 
   
   df.daily.inc = jags.fit |>
     reshape_fit_jags() |>
-    get_realizations(cl.input)
+    get_realizations(cl.data)
 
   return(list(
     jags.object = jags.fit, 
@@ -102,16 +102,16 @@ agg_to_daily <- function(
 #' @inheritParams estimate_R_cl
 #' @keywords internal
 #' @return Data frame
-attach_t_agg <- function(cl.input, prm.daily = NULL, silent = FALSE){
+attach_t_agg <- function(cl.data, prm.daily = NULL, silent = FALSE){
 
   first.agg.period <- prm.daily$first.agg.period
 
   # Handling the first aggregation
   if(is.null(first.agg.period)){
-    fa = as.integer(cl.input$date[2]-cl.input$date[1])
+    fa = as.integer(cl.data$date[2]-cl.data$date[1])
     if(!silent){
       message(paste0("-----
-Assuming the first observed report (from ", cl.input$date[1], ")
+Assuming the first observed report (from ", cl.data$date[1], ")
 is aggregated over ", fa , " previous days
 (second observation's aggregation period).
 This can be changed in `estimate_R_cl()`, using the
@@ -128,9 +128,9 @@ in this parameter list)."))
     }
   }
 
-  date.min = min(cl.input$date)
+  date.min = min(cl.data$date)
 
-  res = cl.input |>
+  res = cl.data |>
     dplyr::mutate(t = as.numeric(date - date.min) + fa) |>
     dplyr::arrange(t)
 

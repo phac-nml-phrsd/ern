@@ -24,7 +24,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
 
   # aggregate data
   # - - - - - - - - - - - - - - - - -
-  dat <- cl.input
+  dat <- cl.data
   pathogen = 'sarscov2'
   max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
@@ -51,7 +51,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   )
 
   r.obj = ern::estimate_R_cl(
-    cl.input      = dat,
+    cl.data      = dat,
     dist.repdelay = dist.repdelay,
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,
@@ -79,7 +79,7 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   dat <- cl.daily |> dplyr::select(date, value)
 
   r.obj = ern::estimate_R_cl(
-    cl.input      = dat,
+    cl.data      = dat,
     dist.repdelay = dist.repdelay,
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,

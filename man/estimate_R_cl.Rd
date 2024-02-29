@@ -5,7 +5,7 @@
 \title{Estimate the effective reproduction from clinical report data}
 \usage{
 estimate_R_cl(
-  cl.input,
+  cl.data,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -22,7 +22,7 @@ estimate_R_cl(
 )
 }
 \arguments{
-\item{cl.input}{Data frame. Must have variables:
+\item{cl.data}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{value}: count of reported cases
@@ -92,9 +92,9 @@ estimates after sampling uncertain distributions.
 \value{
 List. Elements include:
 \itemize{
-\item \code{cl.input}: original aggregated reports signal
+\item \code{cl.data}: original aggregated reports signal
 \item \code{cl.daily}: reports as input for Rt calculation (inferred daily counts, smoothed)
-\item \code{inferred.agg}: inferred daily reports aggregated on the reporting schedule as input in \code{cl.input}
+\item \code{inferred.agg}: inferred daily reports aggregated on the reporting schedule as input in \code{cl.data}
 \item \code{R}: the effective R estimate (summary from ensemble)
 }
 }
@@ -107,15 +107,15 @@ Estimate the effective reproduction from clinical report data
 
 # Load SARS-CoV-2 reported cases in Ontario
 # during the Omicron wave
-data('cl.input')
-dat = cl.input[cl.input$pt == 'on' & 
-                 cl.input$date > as.Date('2021-11-30') & 
-                 cl.input$date < as.Date('2022-01-31'),] 
+data('cl.data')
+dat = cl.data[cl.data$pt == 'on' & 
+                 cl.data$date > as.Date('2021-11-30') & 
+                 cl.data$date < as.Date('2022-01-31'),] 
 
 # Estimate Rt
 \dontrun{
 x = estimate_R_cl(
-  cl.input = dat,
+  cl.data = dat,
   dist.repdelay = ern::def_dist(
     dist = 'gamma',
     mean = 6.99,

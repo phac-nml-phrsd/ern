@@ -245,7 +245,7 @@ test_that("check_for_deconv returns an error when number of observations <
   )
 })
 
-# cl.input ---------------------------------------------------------------
+# cl.data ---------------------------------------------------------------
 
 test_that("check_cl.input_format() returns an error when date and count columns
           are missing, and returns NULL when both columns are present in
@@ -273,7 +273,7 @@ test_that("expected output of check_df.input_daily()", {
   # logical check
   expect_equal(
     class(check_df.input_daily(
-      cl.input
+      cl.data
     )),
     "logical"
   )
@@ -281,7 +281,7 @@ test_that("expected output of check_df.input_daily()", {
   # FALSE check
   expect_false(
     check_df.input_daily(
-      cl.input
+      cl.data
     )
   )
 

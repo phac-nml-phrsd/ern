@@ -4,10 +4,10 @@
 \alias{agg_to_daily}
 \title{Infer daily counts from aggregates}
 \usage{
-agg_to_daily(cl.input, dist.gi, popsize, prm.daily, silent = FALSE)
+agg_to_daily(cl.data, dist.gi, popsize, prm.daily, silent = FALSE)
 }
 \arguments{
-\item{cl.input}{Data frame. Must have variables:
+\item{cl.data}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{value}: count of reported cases
@@ -52,10 +52,10 @@ Infer daily counts from aggregates
 # Importing data attached to the `ern` package
 # and selecting the Omicron wave in Ontario, Canada.
 # This is *weekly* incidence.
-data(cl.input)
-data = cl.input[cl.input$pt == 'on' & 
-                  cl.input$date > as.Date('2021-11-30') & 
-                  cl.input$date < as.Date('2021-12-31'),] 
+data(cl.data)
+data = cl.data[cl.data$pt == 'on' & 
+                  cl.data$date > as.Date('2021-11-30') & 
+                  cl.data$date < as.Date('2021-12-31'),] 
 head(data)
 dist.gi = ern::def_dist(
  dist     = "gamma",
@@ -67,7 +67,7 @@ dist.gi = ern::def_dist(
 )
 
 a = agg_to_daily(
-cl.input = data, 
+cl.data = data, 
 dist.gi = dist.gi, 
   popsize = 14e6, 
   prm.daily = list(

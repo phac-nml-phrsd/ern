@@ -11,7 +11,7 @@ cl.daily.test <- tibble::tibble(
   value = n # avoid zeroes
 )
 
-cl.input.test <- (cl.daily.test
+cl.data.test <- (cl.daily.test
   |> (\(x){dplyr::mutate(x, 
                          group = rep(1:(n/agg.window), each = agg.window),
                          rownum = 1:nrow(x))})()
@@ -25,7 +25,7 @@ cl.input.test <- (cl.daily.test
 test_that("get_use_dates() works when dates.only = TRUE", {
   dates.new <- get_use_dates(
     cl.daily.test,
-    cl.input.test,
+    cl.data.test,
     prm.daily.check,
     dates.only = TRUE
   )
@@ -39,7 +39,7 @@ test_that("get_use_dates() works when dates.only = TRUE", {
 test_that("get_use_dates() works when dates.only = FALSE", {
   df.new <- get_use_dates(
     cl.daily.test,
-    cl.input.test,
+    cl.data.test,
     prm.daily.check,
     dates.only = FALSE
   )
@@ -49,7 +49,7 @@ test_that("get_use_dates() works when dates.only = FALSE", {
     lwr = n,
     upr = n,
     obs = rep(c(NA, n*agg.window), times = agg.window),
-    date.report = rep(cl.input.test$date, each = agg.window),
+    date.report = rep(cl.data.test$date, each = agg.window),
     mean.agg = n*agg.window,
     lwr.agg = n*agg.window,
     upr.agg = n*agg.window,

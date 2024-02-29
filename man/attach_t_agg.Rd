@@ -4,10 +4,10 @@
 \alias{attach_t_agg}
 \title{Attach time index (number of days) column. Exclude first day since we don't necessarily know over which period of time that data was aggregated}
 \usage{
-attach_t_agg(cl.input, prm.daily = NULL, silent = FALSE)
+attach_t_agg(cl.data, prm.daily = NULL, silent = FALSE)
 }
 \arguments{
-\item{cl.input}{Data frame. Must have variables:
+\item{cl.data}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{value}: count of reported cases
