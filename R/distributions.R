@@ -167,7 +167,7 @@ get_discrete_dist <- function(params){
   # --- check args
   check_dist(params)
 
-  if(!(params$dist %in% c("lnorm", "gamma", "norm"))) {
+  if(!(params$dist %in% c("lnorm", "gamma", "norm", "unif"))) {
     stop(paste0("Distribution recipe has not been defined
                 for specified distribution type (dist = `",
                 params$dist, "`)"))
@@ -203,6 +203,14 @@ get_discrete_dist <- function(params){
       1:params$max,
       shape = shape,
       scale = scale
+    )
+  }
+  
+  if(params$dist == "unif"){
+    x <- stats::runif(
+      1:params$max,
+      min = params$min,
+      max = params$max
     )
   }
 
