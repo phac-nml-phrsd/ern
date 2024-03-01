@@ -4,10 +4,10 @@
 \alias{check_cl.input_format}
 \title{Check the format of input clinical data}
 \usage{
-check_cl.input_format(cl.input, silent = FALSE)
+check_cl.input_format(cl.data, silent = FALSE)
 }
 \arguments{
-\item{cl.input}{Data frame. Must have variables:
+\item{cl.data}{Data frame. Must have variables:
 \itemize{
 \item \code{date}: calendar date of report
 \item \code{value}: count of reported cases

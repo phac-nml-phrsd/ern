@@ -29,11 +29,11 @@
 #' @examples 
 #'
 #'  # Load data of viral concentration in wastewater
-#' data("ww.input")
+#' data("ww.data")
 #'
 #' # Run the estimation of Rt based on the wastewater data
 #' x = estimate_R_ww(
-#'   ww.conc  = ww.input,
+#'   ww.conc  = ww.data,
 #'   dist.fec = ern::def_dist(
 #'     dist = "gamma",
 #'     mean = 12.90215,
@@ -169,8 +169,19 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
                            scaling.factor, prm.R, silent,
                            RL.max.iter) {
   # set.seed(i)
-  sample.fec = sample_a_dist(dist = dist.fec)
-  sample.gi  = sample_a_dist(dist = dist.gi)
+  if(dist.fec$dist != "unif"){
+    sample.fec = sample_a_dist(dist = dist.fec)
+  }
+  else if(dist.fec$dist == "unif"){
+    sample.fec = dist.fec
+  }
+  
+  if(dist.gi$dist != "unif"){
+    sample.gi  = sample_a_dist(dist = dist.gi)
+  }
+  else if(dist.gi$dist == "unif"){
+    sample.gi = dist.gi
+  }
 
   inc = deconv_ww_inc(d              = ww.conc,
                       fec            = sample.fec,

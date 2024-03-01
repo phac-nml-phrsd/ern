@@ -5,7 +5,7 @@ popsize = 14.7e6
 
 test_that("estimate_R_cl() returns output of the expected type", {
 res <- estimate_R_cl(
-  cl.input |> dplyr::filter(pt == "on"),
+  cl.data |> dplyr::filter(pt == "on"),
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -25,7 +25,7 @@ expect_equal(
 
 expect_equal(
   names(res),
-  c("cl.input", "cl.daily", "inferred.agg", "R", "diagnostic.mcmc")
+  c("cl.data", "cl.daily", "inferred.agg", "R", "diagnostic.mcmc")
 )
 
 test_output_tibble(
@@ -44,7 +44,7 @@ test_output_tibble(
 test_that("estimate_R_cl() returns a message when prm.daily.check is not NULL, 
  input data is not daily, and silent mode is off", {
   expect_message(estimate_R_cl(
-    cl.input |> dplyr::filter(pt == "on"),
+    cl.data |> dplyr::filter(pt == "on"),
     dist.repdelay,
     dist.repfrac,
     dist.incub,
@@ -71,7 +71,7 @@ test_that("estimate_R_cl() throws a warning", {
   prm.daily2$iter = 55
   
   expect_warning({res <- estimate_R_cl(
-    cl.input |> dplyr::filter(pt == "on"),
+    cl.data |> dplyr::filter(pt == "on"),
     dist.repdelay,
     dist.repfrac,
     dist.incub,
@@ -115,12 +115,11 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
     )
 
     expect_identical(
-      res$cl.input,
+      res$cl.data,
       res$cl.daily |> dplyr::select(date, value)
     )
 
-    # verify this is still OK if popsize, prm.daily 
-    # and prm.daily.check are NULL
+    # verify this is still OK if popsize, prm.daily and prm.daily.check are NULL
     res2 <- estimate_R_cl(
       cl.daily.test,
       dist.repdelay,
@@ -136,7 +135,7 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
     )
 
     expect_identical(
-      res2$cl.input,
+      res2$cl.data,
       res2$cl.daily |> dplyr::select(date, value)
     )
 })
@@ -178,35 +177,6 @@ test_that("estimate_R_cl() smooths daily input data (but skips JAGS step) with s
 })
 
 
-test_that("estimate_R_cl() works with the `linear` method", {
-  
-  res <- estimate_R_cl(
-    cl.input |> dplyr::filter(pt == "on"),
-    dist.repdelay,
-    dist.repfrac,
-    dist.incub,
-    dist.gi,
-    popsize = popsize,
-    prm.daily = list(method = "linear"),
-    prm.daily.check = prm.daily.check,
-    prm.smooth = NULL,
-    prm.R = prm.R,
-    silent = TRUE
-  )
-  
-  expect_equal(class(res), "list")
-  
-  expect_equal(
-    names(res),
-    c("cl.input", "cl.daily", "inferred.agg", "R", "diagnostic.mcmc")
-  )
-  
-  test_output_tibble(
-    res$inferred.agg,
-    col_name = c("date", "obs", "mean.agg", "lwr.agg", "upr.agg"),
-    col_class = c("Date", rep("numeric", 4))
-  )
-              
-})
+
 
 

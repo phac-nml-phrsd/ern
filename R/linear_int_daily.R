@@ -1,14 +1,14 @@
 
 #' @title Daily incidence from linear interpolation 
 #'
-#' @param cl.input Aggregated incidence.
+#' @param cl.data Aggregated incidence.
 #'
 #' @return A dataframe of daily incidence
 #'
 
-linear_int_daily <- function(cl.input) {
+linear_int_daily <- function(cl.data) {
   
-  df    = cl.input
+  df    = cl.data
   tau   = df$t
   A     = df$value
   delta = diff(tau)

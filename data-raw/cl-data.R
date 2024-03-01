@@ -1,4 +1,4 @@
-# Get weekly public COVID reports (`cl.input`)
+# Get weekly public COVID reports (`cl.data`)
 
 # list of pts to retrieve
 pt.list <- c("bc", "ab", "sk", "mb", "on", "qc")
@@ -26,7 +26,7 @@ pt.lookup <- tibble::tribble(
 )
 
 # raw data
-cl.input <- (
+cl.data <- (
    readr::read_csv("https://health-infobase.canada.ca/src/data/covidLive/covid19-download.csv",
                    show_col_types = FALSE, na = c("", "NA", "-"))
    |> dplyr::transmute(
@@ -48,4 +48,4 @@ cl.input <- (
    |> dplyr::ungroup()
 )
 
-usethis::use_data(cl.input, overwrite = TRUE)
+usethis::use_data(cl.data, overwrite = TRUE)

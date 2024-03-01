@@ -85,7 +85,7 @@ Here, we estimate $\mathcal{R}_t$ from a subset of wastewater data from the Iona
 
 ```{r load sample data}
 # Loading sample SARS-CoV-2 wastewater data
-ww.conc = ern::ww.input
+ww.conc = ern::ww.data
 
 head(ww.conc)
 ```
@@ -216,7 +216,7 @@ plot(g)
 
 `estimate_R_cl()` requires the following inputs from the user:
 
-- `cl.input`: clinical disease reports over time, as a data frame with columns `date` (report date) and `value` (count of reports)
+- `cl.data`: clinical disease reports over time, as a data frame with columns `date` (report date) and `value` (count of reports)
 
 - Distribution families for several quantities:
   - `dist.repdelay`: reporting delay
@@ -230,7 +230,7 @@ plot(g)
 Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 reports in the province of Quebec:
 
 ```{r load-data}
-dat <- (ern::cl.input 
+dat <- (ern::cl.data 
     |> dplyr::filter(
       pt == "qc",
       dplyr::between(date, as.Date("2021-07-01"), as.Date("2021-09-01"))
@@ -357,7 +357,7 @@ Once the above inputs and parameters are defined, we estimate $\mathcal{R}_t$ as
 
 ```{r est-rt}
 r.estim = estimate_R_cl(
-  cl.input      = dat,
+  cl.data      = dat,
   dist.repdelay = dist.repdelay,
   dist.repfrac  = dist.repfrac,
   dist.incub    = dist.incub,
@@ -373,7 +373,7 @@ r.estim = estimate_R_cl(
 
 `estimate_R_cl()` returns a list with four elements:
 
-- `cl.input`: the original input of clinical disease reports over time
+- `cl.data`: the original input of clinical disease reports over time
 
 - `cl.daily`: reports as input for Rt calculation (inferred daily counts if original inputs were aggregates, smoothed if specified); includes columns:
   - `id`: identifier for each realization of the daily report inference
@@ -381,7 +381,7 @@ r.estim = estimate_R_cl(
   - `value`: inferred daily report count
   - `t`: internal time index
 
-- `inferred.agg`: inferred daily reports re-aggregated on the reporting schedule as input in `cl.input`; includes columns:
+- `inferred.agg`: inferred daily reports re-aggregated on the reporting schedule as input in `cl.data`; includes columns:
   - `date`: report date
   - `obs`: original (aggregated) observations
   - `mean.agg`: mean of the aggregated inferred daily reports

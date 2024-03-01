@@ -74,11 +74,11 @@ data.
 \examples{
 
  # Load data of viral concentration in wastewater
-data("ww.input")
+data("ww.data")
 
 # Run the estimation of Rt based on the wastewater data
 x = estimate_R_ww(
-  ww.conc  = ww.input,
+  ww.conc  = ww.data,
   dist.fec = ern::def_dist(
     dist = "gamma",
     mean = 12.90215,

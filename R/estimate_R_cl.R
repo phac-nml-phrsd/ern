@@ -1,6 +1,6 @@
 #' @title Estimate the effective reproduction from clinical report data
 #'
-#' @template param-cl.input
+#' @template param-cl.data
 #' @param dist.repfrac List. Parameters for the reporting fraction distribution in the same format as returned by [`def_dist()`].
 #' @param dist.repdelay List. Parameters for the reporting delay distribution in the same format as returned by [`def_dist()`].
 #' @param dist.incub List. Parameters for the incubation period distribution in the same format as returned by [`def_dist()`].
@@ -43,9 +43,9 @@
 #'
 #' @return List. Elements include:
 #' \itemize{
-#'  \item `cl.input`: original aggregated reports signal
+#'  \item `cl.data`: original aggregated reports signal
 #'  \item `cl.daily`: reports as input for Rt calculation (inferred daily counts, smoothed)
-#'  \item `inferred.agg`: inferred daily reports aggregated on the reporting schedule as input in `cl.input`
+#'  \item `inferred.agg`: inferred daily reports aggregated on the reporting schedule as input in `cl.data`
 #'  \item `R`: the effective R estimate (summary from ensemble)
 #' }
 #' @export
@@ -58,15 +58,15 @@
 #' 
 #' # Load SARS-CoV-2 reported cases in Ontario
 #' # during the Omicron wave
-#' data('cl.input')
-#' dat = cl.input[cl.input$pt == 'on' & 
-#'                  cl.input$date > as.Date('2021-11-30') & 
-#'                  cl.input$date < as.Date('2022-01-31'),] 
+#' data('cl.data')
+#' dat = cl.data[cl.data$pt == 'on' & 
+#'                  cl.data$date > as.Date('2021-11-30') & 
+#'                  cl.data$date < as.Date('2022-01-31'),] 
 #' 
 #' # Estimate Rt
 #' \dontrun{
 #' x = estimate_R_cl(
-#'   cl.input = dat,
+#'   cl.data = dat,
 #'   dist.repdelay = ern::def_dist(
 #'     dist = 'gamma',
 #'     mean = 6.99,
@@ -117,7 +117,7 @@
 #'  
 #' 
 estimate_R_cl <- function(
-  cl.input,
+  cl.data,
   dist.repdelay,
   dist.repfrac,
   dist.incub,
@@ -170,16 +170,16 @@ estimate_R_cl <- function(
 
   # Checking argument formats
   check_prm.R(prm.R, silent = silent)
-  check_cl.input_format(cl.input, silent = silent)
+  check_cl.input_format(cl.data, silent = silent)
 
   # Check whether input data is daily
   # if not, need to do aggregated -> daily inference
-  is.daily <- check_df.input_daily(cl.input)
+  is.daily <- check_df.input_daily(cl.data)
 
   
   if(is.daily){
     # Data is already daily 
-    cl.daily.raw <- (cl.input
+    cl.daily.raw <- (cl.data
       |> attach_t()
       |> dplyr::transmute(
        id = as.integer(1),
@@ -204,8 +204,8 @@ estimate_R_cl <- function(
     check_prm.daily(prm.daily)
 
     # attach time-index column to observed aggregated reports
-    cl.input <- attach_t_agg(
-      cl.input  = cl.input,
+    cl.data <- attach_t_agg(
+      cl.data  = cl.data,
       prm.daily = prm.daily,
       silent    = silent
     )
@@ -216,7 +216,7 @@ estimate_R_cl <- function(
       # the renewal equation and 
       # the JAGS software for inference.
       a = agg_to_daily(
-        cl.input  = cl.input,
+        cl.data  = cl.data,
         dist.gi   = dist.gi,
         popsize   = popsize,
         prm.daily = prm.daily,
@@ -247,7 +247,7 @@ estimate_R_cl <- function(
     }
     
     if(prm.daily$method == 'linear'){
-     cl.daily.raw = linear_int_daily(cl.input)
+     cl.daily.raw = linear_int_daily(cl.data)
      diagnostic.mcmc = NULL
     }
     
@@ -283,7 +283,7 @@ estimate_R_cl <- function(
       
       cl.use.dates = get_use_dates(
         cl.daily = cl.daily,
-        cl.input = cl.input,
+        cl.data = cl.data,
         prm.daily.check = prm.daily.check )
       
       if(!silent){
@@ -326,7 +326,7 @@ estimate_R_cl <- function(
     # Calculate the aggregated reports from the inferred daily reports
     inferred.agg = (get_use_dates(
       cl.daily        = cl.daily,
-      cl.input        = cl.input,
+      cl.data        = cl.data,
       prm.daily.check = list(agg.reldiff.tol = Inf),
       dates.only      = FALSE
     )
@@ -338,7 +338,7 @@ estimate_R_cl <- function(
   # Return results
 
   res = list(
-    cl.input  = cl.input,
+    cl.data  = cl.data,
     cl.daily = cl.daily,
     inferred.agg = inferred.agg,
     R = R,

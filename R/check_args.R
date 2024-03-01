@@ -215,18 +215,18 @@ check_for_deconv <- function(obs, dist){
 
 #' @title Check the format of input clinical data
 #'
-#' @template param-cl.input
+#' @template param-cl.data
 #' @template param-silent
 #'
 #' @keywords internal
 #' @return NULL
-check_cl.input_format <- function(cl.input, silent = FALSE) {
+check_cl.input_format <- function(cl.data, silent = FALSE) {
 
   # check is df
-  assertthat::assert_that(is.data.frame(cl.input))
+  assertthat::assert_that(is.data.frame(cl.data))
 
   # check for required columns
-  n = names(cl.input)
+  n = names(cl.data)
 
   msg.template1 <- 'The input data frame of clinical reports must have a `'
   msg.template2 <- '` column. ABORTING!'
@@ -238,8 +238,8 @@ check_cl.input_format <- function(cl.input, silent = FALSE) {
   }
 
   # check column types
-  assertthat::assert_that(assertthat::is.date(cl.input$date))
-  assertthat::assert_that(is.numeric(cl.input$value))
+  assertthat::assert_that(assertthat::is.date(cl.data$date))
+  assertthat::assert_that(is.numeric(cl.data$value))
 
   return()
 }
