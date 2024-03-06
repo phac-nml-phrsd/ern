@@ -31,12 +31,7 @@
 #'  \item `agg.reldiff.tol`: numerical tolerance (%) for relative error between aggregated inferred daily reports and original aggregated reports; chronological observations are dropped until this tolerance is first acheived (convergence at the start of the timeseries is often the worst, need to maintain uninterrupted daily timeseries for input into Rt calculation).
 #' }
 #' Set this entire argument to `NULL` to use inferred daily reports as is.
-#' @param prm.smooth List. Smoothing parameters for input signal (daily reports) into Rt calculation. Elements include:
-#' \itemize{
-#'  \item `method`: smoothing method to use; currently only `rollmean` (centred rolling average) is implemented
-#'  \item `window`: width of smoothing window (number of days)
-#' }
-#' Set this entire argument to `NULL` to turn off smoothing.
+#' @template param-prm.smooth
 #' @param RL.max.iter Integer. Maximum of iterations for the Richardson-Lucy deconvolution algorithm.
 #' @template param-prm.R
 #' @template param-silent

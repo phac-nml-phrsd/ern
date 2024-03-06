@@ -16,10 +16,10 @@ smooth_ww(ww.conc, prm.smooth, silent = FALSE)
 \item{prm.smooth}{List. list of smoothing parameters. Parameters should be
 specified as followed:
 \itemize{
-\item \code{method}: smoothing method, either \code{'rollmean'} (rolling mean) or \code{'loess'} (LOESS smoothing)
+\item \code{method}: smoothing method, either \code{'rollmean'} (rolling mean) or \code{'loess'} (LOESS smoothing via \code{\link[stats:loess]{stats::loess()}})
 \item \code{window}: for \verb{method = 'rollmean} only; width of smoothing window in days
 \item \code{align}: for \verb{method = 'rollmean} only; smoothing alignment, either \code{'center'}, \code{'left'}, \code{'right'}
-\item \code{span}: for \code{method = 'loess'} only; smoothing span (see the documentation for \code{stats::loess()} for details)
+\item \code{span}: for \code{method = 'loess'} only; smoothing span (see the documentation for \code{\link[stats:loess]{stats::loess()}} for details)
 \item \code{floor}: optional call for wastewater concentration smoothing with \code{method = 'loess'} only; user defined minimum smoothing concentration
 }
 Set this entire list to \code{NULL} to turn off smoothing}

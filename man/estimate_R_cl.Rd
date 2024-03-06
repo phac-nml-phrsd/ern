@@ -65,12 +65,16 @@ For longer time series, user may perfer the \code{linear} method.
 }
 Set this entire argument to \code{NULL} to use inferred daily reports as is.}
 
-\item{prm.smooth}{List. Smoothing parameters for input signal (daily reports) into Rt calculation. Elements include:
+\item{prm.smooth}{List. list of smoothing parameters. Parameters should be
+specified as followed:
 \itemize{
-\item \code{method}: smoothing method to use; currently only \code{rollmean} (centred rolling average) is implemented
-\item \code{window}: width of smoothing window (number of days)
+\item \code{method}: smoothing method, either \code{'rollmean'} (rolling mean) or \code{'loess'} (LOESS smoothing via \code{\link[stats:loess]{stats::loess()}})
+\item \code{window}: for \verb{method = 'rollmean} only; width of smoothing window in days
+\item \code{align}: for \verb{method = 'rollmean} only; smoothing alignment, either \code{'center'}, \code{'left'}, \code{'right'}
+\item \code{span}: for \code{method = 'loess'} only; smoothing span (see the documentation for \code{\link[stats:loess]{stats::loess()}} for details)
+\item \code{floor}: optional call for wastewater concentration smoothing with \code{method = 'loess'} only; user defined minimum smoothing concentration
 }
-Set this entire argument to \code{NULL} to turn off smoothing.}
+Set this entire list to \code{NULL} to turn off smoothing}
 
 \item{prm.R}{List. Settings for the ensemble when calculating Rt.
 Elements include:
