@@ -9,7 +9,7 @@
 
 A data frame with 47 rows and 3 columns:
 \itemize{
-\item \code{date}: report date
+\item \code{date}: sampling date
 \item \code{value}: mean sample concentration between multiple replicates
 }
 }
@@ -18,6 +18,12 @@ A data frame with 47 rows and 3 columns:
 ww.data
 }
 \description{
-A subset of SARS-CoV-2 (N2 gene) concentration data in wastewater sampled from the Iona Island wastewater treatment plant in Vancouver between 7 July 2023 and 5 November 2023.
+A subset of SARS-CoV-2 (N2 gene) concentration data in
+wastewater sampled from the Iona Island wastewater treatment plant
+in Vancouver between 7 July 2023 and 5 November 2023.
+Units are in N2 gene copies per milliliter of wastewater.
+Concentration was measured using RT-qPCR assays; RNA was extracted from
+suspended solids.
+See \url{https://health-infobase.canada.ca/covid-19/wastewater/}
 }
 \keyword{datasets}

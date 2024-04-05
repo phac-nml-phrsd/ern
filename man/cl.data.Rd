@@ -9,7 +9,8 @@
 
 A data frame with 96 rows and 3 columns:
 \itemize{
-\item \code{pt}: standard two-character abbreviation (lowercase) of the province name (based on Statcan 2021 census abbreviations)
+\item \code{pt}: standard two-character abbreviation (lowercase)
+of the province name (based on Statistics Canada 2021 census abbreviations)
 \item \code{date}: report date
 \item \code{value}: count of reported cases for the previous week
 }
@@ -23,6 +24,7 @@ Filter indicating a specific province to extract a sample dataset for use with \
 cl.data
 }
 \description{
-A subset of COVID-19 weekly reports in the Government of Canada Health Infobase
+A subset of COVID-19 weekly reports in the Government of Canada Health Infobase.
+See \url{https://health-infobase.canada.ca/covid-19/}
 }
 \keyword{datasets}
