@@ -4,7 +4,7 @@
 \alias{plot_diagnostic_cl}
 \title{Diagnostic plot for R estimation from clinical report data}
 \usage{
-plot_diagnostic_cl(r.estim)
+plot_diagnostic_cl(r.estim, caption = NULL, wrap.plots = TRUE)
 }
 \arguments{
 \item{r.estim}{List. Output of \code{\link[=estimate_R_cl]{estimate_R_cl()}}.}
@@ -33,9 +33,9 @@ x = estimate_R_cl(
   dist.repdelay = ern::def_dist(
     dist = 'gamma',
     mean = 6.99,
-    mean_sd = 0.2211,
-    sd = 3.663,
-    sd_sd = 0.1158,
+    mean_sd = 0.22,
+    sd = 3.6,
+    sd_sd = 0.11,
     max = 21
     ), 
   dist.repfrac = ern::def_dist(
@@ -46,17 +46,17 @@ x = estimate_R_cl(
   dist.incub = ern::def_dist(
     dist     = "gamma",
     mean     = 3.49,
-    mean_sd  = 0.1477,
+    mean_sd  = 0.14,
     shape    = 8.5,
-    shape_sd = 1.8945,
+    shape_sd = 1.89,
     max      = 8
     ),
   dist.gi = ern::def_dist(
     dist     = "gamma",
     mean     = 6.84,
-    mean_sd  = 0.7486,
+    mean_sd  = 0.74,
     shape    = 2.39,
-    shape_sd = 0.3573,
+    shape_sd = 0.35,
     max      = 15
     ),
   popsize = 14e6, # population of Ontario in 2023
@@ -74,7 +74,13 @@ x = estimate_R_cl(
 
 # Diagnostic plot for Rt estimates 
 # from clinical data
-plot_diagnostic_cl(x)
+g = plot_diagnostic_cl(x)
+plot(g)
+
+g2 = plot_diagnostic_cl(x, caption = 'This is your caption', wrap.plots = FALSE)
+plot(g2$clinical_data)
+plot(g2$inferred_incidence)
+plot(g2$Rt)
 }
 
 }
