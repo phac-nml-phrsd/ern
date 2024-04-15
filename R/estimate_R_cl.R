@@ -5,19 +5,18 @@
 #' @param dist.repdelay List. Parameters for the reporting delay distribution in the same format as returned by [`def_dist()`].
 #' @param dist.incub List. Parameters for the incubation period distribution in the same format as returned by [`def_dist()`].
 #' @template param-dist.gi
-#' @param popsize Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #' @param prm.daily List. Parameters for daily report inference via MCMC. Elements include:
 #' \itemize{
-#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #'  \item `method`: String. Method name to infer the daily incidence reports from aggregated ones. 
 #'  Either \code{linear} or \code{renewal} is currently implemented. 
 #'  The \code{linear} method simply performs a linear interpolation that matches the aggregated values.
 #'  The \code{renewal} method fits a SIR-like model using a renewal equation to infer the daily incidence. 
 #'  In this case, the fitting algorithm is a Markov Chain Monte Carlo (MCMC) implemented in JAGS
-#'  and needs the parameter below (e.g., \code{burn,iter,chains,...}). 
+#'  and needs the parameters below (e.g., \code{burn,iter,chains,...}). 
 #'  The \code{renewal} method is more adapted for short single wave epidemics as this models
 #'  i) naturally fits a single wave and ii) has longer computing time. 
 #'  For longer time series, user may perfer the \code{linear} method.  
+#'  \item `popsize`: Integer. Population size to use in MCMC simulation to infer daily observations from aggregated input data.
 #'  \item `burn`: Numeric. Length of burn-in period (number of days).
 #'  \item `iter`: Numeric. Number of iterations after burn-in period (number of days).
 #'  \item `chains`: Numeric. Number of chains to simulate.
@@ -25,6 +24,7 @@
 #'  \item `prior_R0_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for R0.
 #'  \item `prior_alpha_shape`: Shape of the (hyper-)parameter for the prior Gamma distribution for alpha.
 #'  \item `prior_alpha_rate`: Rate of the (hyper-)parameter for the prior Gamma distribution for alpha.
+#'  \item `first.agg.period`: length of aggregation period for first aggregated observation (number of days); if NULL, assume same aggregation period as observed for second observation (gap between first and second observations)
 #' }
 #' @param prm.daily.check List. Parameters for checking aggregated to daily report inference. Elements include:
 #' \itemize{
@@ -91,9 +91,9 @@
 #'     shape_sd = 0.3573,
 #'     max      = 15
 #'     ),
-#'   popsize = 14e6, # population of Ontario in 2023
 #'   prm.daily = list(
 #'     method = 'renewal',
+#'     popsize = 14e6, # population of Ontario in 2023
 #'     # Very low number of MCMC iterations
 #'     # for this example to run fast.
 #'     # Increase `burn`, `iter` and `chains` 
@@ -117,17 +117,17 @@ estimate_R_cl <- function(
   dist.repfrac,
   dist.incub,
   dist.gi,
-  popsize,
   prm.daily = list(
     method = 'linear',  # c('linear', 'renewal')
+    popsize = NULL,
     burn = 500,
     iter = 2e3,
     chains = 3,
-    first.agg.period = NULL,
     prior_R0_shape = 2,
     prior_R0_rate = 0.6,
     prior_alpha_shape = 1,
-    prior_alpha_rate = 1
+    prior_alpha_rate = 1,
+    first.agg.period = NULL
   ),
   prm.daily.check = list(
     agg.reldiff.tol = 10
@@ -147,11 +147,12 @@ estimate_R_cl <- function(
   silent = FALSE
 ) {
 
-  # Checking if JAGS is installed on machine. Stop function if not found
-  suppressWarnings(j <- runjags::testjags(silent = TRUE))
-  
+  # Checking if JAGS is installed on machine when daily inference via renewal method is requested. Stop function if not found
   if(!is.null(prm.daily)){
-    if(isFALSE(j$JAGS.found) & prm.daily[['method']] == 'renewal'){
+    if(prm.daily$method == "renewal"){
+    suppressWarnings(j <- runjags::testjags(silent = TRUE))
+
+    if(isFALSE(j$JAGS.found)){
       stop(
         "JAGS is not installed on this machine but is required for\n",
         "Rt estimations on clinical testing data using ern::estimate_Rt_cl()\n",
@@ -160,9 +161,9 @@ estimate_R_cl <- function(
         "  - Either, install JAGS (https://sourceforge.net/projects/mcmc-jags/files/)\n",
         "  - Or, use the \"linear\" method: `prm.daily(method=\'renewal\')`\n\n",
         "See README for more details.\n\n")
-    }
+    }}
   }
-
+  
   # Checking argument formats
   check_prm.R(prm.R, silent = silent)
   check_cl.input_format(cl.data, silent = silent)
@@ -213,7 +214,6 @@ estimate_R_cl <- function(
       a = agg_to_daily(
         cl.data  = cl.data,
         dist.gi   = dist.gi,
-        popsize   = popsize,
         prm.daily = prm.daily,
         silent    = silent
       )

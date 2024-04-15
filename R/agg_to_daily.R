@@ -30,8 +30,9 @@
 #' a = agg_to_daily(
 #' cl.data = data, 
 #' dist.gi = dist.gi, 
-#'   popsize = 14e6, 
 #'   prm.daily = list(
+#'   method = "renewal",
+#'   popsize = 14e6,
 #'   # MCMC parameters.
 #'   # small values for computation speed for this example.
 #'   # Increase for better accuracy
@@ -64,7 +65,6 @@
 agg_to_daily <- function(
   cl.data,
   dist.gi,
-  popsize,
   prm.daily,
   silent = FALSE
 ) {
@@ -80,7 +80,7 @@ agg_to_daily <- function(
 
   jags.fit = fit_jags_aggreg(
     g = gi,
-    N = popsize,
+    N = prm.daily$popsize,
     obs.times = cl.data$t,
     Y = cl.data$value,
     prm.daily = prm.daily,
