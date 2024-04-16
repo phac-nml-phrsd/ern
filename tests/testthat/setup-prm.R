@@ -2,6 +2,7 @@
 
 prm.daily = list(
   method = "renewal",
+  popsize = 14.7e6,
   burn = 5,
   iter = 5,
   chains = 1,

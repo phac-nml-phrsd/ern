@@ -50,59 +50,83 @@
 #' @examples 
 #' 
 #' # -- THIS EXAMPLE TAKES ABOUT 30 SECONDS TO RUN --
-#' 
-#' # Load SARS-CoV-2 reported cases in Ontario
-#' # during the Omicron wave
-#' data('cl.data')
-#' dat = cl.data[cl.data$pt == 'on' & 
-#'                  cl.data$date > as.Date('2021-11-30') & 
-#'                  cl.data$date < as.Date('2022-01-31'),] 
-#' 
 #' # Estimate Rt
+#' 
 #' \dontrun{
-#' x = estimate_R_cl(
-#'   cl.data = dat,
-#'   dist.repdelay = ern::def_dist(
+#' # Load SARS-CoV-2 reported cases in Quebec
+#' # during the Summer 2021
+#' dat <- (ern::cl.data
+#'     |> dplyr::filter(
+#'       pt == "qc", 
+#'       dplyr::between(date, as.Date("2021-06-01"), as.Date("2021-09-01"))
+#'     )
+#' )
+#' # distributions
+#' dist.repdelay = ern::def_dist(
 #'     dist = 'gamma',
-#'     mean = 6.99,
-#'     mean_sd = 0.2211,
-#'     sd = 3.663,
-#'     sd_sd = 0.1158,
-#'     max = 21
-#'     ), 
-#'   dist.repfrac = ern::def_dist(
+#'     mean = 5, 
+#'     mean_sd = 1,
+#'     sd = 1,
+#'     sd_sd = 0.1,
+#'     max = 10
+#' )
+#' dist.repfrac = ern::def_dist(
 #'     dist = "unif",
 #'     min = 0.1,
 #'     max = 0.3
-#'     ),
-#'   dist.incub = ern::def_dist(
-#'     dist     = "gamma",
-#'     mean     = 3.49,
-#'     mean_sd  = 0.1477,
-#'     shape    = 8.5,
+#' )
+#' dist.incub = ern::def_dist(
+#'     dist = "gamma",
+#'     mean = 3.49,
+#'     mean_sd = 0.1477,
+#'     shape = 8.5,
 #'     shape_sd = 1.8945,
-#'     max      = 8
-#'     ),
-#'   dist.gi = ern::def_dist(
-#'     dist     = "gamma",
-#'     mean     = 6.84,
-#'     mean_sd  = 0.7486,
-#'     shape    = 2.39,
-#'     shape_sd = 0.3573,
-#'     max      = 15
-#'     ),
-#'   prm.daily = list(
-#'     method = 'renewal',
-#'     popsize = 14e6, # population of Ontario in 2023
-#'     # Very low number of MCMC iterations
-#'     # for this example to run fast.
-#'     # Increase `burn`, `iter` and `chains` 
-#'     # for better accuracy
-#'     burn = 50, iter = 50, chains = 1, 
-#'     # first.agg.period = NULL,
-#'     prior_R0_shape = 2, prior_R0_rate = 0.6, 
-#'     prior_alpha_shape = 1, prior_alpha_rate = 1),
-#'   silent = TRUE
+#'     max = 8
+#' )
+#' dist.gi = ern::def_dist(
+#'     dist = "gamma",
+#'     mean = 6,
+#'     mean_sd = 0.75,
+#'     shape = 2.4,
+#'     shape_sd = 0.3,
+#'     max = 10
+#' )
+#'
+#' # settings
+#' prm.daily <- list(
+#'     method = "renewal",
+#'     popsize = 8.5e6, # Q3 (July 1) 2022 estimate for Quebec
+#'     burn = 500,
+#'     iter = 500,
+#'     chains = 2,
+#'     prior_R0_shape = 1.1, prior_R0_rate = 0.6, 
+#'     prior_alpha_shape = 1, prior_alpha_rate = 1
+#' )
+#' prm.daily.check <- list(
+#'     agg.reldiff.tol = 10
+#' )
+#' prm.smooth <- list(
+#'     method = "rollmean",
+#'     align = "center",
+#'     window = 7
+#' )
+#' prm.R <- list(
+#'     iter = 20, 
+#'     CI = 0.95, 
+#'     window = 7, 
+#'     config.EpiEstim = NULL
+#' )
+#'
+#' x <- estimate_R_cl(
+#'   dat,
+#'   dist.repdelay,
+#'   dist.repfrac,
+#'   dist.incub,
+#'   dist.gi,
+#'   prm.daily,
+#'   prm.daily.check,
+#'   prm.smooth,
+#'   prm.R
 #' )
 #' 
 #' # Rt estimates

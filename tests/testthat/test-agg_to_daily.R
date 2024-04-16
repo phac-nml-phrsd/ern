@@ -1,14 +1,12 @@
 # agg_to_daily() ------------------------------------------------------------
 
 # set up inputs
-popsize <- 14.7e6
 
 test_that("agg_to_daily() returns a message when silent = FALSE", {
   expect_message(
     agg_to_daily(
       cl.data = cl.data,
       dist.gi = dist.gi,
-      popsize = popsize,
       prm.daily = prm.daily,
       silent = FALSE
     )
@@ -19,7 +17,6 @@ test_that("agg_to_daily() returns a data frame with the right format", {
   res <- agg_to_daily(
     cl.data = cl.data,
     dist.gi = dist.gi,
-    popsize = popsize,
     prm.daily = prm.daily,
     silent = TRUE
   )
@@ -44,18 +41,16 @@ test_that("fit_jags_aggreg() returns errors when initial incidence is invalid", 
     agg_to_daily(
       cl.data = df,
       dist.gi = dist.gi,
-      popsize = popsize,
       prm.daily = prm.daily,
       silent = TRUE
     )
   )
   
-  df[1, "value"] <- popsize*1e4
+  df[1, "value"] <- prm.daily$popsize*1e4
   expect_error(
     agg_to_daily(
       cl.data = df,
       dist.gi = dist.gi,
-      popsize = popsize,
       prm.daily = prm.daily,
       silent = TRUE
     )
@@ -127,7 +122,6 @@ test_that("warning message is returned when deducing times from dates",{
     agg_to_daily(
       cl.data = df,
       dist.gi = dist.gi,
-      popsize = popsize,
       prm.daily = prm.daily,
       silent = TRUE
     ) )

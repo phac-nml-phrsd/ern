@@ -224,9 +224,6 @@ plot(g)
   - `dist.incub`: incubation period
   - `dist.gi`: generation interval
   
-- If the input reports are not daily, the user must additionally specify the following arguments in order for `ern` to infer daily reported cases:
-  - `popsize`: the number of individual in the population being considered
-  
 Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 reports in the province of Quebec:
 
 ```{r load-data}
@@ -274,9 +271,6 @@ dist.gi = ern::def_dist(
   shape_sd = 0.3573,
   max      = 15
 )
-
-# population size for daily report inference
-popsize = 1e7
 ```
 
 We can visualize the assumed distributions with `plot_dist()`:
@@ -315,6 +309,7 @@ All of these parameters have defaults, but they can also be adjusted by the user
 # settings for daily report inference
 prm.daily = list(
   method = "renewal",
+  popsize = 1e7, # population size
    # Here, low value for `burn` and `iter` 
    # to have a fast compilation of the vignette.
    # For real-world applications, both `burn` and `iter`
@@ -362,7 +357,6 @@ r.estim = estimate_R_cl(
   dist.repfrac  = dist.repfrac,
   dist.incub    = dist.incub,
   dist.gi       = dist.gi,
-  popsize       = popsize,
   prm.daily     = prm.daily,
   prm.daily.check = prm.daily.check,
   prm.smooth    = prm.smooth,

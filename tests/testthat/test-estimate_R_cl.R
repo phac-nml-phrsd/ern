@@ -1,6 +1,3 @@
-popsize = 14.7e6
-
-
 # outputs --------------------------------------------------
 
 test_that("estimate_R_cl() returns output of the expected type", {
@@ -10,7 +7,6 @@ res <- estimate_R_cl(
   dist.repfrac,
   dist.incub,
   dist.gi,
-  popsize = popsize,
   prm.daily = prm.daily,
   prm.daily.check = prm.daily.check,
   prm.smooth = prm.smooth,
@@ -49,7 +45,6 @@ test_that("estimate_R_cl() returns a message when prm.daily.check is not NULL,
     dist.repfrac,
     dist.incub,
     dist.gi,
-    popsize = popsize,
     prm.daily = prm.daily,
     prm.daily.check = prm.daily.check,
     prm.smooth = prm.smooth,
@@ -76,7 +71,6 @@ test_that("estimate_R_cl() throws a warning", {
     dist.repfrac,
     dist.incub,
     dist.gi,
-    popsize = popsize,
     prm.daily = prm.daily2,
     prm.daily.check = prm.daily.check,
     prm.smooth = prm.smooth,
@@ -106,7 +100,6 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
       dist.repfrac,
       dist.incub,
       dist.gi,
-      popsize = popsize,
       prm.daily = prm.daily,
       prm.daily.check = prm.daily.check,
       prm.smooth = NULL, # turn off smoothing
@@ -119,14 +112,13 @@ test_that("estimate_R_cl() skips JAGS step and smoothing if input data is alread
       res$cl.daily |> dplyr::select(date, value)
     )
 
-    # verify this is still OK if popsize, prm.daily and prm.daily.check are NULL
+    # verify this is still OK if prm.daily and prm.daily.check are NULL
     res2 <- estimate_R_cl(
       cl.daily.test,
       dist.repdelay,
       dist.repfrac,
       dist.incub,
       dist.gi,
-      popsize = NULL,
       prm.daily = NULL,
       prm.daily.check = NULL,
       prm.smooth = NULL, # turn off smoothing
@@ -152,7 +144,6 @@ test_that("estimate_R_cl() smooths daily input data (but skips JAGS step) with s
     dist.repfrac,
     dist.incub,
     dist.gi,
-    popsize = NULL,
     prm.daily = NULL,
     prm.daily.check = NULL,
     prm.smooth = prm.smooth,
