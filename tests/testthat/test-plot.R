@@ -37,7 +37,8 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   dist.gi.test        = dist.gi
   dist.gi.test$max    = max.dists
 
-  popsize = 1e7
+  prm.daily2 = prm.daily
+  prm.daily2$popsize = 1e7
 
   prm.smooth = list(
     method = "rollmean",
@@ -60,9 +61,8 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,
     dist.gi       = dist.gi.test,
-    popsize       = popsize,
     prm.smooth    = prm.smooth,
-    prm.daily     = prm.daily,
+    prm.daily     = prm.daily2,
     prm.R         = prm.R,
     prm.daily.check = prm.daily.check,
     silent = TRUE
@@ -89,9 +89,8 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,
     dist.gi       = dist.gi.test,
-    popsize       = popsize,
     prm.smooth    = prm.smooth,
-    prm.daily     = prm.daily,
+    prm.daily     = prm.daily2,
     prm.R         = prm.R,
     prm.daily.check = prm.daily.check,
     silent = TRUE
