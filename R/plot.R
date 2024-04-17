@@ -2,7 +2,9 @@
 #'
 #' @param r.estim List. Output of [estimate_R_ww()].
 #' @param caption Character. Optional plot caption.
-#'
+#' @param wrap.plots Logical. 
+#' Wrap all diagnostic plots into one single ggplot object (default = \code{TRUE}). 
+#' 
 #' @return A `ggplot` object.
 #'
 #' @export
@@ -19,18 +21,18 @@
 #'   ww.conc  = ww.data,
 #'   dist.fec = ern::def_dist(
 #'     dist = "gamma",
-#'     mean = 12.90215,
-#'     mean_sd = 1.136829,
-#'     shape = 1.759937,
-#'     shape_sd = 0.2665988,
+#'     mean = 12.9,
+#'     mean_sd = 1.13,
+#'     shape = 1.75,
+#'     shape_sd = 0.26,
 #'     max = 33
 #'     ),
 #'   dist.gi  = ern::def_dist(
 #'     dist     = "gamma",
 #'     mean     = 6.84,
-#'     mean_sd  = 0.7486,
+#'     mean_sd  = 0.74,
 #'     shape    = 2.39,
-#'     shape_sd = 0.3573,
+#'     shape_sd = 0.35,
 #'     max      = 15
 #'     ), 
 #'   silent   = TRUE
@@ -39,9 +41,14 @@
 #' # Diagnostic plot
 #' g = plot_diagnostic_ww(x)
 #' plot(g)
+#' 
+#' g2 = plot_diagnostic_ww(x, wrap.plots = FALSE, caption = "This is your caption")
+#' plot(g2$wastewater_data)
+#' plot(g2$inferred_incidence)
+#' plot(g2$Rt)
 #'
 #'
-plot_diagnostic_ww <- function(r.estim, caption=NULL) {
+plot_diagnostic_ww <- function(r.estim, caption=NULL, wrap.plots = TRUE) {
 
   ggplot2::theme_set(ggplot2::theme_bw())
   date.start = min(r.estim$R$date)
@@ -85,11 +92,20 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
     xsc +
     ggplot2::labs(title = 'Effective Reproduction Number')
 
-
-  g = patchwork::wrap_plots(g.ww, g.inc, g.r, ncol=1)
-
-  if(!is.null(caption)) g = g + ggplot2::labs(caption=caption)
-
+  if(wrap.plots){
+    g = patchwork::wrap_plots(g.ww, g.inc, g.r, ncol=1)
+    if(!is.null(caption)) g = g + ggplot2::labs(caption=caption)
+  }
+  
+  if(!wrap.plots){
+    g = list(
+      wastewater_data    = g.ww, 
+      inferred_incidence = g.inc,
+      Rt                 = g.r)
+    if(!is.null(caption)) 
+      g[['Rt']] = g[['Rt']] + ggplot2::labs(caption=caption)
+  }
+  
   return(g)
 }
 
@@ -191,18 +207,22 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL) {
 #' 
 #' # Diagnostic plot for Rt estimates 
 #' # from clinical data
-#' plot_diagnostic_cl(x)
+#' g = plot_diagnostic_cl(x)
+#' plot(g)
+#' 
+#' g2 = plot_diagnostic_cl(x, caption = 'This is your caption', wrap.plots = FALSE)
+#' plot(g2$clinical_data)
+#' plot(g2$inferred_incidence)
+#' plot(g2$Rt)
 #' }
 #' 
 plot_diagnostic_cl <- function(
-    r.estim
+    r.estim, caption = NULL, wrap.plots = TRUE
 ){
   
   # ==== plot setup ====
   
   alpha <- 0.3 # for CI ribbons
-  # linetype_scale <- c("dotted", "solid")
-  # names(alpha_scale) <- names(linetype_scale) <- c("FALSE", "TRUE")
   
   ggplot2::theme_set(ggplot2::theme_bw())
   
@@ -306,8 +326,24 @@ plot_diagnostic_cl <- function(
          + th
   )
   
-  # ==== composite plot ====
-  g = patchwork::wrap_plots(p1,p2,p3, ncol=1, heights = heights)
+  # ==== Return plots
+  
+  if(wrap.plots){
+    g = patchwork::wrap_plots(p1, p2, p3, ncol = 1, heights = heights)
+    
+    if(!is.null(caption)) 
+      g = g + ggplot2::labs(caption=caption)
+  }
+  
+  if(!wrap.plots){
+    g = list(
+      clinical_data      = p1, 
+      inferred_incidence = p2, 
+      Rt                 = p3)
+    
+    if(!is.null(caption)) 
+      g[['Rt']] = g[['Rt']] + ggplot2::labs(caption=caption)
+  }
   
   return(g)
 }

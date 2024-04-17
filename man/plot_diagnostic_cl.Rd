@@ -4,7 +4,7 @@
 \alias{plot_diagnostic_cl}
 \title{Diagnostic plot for R estimation from clinical report data}
 \usage{
-plot_diagnostic_cl(r.estim)
+plot_diagnostic_cl(r.estim, caption = NULL, wrap.plots = TRUE)
 }
 \arguments{
 \item{r.estim}{List. Output of \code{\link[=estimate_R_cl]{estimate_R_cl()}}.}
@@ -99,7 +99,13 @@ x <- estimate_R_cl(
 
 # Diagnostic plot for Rt estimates 
 # from clinical data
-plot_diagnostic_cl(x)
+g = plot_diagnostic_cl(x)
+plot(g)
+
+g2 = plot_diagnostic_cl(x, caption = 'This is your caption', wrap.plots = FALSE)
+plot(g2$clinical_data)
+plot(g2$inferred_incidence)
+plot(g2$Rt)
 }
 
 }

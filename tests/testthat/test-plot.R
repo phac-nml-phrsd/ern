@@ -1,5 +1,5 @@
 test_that("plot_diagnostic_ww returns an object that has a class that includes
-          'ggplot' and 'patchwork'", {
+          'ggplot' and 'patchwork' or 'list' if not wrapped.", {
             load("../testdata/ww_test_params.RData")
             r.obj = estimate_R_ww(
               ww.conc = ww.conc,
@@ -8,15 +8,19 @@ test_that("plot_diagnostic_ww returns an object that has a class that includes
               prm.smooth = prm.smooth,
               silent = TRUE
             )
-            g = plot_diagnostic_ww(r.obj, caption = "test")
-            expect_s3_class(
-              g,
-              "patchwork"
-            )
-            expect_s3_class(
-              g,
-              "ggplot"
-            )
+            g = plot_diagnostic_ww(r.obj, 
+                                   caption = "test", 
+                                   wrap.plots = TRUE)
+            
+            expect_s3_class(g, "patchwork")
+            expect_s3_class(g, "ggplot")
+            
+            g.notwrapped = plot_diagnostic_ww(r.obj, 
+                                   caption = "test", 
+                                   wrap.plots = FALSE)
+            
+            expect_type(g.notwrapped, "list")
+            expect_s3_class(g.notwrapped[[1]], 'ggplot')
 })
 
 test_that("plot_diagnostic_cl returns an object that has a class that includes
@@ -28,10 +32,10 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   pathogen = 'sarscov2'
   max.dists = 10 # need to truncate distributions if you're using a very short timeseries
 
-  dist.incub.test   = dist.incub
-  dist.incub.test$max = max.dists # need if we're talking fewer data points
-  dist.gi.test      = dist.gi
-  dist.gi.test$max = max.dists
+  dist.incub.test     = dist.incub
+  dist.incub.test$max = max.dists # need if we're taking fewer data points
+  dist.gi.test        = dist.gi
+  dist.gi.test$max    = max.dists
 
   prm.daily2 = prm.daily
   prm.daily2$popsize = 1e7
@@ -65,21 +69,22 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   )
 
   g = ern::plot_diagnostic_cl(r.obj)
-  expect_s3_class(
-    g,
-    "patchwork"
-  )
-  expect_s3_class(
-    g,
-    "ggplot"
-  )
-
+  expect_s3_class(g, "patchwork")
+  expect_s3_class(g, "ggplot")
+  
+  g.notwrapped = ern::plot_diagnostic_cl(r.obj, 
+                                         caption = 'foo', 
+                                         wrap.plots = FALSE)
+  expect_type(g.notwrapped, 'list')
+  expect_s3_class(g.notwrapped[[1]], 'ggplot')
+  
+  
   # daily data
   # - - - - - - - - - - - - - - - - -
   dat <- cl.daily |> dplyr::select(date, value)
 
   r.obj = ern::estimate_R_cl(
-    cl.data      = dat,
+    cl.data       = dat,
     dist.repdelay = dist.repdelay,
     dist.repfrac  = dist.repfrac,
     dist.incub    = dist.incub.test,
@@ -92,14 +97,15 @@ test_that("plot_diagnostic_cl returns an object that has a class that includes
   )
 
   g = ern::plot_diagnostic_cl(r.obj)
-  expect_s3_class(
-    g,
-    "patchwork"
-  )
-  expect_s3_class(
-    g,
-    "ggplot"
-  )
+  expect_s3_class(g, "patchwork")
+  expect_s3_class(g, "ggplot")
+  
+  g.notwrapped = ern::plot_diagnostic_cl(r.obj, 
+                                         caption = 'foo daily', 
+                                         wrap.plots = FALSE)
+  expect_type(g.notwrapped, 'list')
+  expect_s3_class(g.notwrapped[[1]], 'ggplot')
+  
 })
 
 test_that("plot_dist returns a ggplot object",{
