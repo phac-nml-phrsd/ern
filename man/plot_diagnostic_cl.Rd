@@ -8,9 +8,23 @@ plot_diagnostic_cl(r.estim, caption = NULL, wrap.plots = TRUE)
 }
 \arguments{
 \item{r.estim}{List. Output of \code{\link[=estimate_R_cl]{estimate_R_cl()}}.}
+
+\item{caption}{String. Caption to be inserted in the plot.
+Default is \code{caption = NULL} which disables the caption.}
+
+\item{wrap.plots}{Logical. Wrap the plots together into a single ggplot object?
+If \code{wrap.plots = TRUE} (the default) will return wrapped plots in a single object,
+else will return a list of separate ggplot objects.}
 }
 \value{
-A \code{ggplot} object
+Plots of the clinical data used, the inferred daily incidence and
+Rt estimates. If \code{wrap.plots = TRUE} (the default) will return
+wrapped plots (with x-axis aligned to facilitate the comaprison)
+in a single object,
+else will return a list of separate ggplot objects.
+
+A \code{ggplot} object (or a list of ggplot objects
+if \code{wrap.plots = FALSE}).
 }
 \description{
 Diagnostic plot for R estimation from clinical report data

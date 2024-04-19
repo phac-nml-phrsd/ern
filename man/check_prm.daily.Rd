@@ -8,8 +8,6 @@ check_prm.daily(x)
 }
 \arguments{
 \item{x}{List. Parameters for daily data inference.}
-
-\item{silent}{Logical. Flag to suppress all output messages, warnings, and progress bars.}
 }
 \description{
 Check parameters for daily data inference

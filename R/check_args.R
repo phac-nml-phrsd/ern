@@ -3,7 +3,6 @@
 #' @title Check parameters for daily data inference
 #'
 #' @param x List. Parameters for daily data inference.
-#' @template param-silent
 #' 
 #' @keywords internal
 #'

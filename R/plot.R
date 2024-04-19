@@ -112,15 +112,27 @@ plot_diagnostic_ww <- function(r.estim, caption=NULL, wrap.plots = TRUE) {
 #' Diagnostic plot for R estimation from clinical report data
 #'
 #' @param r.estim List. Output of [estimate_R_cl()].
+#' @param caption String. Caption to be inserted in the plot. 
+#' Default is \code{caption = NULL} which disables the caption.
+#' @param wrap.plots Logical. Wrap the plots together into a single ggplot object?
+#' If \code{wrap.plots = TRUE} (the default) will return wrapped plots in a single object,
+#' else will return a list of separate ggplot objects.
 #'
-#' @return A `ggplot` object
+#' @return Plots of the clinical data used, the inferred daily incidence and
+#' Rt estimates. If \code{wrap.plots = TRUE} (the default) will return
+#' wrapped plots (with x-axis aligned to facilitate the comaprison)
+#'  in a single object,
+#' else will return a list of separate ggplot objects.
+#' 
+#' A `ggplot` object (or a list of ggplot objects
+#'  if \code{wrap.plots = FALSE}).
+#' 
 #' @export
 #'
 #' @importFrom patchwork plot_layout
 # need this to get the S3 method "/"
 #'
 #' @seealso [estimate_R_cl()]
-#' 
 #' 
 #' 
 #' @examples 
