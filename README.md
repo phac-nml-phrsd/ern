@@ -97,6 +97,8 @@ Before creating a pull request into `main`, please be sure to pull `main` in to 
 
 ### For CRAN udpates
 
- - do a "check" using the `R-devel` version. Note: you also need the _latest_ `Rtools` associated with this version (download [here](https://cran.r-project.org/bin/windows/Rtools/)) 
+ - do a "check" using the `R-devel` version ([link](https://cran.r-project.org/bin/windows/base/rdevel.html)). Note: you also need the _latest_ `Rtools` associated with this version (download [here](https://cran.r-project.org/bin/windows/Rtools/)) 
  - resolve _all_ errors, warnings and notes. There _might_ be false positives; communicate with CRAN in that case.
- 
+ - build a "Source Package"
+ - verify the package compiles with no error under [Mac OS](https://mac.r-project.org/macbuilder/submit.html) and [Windows](https://win-builder.r-project.org/)
+ - [Submit](https://cran.r-project.org/submit.html) to CRAN
