@@ -1,6 +1,6 @@
 Package: ern
 Title: Effective Reproduction Number Estimation
-Version: 2.0.0
+Version: 2.1.0
 Authors@R: c(
     person("David", "Champredon", , "david.champredon@canada.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7090-8757")),
