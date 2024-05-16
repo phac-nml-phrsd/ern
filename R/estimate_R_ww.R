@@ -134,34 +134,28 @@ to obtain accurate Rt estimates using wastewater data.\n")
     RL.max.iter = RL.max.iter
   )
   
-  
   inc = lapply(r, `[[`, 'inc') |>
     dplyr::bind_rows() |>
     dplyr::transmute(value = I, date) |>
     summarise_by_date_iters()
 
   rt = lapply(r, `[[`, 2) |>
-    dplyr::bind_rows() |>
-    summarise_by_date_ens(CI = prm.R$CI)
-  
-  # Wed May 15 12:08:06 2024 ------------------------------
-  
-  rt2 = lapply(r, `[[`, 3) |>
     dplyr::bind_rows() |> 
     dplyr::group_by(date) |>
     dplyr::summarise(
       mean = mean(postsample),
-      lwr  = quantile(postsample, probs = 0.5 - prm.R$CI / 2),
-      upr  = quantile(postsample, probs = 0.5 + prm.R$CI / 2)
+      lwr  = stats::quantile(postsample, probs = 0.5 - prm.R$CI / 2),
+      upr  = stats::quantile(postsample, probs = 0.5 + prm.R$CI / 2)
     )
 
-  return(list(
+  res = list(
     ww.conc   = ww.conc,
     ww.smooth = ww.smooth,
     inc       = inc,
-    R         = rt,
-    Rnew = rt2
-  ))
+    R         = rt 
+  )
+  
+  return(res)
 }
 
 
@@ -208,23 +202,14 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
     tidyr::drop_na() |>
     dplyr::mutate(iter = i)
 
-  rt = incidence_to_R(incidence = i.df,
-                      generation.interval = sample.gi,
-                      prm.R = prm.R) |>
-    dplyr::mutate(iter = i)
-
-  # Wed May 15 11:41:37 2024 ------------------------------
-  rt2 = incidence_to_R_new(
-    incidence = i.df,
+  
+  rt = incidence_to_R(
+    incidence           = i.df,
     generation.interval = sample.gi,
-    prm.R = prm.R) |>
+    prm.R               = prm.R) |>
     dplyr::mutate(iter = i)
   
+  r = list(inc = i.df, rt = rt)
   
-  r = list(
-    inc = i.df,
-    rt = rt,
-    rt2 = rt2
-  )
   return(r)
 }
