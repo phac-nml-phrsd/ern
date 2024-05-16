@@ -7,5 +7,6 @@ utils::globalVariables(c(
   "value","value_smooth","y",
   "t.diff", "t.diff.check", "check",
   "silent", "x", "case_when",
+  "postsample",
   "chain", "iter", "parameter", "Point.est.", "Upper.C.I."
 ))
