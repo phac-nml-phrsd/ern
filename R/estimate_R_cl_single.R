@@ -1,78 +1,3 @@
-#' @title A single realization of the Rt estimate
-#'
-#' @param cl.daily Dataframe of inferred daily incidence.
-#' @inheritParams estimate_R_cl
-#' @keywords internal
-#'
-estimate_R_cl_single <- function(
-    cl.daily,
-    dist.repfrac,
-    dist.repdelay,
-    dist.incub,
-    dist.gi,
-    prm.R,
-    silent = FALSE,
-    RL.max.iter = 10
-){
-
-  # sample one realization of reports.daily (smoothed)
-  id.list <- unique(cl.daily$id)
-  the_id  <- sample(id.list, size = 1)
-  df.draw <- (cl.daily
-     |> dplyr::filter(id == the_id)
-  )
-
-  # sample reporting fraction
-  reporting.fraction.draw <- sample_from_dist(
-    n = 1,
-    params = dist.repfrac
-  )
-
-  # sample reporting delay distribution
-  reporting.delay <- sample_a_dist(dist.repdelay)
-
-  # sample incubation period
-  incubation.period <- sample_a_dist(dist.incub)
-
-  # sample generation interval
-  generation.interval <- sample_a_dist(dist.gi)
-
-  # correct for underreporting
-  reports.daily.scaled <- correct_underreporting(
-    df.draw,
-    reporting.fraction.draw
-  )
-
-  # reports deconvoluted with reporting delay distribution
-  # and then with incubation period distribution
-  incidence <- reports_to_incidence(
-    reports.daily = reports.daily.scaled,
-    reporting.delay,
-    incubation.period,
-    silent = silent,
-    max.iter = RL.max.iter  ) |>
-    # attach time index to incidence
-    (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
-
-  
-  # The RL deconvolution can be unstable at
-  # the start of the deconvoluted function,
-  # so we remove the first points based on 
-  # the mean of the kernels (this is heuristic):
-  incidence = dplyr::filter(incidence,
-                     t > (dist.repdelay$mean + dist.incub$mean))
-  
-  # Estimate Rt
-  res = incidence_to_R(
-    incidence,
-    generation.interval,
-    prm.R)
-
-  return(res)
-}
-
-
-# helpers -----------------------------------------------------------------
 
 #' @title Correct underreporting by scaling up
 #'
@@ -186,4 +111,80 @@ deconv <- function(
     t = time,
     y = RL_result)
   )
+}
+
+
+
+
+#' @title A single realization of the Rt estimate
+#'
+#' @param cl.daily Dataframe of inferred daily incidence.
+#' @inheritParams estimate_R_cl
+#' @keywords internal
+#'
+estimate_R_cl_single <- function(
+    cl.daily,
+    dist.repfrac,
+    dist.repdelay,
+    dist.incub,
+    dist.gi,
+    prm.R,
+    silent = FALSE,
+    RL.max.iter = 10
+){
+  
+  # sample one realization of reports.daily (smoothed)
+  id.list <- unique(cl.daily$id)
+  the_id  <- sample(id.list, size = 1)
+  df.draw <- (cl.daily
+              |> dplyr::filter(id == the_id)
+  )
+  
+  # sample reporting fraction
+  reporting.fraction.draw <- sample_from_dist(
+    n = 1,
+    params = dist.repfrac
+  )
+  
+  # sample reporting delay distribution
+  reporting.delay <- sample_a_dist(dist.repdelay)
+  
+  # sample incubation period
+  incubation.period <- sample_a_dist(dist.incub)
+  
+  # sample generation interval
+  generation.interval <- sample_a_dist(dist.gi)
+  
+  # correct for underreporting
+  reports.daily.scaled <- correct_underreporting(
+    df.draw,
+    reporting.fraction.draw
+  )
+  
+  # reports deconvoluted with reporting delay distribution
+  # and then with incubation period distribution
+  incidence <- reports_to_incidence(
+    reports.daily = reports.daily.scaled,
+    reporting.delay,
+    incubation.period,
+    silent = silent,
+    max.iter = RL.max.iter  ) |>
+    # attach time index to incidence
+    (\(x){dplyr::mutate(x, t = 1:nrow(x))})()
+  
+  
+  # The RL deconvolution can be unstable at
+  # the start of the deconvoluted function,
+  # so we remove the first points based on 
+  # the mean of the kernels (this is heuristic):
+  incidence = dplyr::filter(incidence,
+                            t > (dist.repdelay$mean + dist.incub$mean))
+  
+  # Estimate Rt
+  res = incidence_to_R(
+    incidence,
+    generation.interval,
+    prm.R)
+  
+  return(res)
 }

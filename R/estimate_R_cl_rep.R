@@ -17,13 +17,15 @@ estimate_R_cl_rep <- function(
     RL.max.iter = 10
 ){
 
-  if(is.null(prm.R$config.EpiEstim) & !silent) message("Using default config in `EpiEstim::estimate_R()`.")
+  if(is.null(prm.R$config.EpiEstim) & !silent) 
+    message("Using default config in `EpiEstim::estimate_R()`.")
 
   # TODO: parallelize in a generic way (using a custom
   # iteration function that we use both on the clinical
   # and ww side)
 
   tmp = list()
+  
   for(i in 1:prm.R$iter){
     tmp[[i]] = estimate_R_cl_single(
       cl.daily      = cl.daily,
@@ -36,15 +38,12 @@ estimate_R_cl_rep <- function(
       RL.max.iter   = RL.max.iter
     )
   }
-  R = dplyr::bind_rows(tmp)
-
-  # Return summary of ensembles
-  res = R |>
-    summarise_by_date_ens(CI = prm.R$CI) |>  
-    # flag which points to trust or not
-    # beginning of estimate takes a bit to converge
-    # use one max generation interval as rule of thumb
-    dplyr::mutate(use = (date >= min(date, na.rm = TRUE) + lubridate::days(dist.gi$max)))
-
+  R = dplyr::bind_rows(tmp) |> dplyr::filter(!is.na(date))
+  
+  res = R |> 
+    summary_postsamples(prm.R) |>
+    dplyr::mutate(use = (date >= min(date, na.rm = TRUE) + 
+                           lubridate::days(dist.gi$max))) 
+    
   return(res)
 }

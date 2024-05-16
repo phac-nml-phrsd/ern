@@ -1,3 +1,21 @@
+
+
+
+#' @title Helper function - sample from EpiEstim's R posterior distribution
+#'
+#' @param window integer. Time slice used to estimate Rt.
+#' @param objee List. EpiEstim object as returned by EpiEstim::estimate_R
+#' @param n integer. Number of posterior samples drawn.
+#'
+#' @keywords internal
+#'
+#'
+sample_post_ee <- function(window, objee, n) {
+    y = EpiEstim::sample_posterior_R(objee, n = n, window = window)
+    a = data.frame(window = window, postsample = y, t_end = objee$R$t_end[window])
+    return(a)
+}
+
 #' @title Estimate Rt using EpiEstim
 #'
 #' @param incidence Data frame. Estimated incidence. Must include at least
@@ -15,13 +33,13 @@
 incidence_to_R <- function(
     incidence,
     generation.interval,
-    prm.R
-){
+    prm.R)
+{
   # === prep inputs ====
-
+  
   # Prepare the configuration for EpiEstim's function
   incid <- incidence$I
-
+  
   if(is.null(prm.R$config.EpiEstim)){
     # If the configuration for EpiEstim's function
     # is not specified, we create a default one:
@@ -36,51 +54,51 @@ incidence_to_R <- function(
     # If the configuration for EpiEstim's function
     # is not specified, we use it directly `as is`:
     config.EpiEstim <- prm.R$config.EpiEstim
-
+    
     # Checks `config.EpiEstim`
     if(! 'si_distr' %in% names(config.EpiEstim)){
-      message('\nERROR: `si_distr` must be specified in `config.EpiEstim`. ABORTING!')
+      message('\nERROR: `si_distr` must be specified ',
+              'in `config.EpiEstim`. ABORTING!')
       stop('Missing `si_distr`')
     }
   }
-
+  
   # update t_end in config if window is specified in prm.R
   # NOTE: this overrides specification of t_end in config.EpiEstim
   if(!is.null(prm.R$window)){
     t_start <- config.EpiEstim$t_start
     t_end   <- as.integer(t_start + (prm.R$window - 1)) # -1 because window includes endpoints
-
+    
     # trim off start/end dates where end date exceeds
     # number of incidence observations
     valid                   <- ( t_end <= length(incid) )
     config.EpiEstim$t_start <- t_start[valid]
     config.EpiEstim$t_end   <- t_end[valid]
   }
-
+  
   # ==== Calculate Rt ====
-
+  
   # calculate Rt based on _one_ generation interval
   # (handle GI sampling outside of this function).
   # Note: only the method `non_parametric_si` can
   # be used within the `ern` library.
-
-  R = EpiEstim::estimate_R(
+  
+  objee = EpiEstim::estimate_R(
     incid  = incid,
     method = "non_parametric_si",
     config = config.EpiEstim
-  )$R
-
-  # ==== prep output ====
-
-  res = (R
-         |> dplyr::left_join(incidence, by = c("t_end" = "t"))
-         |> dplyr::select(-dplyr::starts_with("t_"))
-         |> dplyr::transmute(
-           date,
-           mean = `Mean(R)`,
-           lo   = `Quantile.0.025(R)`,
-           hi   = `Quantile.0.975(R)`,
-           I )
   )
+  R = objee$R
+  
+  # Sample from EpiEstim's posteriors
+  dfpost = lapply(1:nrow(R), sample_post_ee, objee=objee, n = 300) |>
+    dplyr::bind_rows()
+  
+  # Format result
+  res = dfpost |>
+    dplyr::left_join(incidence, by = c("t_end" = "t"))|> 
+    dplyr::select(-dplyr::starts_with("t_"))
+  
   return(res)
 }
+

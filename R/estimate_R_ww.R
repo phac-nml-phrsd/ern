@@ -133,7 +133,7 @@ to obtain accurate Rt estimates using wastewater data.\n")
     silent      = silent,
     RL.max.iter = RL.max.iter
   )
-
+  
   inc = lapply(r, `[[`, 'inc') |>
     dplyr::bind_rows() |>
     dplyr::transmute(value = I, date) |>
@@ -141,14 +141,16 @@ to obtain accurate Rt estimates using wastewater data.\n")
 
   rt = lapply(r, `[[`, 2) |>
     dplyr::bind_rows() |>
-    summarise_by_date_ens(CI = prm.R$CI)
+    summary_postsamples(prm.R)
 
-  return(list(
+  res = list(
     ww.conc   = ww.conc,
     ww.smooth = ww.smooth,
     inc       = inc,
-    R         = rt
-  ))
+    R         = rt 
+  )
+  
+  return(res)
 }
 
 
@@ -195,14 +197,14 @@ inc2R_one_iter <- function(i, dist.fec, dist.gi, ww.conc,
     tidyr::drop_na() |>
     dplyr::mutate(iter = i)
 
-  rt = incidence_to_R(incidence = i.df,
-                      generation.interval = sample.gi,
-                      prm.R = prm.R) |>
+  
+  rt = incidence_to_R(
+    incidence           = i.df,
+    generation.interval = sample.gi,
+    prm.R               = prm.R) |>
     dplyr::mutate(iter = i)
-
-  r = list(
-    inc = i.df,
-    rt = rt
-  )
+  
+  r = list(inc = i.df, rt = rt)
+  
   return(r)
 }

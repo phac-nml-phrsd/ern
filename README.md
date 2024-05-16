@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![codecov](https://codecov.io/gh/phac-nml-phrsd/ern/branch/main/graph/badge.svg?token=SWXENVF9T4)](https://app.codecov.io/gh/phac-nml-phrsd/ern)
+[![codecov](https://codecov.io/gh/phac-nml-phrsd/ern/branch/main/graph/badge.svg?token=SWXENVF9T4)](https://codecov.io/gh/phac-nml-phrsd/ern)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
@@ -30,10 +30,11 @@ devtools::install_github('phac-nml-phrsd/ern')
 ### Note on JAGS
 
 `rjags` is a dependency for `ern`, specifically for Rt calculations
-performed on clinical testing data using the "renewal" method for inference of the daily incidence from aggregated clinical data. 
-If you are only using the "linear" method, or performing
-calculations using wastewater data, you do not need to worry about
-installing `rjags` and can skip this section.
+performed on clinical testing data using the “renewal” method for
+inference of the daily incidence from aggregated clinical data. If you
+are only using the “linear” method, or performing calculations using
+wastewater data, you do not need to worry about installing `rjags` and
+can skip this section.
 
 `rjags` is the R interface for the [`JAGS` Bayesian modelling
 library](https://mcmc-jags.sourceforge.io/). Installation of `JAGS` is
@@ -71,7 +72,6 @@ You can cite `ern` with:
 
 ``` r
 citation('ern')
-#> 
 #> To cite package 'ern' in publications use:
 #> 
 #>   Champredon D, Papst I, Yusuf W (2023). _ern: An R Package to Estimate
@@ -93,12 +93,21 @@ citation('ern')
 
 ## For developers
 
-Before creating a pull request into `main`, please be sure to pull `main` in to your development branch, resolve any conflicts, and then run `devtools::check(args = c('--as-cran'))` on your development branch. Ensure that all checks pass without issue.
+Before creating a pull request into `main`, please be sure to pull
+`main` in to your development branch, resolve any conflicts, and then
+run `devtools::check(args = c('--as-cran'))` on your development branch.
+Ensure that all checks pass without issue.
 
 ### For CRAN udpates
 
- - do a "check" using the `R-devel` version ([link](https://cran.r-project.org/bin/windows/base/rdevel.html)). Note: you also need the _latest_ `Rtools` associated with this version (download [here](https://cran.r-project.org/bin/windows/Rtools/)) 
- - resolve _all_ errors, warnings and notes. There _might_ be false positives; communicate with CRAN in that case.
- - build a "Source Package"
- - verify the package compiles with no error under [Mac OS](https://mac.r-project.org/macbuilder/submit.html) and [Windows](https://win-builder.r-project.org/)
- - [Submit](https://cran.r-project.org/submit.html) to CRAN
+- do a “check” using the `R-devel` version
+  ([link](https://cran.r-project.org/bin/windows/base/rdevel.html)).
+  Note: you also need the *latest* `Rtools` associated with this version
+  (download [here](https://cran.r-project.org/bin/windows/Rtools/))
+- resolve *all* errors, warnings and notes. There *might* be false
+  positives; communicate with CRAN in that case.
+- build a “Source Package”
+- verify the package compiles with no error under [Mac
+  OS](https://mac.r-project.org/macbuilder/submit.html) and
+  [Windows](https://win-builder.r-project.org/)
+- [Submit](https://cran.r-project.org/submit.html) to CRAN
