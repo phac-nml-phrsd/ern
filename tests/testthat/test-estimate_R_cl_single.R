@@ -19,24 +19,15 @@ test_that("estimate_R_cl_single() returns output of the expected format", {
 
   expect_s3_class(res, "data.frame")
 
-  col_name <- c("date", "mean", "lo", "hi", "I")
+  col_name <- c("window", "postsample", "date", "I")
 
-  expect_equal(
-    names(res),
-    col_name
-  )
+  expect_equal(names(res), col_name)
 
-  expect_equal(
-    class(res$date),
-    "Date"
-  )
+  expect_equal(class(res$date), "Date")
+  expect_equal(class(res$window), "integer")
+  expect_equal(class(res$postsample), "numeric")
+  expect_equal(class(res$I), "numeric")
 
-  for (i in 2:length(col_name)){
-    expect_equal(
-      class(res[, col_name[i]]),
-      "numeric"
-    )
-  }
 })
 
 # reports_to_incidence ----------------------------------------------------
