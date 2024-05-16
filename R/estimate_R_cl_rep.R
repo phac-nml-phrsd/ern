@@ -41,13 +41,9 @@ estimate_R_cl_rep <- function(
   R = dplyr::bind_rows(tmp) |> dplyr::filter(!is.na(date))
   
   res = R |> 
-    dplyr::group_by(date) |>
-    dplyr::summarise(
-      mean = mean(postsample),
-      lwr  = stats::quantile(postsample, probs = 0.5 - prm.R$CI / 2),
-      upr  = stats::quantile(postsample, probs = 0.5 + prm.R$CI / 2)
-    ) |>
-    dplyr::mutate(use = (date >= min(date, na.rm = TRUE) + lubridate::days(dist.gi$max))) 
-  
+    summary_postsamples(prm.R) |>
+    dplyr::mutate(use = (date >= min(date, na.rm = TRUE) + 
+                           lubridate::days(dist.gi$max))) 
+    
   return(res)
 }

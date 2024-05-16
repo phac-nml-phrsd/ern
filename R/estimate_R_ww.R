@@ -140,13 +140,8 @@ to obtain accurate Rt estimates using wastewater data.\n")
     summarise_by_date_iters()
 
   rt = lapply(r, `[[`, 2) |>
-    dplyr::bind_rows() |> 
-    dplyr::group_by(date) |>
-    dplyr::summarise(
-      mean = mean(postsample),
-      lwr  = stats::quantile(postsample, probs = 0.5 - prm.R$CI / 2),
-      upr  = stats::quantile(postsample, probs = 0.5 + prm.R$CI / 2)
-    )
+    dplyr::bind_rows() |>
+    summary_postsamples(prm.R)
 
   res = list(
     ww.conc   = ww.conc,
