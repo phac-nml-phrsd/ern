@@ -69,27 +69,6 @@ summarise_by_date_iters <- function(df){
   return(res)
 }
 
-#' @title Summarise observations by date for several ensembles
-#'
-#' @param df Data frame. Must have `date`, `mean`, `lo`, and `hi` columns.
-#' @param CI Numeric. Confidence interval width for the summary, as a proportion (`CI = 0.95` uses the 95% confidence interval)
-#' @keywords internal
-summarise_by_date_ens <- function(df, CI = 0.95){
-  res = df |>
-    dplyr::group_by(date) |>
-    dplyr::summarise(
-      mean = mean(mean),
-      #
-      # what we do below for 'lwr' and 'upr' is not statistically correct,
-      # but likely "good enough" for now.
-      #
-      lwr = stats::quantile(lo, probs = 0.5 - CI/2),
-      upr = stats::quantile(hi, probs = 0.5 + CI/2),
-      .groups = "drop" )
-
-  return(res)
-}
-
 #' @title Summarise daily inferred reports 
 #' based on original reporting schedule and calculate error
 #'
