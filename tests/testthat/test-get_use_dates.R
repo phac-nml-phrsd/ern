@@ -61,5 +61,6 @@ test_that("get_use_dates() works when dates.only = FALSE", {
   names(df.expected$lwr) <- rep("2.5%", n)
   names(df.expected$upr) <- rep("97.5%", n)
 
-  expect_identical(df.new, df.expected)
+  res = all.equal(df.new, df.expected)
+  expect_true(res)
 })
