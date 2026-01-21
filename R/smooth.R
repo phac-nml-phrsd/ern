@@ -98,7 +98,16 @@ smooth_with_loess <- function(df, prm.smooth) {
   df = attach_t(df)
 
   # fit LOESS model
-  z = stats::loess(formula = 'value ~ t', data = df, span = prm.smooth$span)
+  
+  # The surface method should be "exact" to avoid
+  # small interpolation errors that may compound 
+  # and lead to unstable smoothed concentration, 
+  # and then unstable Rt estimates
+  lc = stats::loess.control(surface ="direct")
+  z  = stats::loess(formula = 'value ~ t', 
+                    data = df, 
+                    span = prm.smooth$span,
+                    control = lc)
 
   # extract time index and fitted values
   t = z$x[,"t"]

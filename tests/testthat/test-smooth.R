@@ -62,7 +62,10 @@ test_that("loess smoothing on clinical data produces expected results", {
   )
 
   # calculate expected
-  z = stats::loess(formula = "value ~ t", data = df, span = prm.smooth.loess$span)
+  z = stats::loess(formula = "value ~ t", 
+                   data = df,
+                   control = stats::loess.control(surface = 'direct'),
+                   span = prm.smooth.loess$span)
   value_smoothed = z$fitted
 
   expect_equal(
