@@ -1,6 +1,8 @@
 #' Diagnostic plot for R estimation from wastewater data
 #'
 #' @param r.estim List. Output of [estimate_R_ww()].
+#' @param r.param Character. Select which element of `r.estim` to define date
+#'  range. Default is `R`.
 #' @param caption Character. Optional plot caption.
 #' @param wrap.plots Logical. 
 #' Wrap all diagnostic plots into one single ggplot object (default = \code{TRUE}). 
@@ -48,11 +50,12 @@
 #' plot(g2$Rt)
 #'
 #'
-plot_diagnostic_ww <- function(r.estim, caption=NULL, wrap.plots = TRUE) {
+plot_diagnostic_ww <- function(r.estim, r.param = "R",
+                               caption=NULL, wrap.plots = TRUE) {
 
   ggplot2::theme_set(ggplot2::theme_bw())
-  date.start = min(r.estim$R$date)
-  date.end   = max(r.estim$R$date)
+  date.start = min(r.estim[[r.param]][['date']])
+  date.end   = max(r.estim[[r.param]][['date']])
 
   xsc = ggplot2::scale_x_date(
     limits = c(lubridate::ymd(date.start),

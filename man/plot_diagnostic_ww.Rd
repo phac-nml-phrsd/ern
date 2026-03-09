@@ -4,10 +4,13 @@
 \alias{plot_diagnostic_ww}
 \title{Diagnostic plot for R estimation from wastewater data}
 \usage{
-plot_diagnostic_ww(r.estim, caption = NULL, wrap.plots = TRUE)
+plot_diagnostic_ww(r.estim, r.param = "R", caption = NULL, wrap.plots = TRUE)
 }
 \arguments{
 \item{r.estim}{List. Output of \code{\link[=estimate_R_ww]{estimate_R_ww()}}.}
+
+\item{r.param}{Character. Select which element of \code{r.estim} to define date
+range. Default is \code{R}.}
 
 \item{caption}{Character. Optional plot caption.}
 
