@@ -270,6 +270,16 @@ estimate_R_cl <- function(
      diagnostic.mcmc = NULL
     }
     
+    if(prm.daily$method == 'smooth'){
+      smooth.input      = prm.daily$smooth.input
+      smooth.input.span = prm.daily$smooth.input.span
+      cl.daily.raw = smooth_disaggregation_daily(
+        cl.data = cl.data, 
+        smooth.input = smooth.input,
+        smooth.input.span = smooth.input.span)
+      diagnostic.mcmc = NULL
+    }
+    
   } # end if not daily
 
      
