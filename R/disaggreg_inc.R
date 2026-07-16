@@ -1,12 +1,10 @@
 
-#' @description Build aggregation matrix A
+#' @title Build aggregation matrix A
 #' 
 #' @param N Integer. Total number of days after disaggregation.
 #' @param obs_times Integer vector. Observation times of the aggregated (reported) incidence.
 #' @param window Integer. Aggregation window size. For example, \code{window = 7} for weekly aggregation. 
-#' 
 #' @keywords internal
-#' 
 #' 
 build_A <- function(N, obs_times, window) {
   K <- length(obs_times)
@@ -25,11 +23,10 @@ build_A <- function(N, obs_times, window) {
   return(A)
 }
 
-#' @description Build second-difference matrix D, that is:
+#' @title Build second-difference matrix D, that is:
 #' D y = y_{t+1} - 2 y_t + y_{t-1}
 #' 
 #' @param N Integer. Total number of days after disaggregation.
-#' 
 #' @keywords internal
 #' 
 build_D2 <- function(N) {
@@ -53,10 +50,9 @@ build_D2 <- function(N) {
 #' @param obs_times Integer vector. Observation times of the aggregated (reported) incidence.
 #' @param N Integer. Total number of days after disaggregation.
 #'
-#' @returns
-#' @export
+#' @returns Numerical vector of daily disaggregated incidence.
 #'
-#' @examples
+#' @keywords internal
 #'
 solve_temporal_disagg <- function(z, obs_times, N, window) {
   
