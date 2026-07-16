@@ -12,9 +12,16 @@ check_prm.daily <- function(x){
   assertthat::assert_that(assertthat::has_name(x, "method"))
   assertthat::assert_that(assertthat::is.string(x[['method']]))
   assertthat::assert_that(x[['method']] == "renewal" | 
-                          x[['method']] == "linear")
+                          x[['method']] == "linear"  |
+                          x[['method']] == "smooth")
   
 
+  if(x$method == "smooth"){
+    assertthat::assert_that(assertthat::has_name(x, 'smooth.input'))
+    assertthat::assert_that(assertthat::has_name(x, 'smooth.input.span'))
+    assertthat::assert_that(assertthat::is.number(x, 'smooth.input.span'))
+  }
+  
   if(x$method == "renewal"){
     # Check that mandatory elements are 
     # present and of the right type for this model
@@ -36,7 +43,7 @@ check_prm.daily <- function(x){
     assertthat::assert_that(assertthat::is.count((x$first.agg.period)))
   }
 
-  return()
+  return(NULL)
 }
 
 
@@ -90,7 +97,7 @@ check_prm.smooth <- function(x){
   else if(x$method == "loess"){
 
     # loess checks
-    err.msg <- "For `method = 'loess', a numeric `span` value greater than must be specified in `prm.smooth`"
+    err.msg <- "For `method = 'loess', a numeric `span` value greater than 0 must be specified in `prm.smooth`"
     if(!("span" %in% names(x))) stop(err.msg)
     if(!is.numeric(x$span)) stop(err.msg)
     if(is.null(x$span) | x$span <= 0){
