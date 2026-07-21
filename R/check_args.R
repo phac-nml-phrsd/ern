@@ -19,7 +19,7 @@ check_prm.daily <- function(x){
   if(x$method == "smooth"){
     assertthat::assert_that(assertthat::has_name(x, 'smooth.input'))
     assertthat::assert_that(assertthat::has_name(x, 'smooth.input.span'))
-    assertthat::assert_that(assertthat::is.number(x, 'smooth.input.span'))
+    assertthat::assert_that(assertthat::is.number(x[['smooth.input.span']]))
   }
   
   if(x$method == "renewal"){
