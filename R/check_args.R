@@ -259,8 +259,8 @@ check_cl.input_format <- function(cl.data, silent = FALSE) {
 check_df.input_daily <- function(df.input){
   is.daily <- (df.input
     |> dplyr::mutate(t.diff = as.numeric(date - dplyr::lag(date)))
-    |> tidyr::drop_na()
-    |> dplyr::mutate(t.diff.check = t.diff == 1)
+    |> dplyr::filter(!is.na(t.diff) ) 
+    |> dplyr::mutate(t.diff.check = (t.diff == 1) )
     |> dplyr::summarise(check = all(t.diff.check))
     |> dplyr::pull(check)
   )
