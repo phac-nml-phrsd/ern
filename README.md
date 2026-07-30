@@ -24,16 +24,23 @@ National Microbiology Laboratory. Please note this software is provivded
 To install the latest version of this package:
 
 ``` r
-devtools::install_github('phac-nml-phrsd/ern')
+remotes::install_github('phac-nml-phrsd/ern')
 ```
 
-### Note on JAGS
+### Note on dependencies 
+
+#### Rust
+
+From version 2.2.1 onwards, `ern` depends on the R package `CVXR` which itself 
+depends on the package `clarabel` requiring a Rust compiler.
+
+#### JAGS
 
 `rjags` is a dependency for `ern`, specifically for Rt calculations
 performed on clinical testing data using the “renewal” method for
 inference of the daily incidence from aggregated clinical data. If you
-are only using the “linear” method, or performing calculations using
-wastewater data, you do not need to worry about installing `rjags` and
+are not using the "renewal" method, or performing calculations using
+wastewater data only, you do not need to worry about installing `rjags` and
 can skip this section.
 
 `rjags` is the R interface for the [`JAGS` Bayesian modelling
