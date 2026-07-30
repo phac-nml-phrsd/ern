@@ -17,7 +17,7 @@ build_A <- function(N, obs_times, window) {
     
     # Keep only valid indices
     idx <- idx[idx >= 1 & idx <= N]
-    
+    stopifnot(length(idx)>0)
     A[k, idx] <- 1
   }
   return(A)
