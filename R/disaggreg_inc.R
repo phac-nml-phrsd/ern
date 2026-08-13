@@ -24,7 +24,7 @@ build_A <- function(N, obs_times, window) {
 }
 
 #' @title Build second-difference matrix D, that is:
-#' D y = y_{t+1} - 2 y_t + y_{t-1}
+#' D2(y) = y(t+1) - 2 y(t) + y(t-1)
 #' 
 #' @param N Integer. Total number of days after disaggregation.
 #' @keywords internal
@@ -110,13 +110,12 @@ smooth_disaggregation_daily <- function(cl.data,
   # Smooth aggregated incidence
   zs = z
   if(smooth.input){
-    q = loess(data.frame(t = obs_times, z = z),
-              formula = z ~ t, 
-              span = smooth.input.span)
+    q = stats::loess(
+      data    = data.frame(t = obs_times, z = z),
+      formula = z ~ t, 
+      span    = smooth.input.span)
     zs = q$fitted
     zs[zs < 0] = 0
-    
-    if(0){plot(z) ; lines(zs)} # DEBUG
   }
   
   N       = max(cl.data$t)
