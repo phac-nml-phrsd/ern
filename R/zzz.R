@@ -1,8 +1,6 @@
 .onAttach <- function(libname, pkgname){
   
-  msg = paste("\nern version:", utils::packageVersion("ern"),
-              "\n\nIf not already installed, software JAGS is recommended.",
-              "\n(https://sourceforge.net/projects/mcmc-jags/files/)\n")
+  msg = paste("\nern version:", utils::packageVersion("ern"))
   
   packageStartupMessage(msg)
   
