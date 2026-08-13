@@ -324,26 +324,14 @@ All of these parameters have defaults, but they can also be adjusted by the user
 ```{r init-prms}
 # settings for daily report inference
 prm.daily = list(
-  method = "renewal",
-  popsize = 1e7, # population size
-   # Here, low value for `burn` and `iter` 
-   # to have a fast compilation of the vignette.
-   # For real-world applications, both `burn` and `iter`
-   # should be significantly increased (e.g., 10,000).
-   # Also, the number of chains should be at least 3 
-   # (instead of 1 here) for real-world applications.
-  burn = 100,
-  iter = 200,
-  chains = 1,
-  prior_R0_shape = 2,
-  prior_R0_rate = 0.6,
-  prior_alpha_shape = 1,
-  prior_alpha_rate = 1
+  method            = "smooth",
+  smooth.input      = TRUE, 
+  smooth.input.span = 0.3
 )
 
 # settings for checks of daily inferred reports
 prm.daily.check = list(
-  agg.reldiff.tol = 200
+  agg.reldiff.tol = 0.1
 )
 
 # smoothing settings for daily inferred reports
