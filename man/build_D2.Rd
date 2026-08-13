@@ -3,7 +3,7 @@
 \name{build_D2}
 \alias{build_D2}
 \title{Build second-difference matrix D, that is:
-D y = y_{t+1} - 2 y_t + y_{t-1}}
+D2(y) = y(t+1) - 2 y(t) + y(t-1)}
 \usage{
 build_D2(N)
 }
@@ -12,6 +12,6 @@ build_D2(N)
 }
 \description{
 Build second-difference matrix D, that is:
-D y = y_{t+1} - 2 y_t + y_{t-1}
+D2(y) = y(t+1) - 2 y(t) + y(t-1)
 }
 \keyword{internal}
