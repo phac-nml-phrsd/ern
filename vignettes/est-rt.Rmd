@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r chunck options, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -211,6 +211,22 @@ plot(g)
 # Estimating $\mathcal{R}_t$ with clinical data {#rt-cl}
 
 `estimate_R_cl()` takes several [inputs](#cl-inputs) and [parameters](#cl-params), described in the next two sections.
+
+A key feature of clinical surveillance data is that they often are aggregated,
+typically on a weekly basis (e.g., for respiratory infections).
+
+Hence, a critical step is to disaggregate this observation data into daily 
+observations. Several methods are implemented, labelled `linear`, `renewal` and
+`smooth`. 
+
+The `linear` method disaggregate observations into a daily piecewise linear function.
+The `renewal` method fits a simple epidemic model implemented with a "renewal equation" 
+to then estimate the daily incidence. 
+The `smooth` method disaggregate observations into a smooth function using 
+convex optimization.
+
+For most applications, we suggest using the `smooth` method.
+
 
 ## Specifying inputs {#cl-inputs}
 
