@@ -110,9 +110,10 @@ smooth_disaggregation_daily <- function(cl.data,
   # Smooth aggregated incidence
   zs = z
   if(smooth.input){
-    q = loess(data.frame(t = obs_times, z = z),
-              formula = z ~ t, 
-              span = smooth.input.span)
+    q = stats::loess(
+      data    = data.frame(t = obs_times, z = z),
+      formula = z ~ t, 
+      span    = smooth.input.span)
     zs = q$fitted
     zs[zs < 0] = 0
   }
