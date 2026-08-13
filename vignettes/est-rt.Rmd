@@ -242,7 +242,7 @@ For most applications, we suggest using the `smooth` method.
   
 Here, we estimate $\mathcal{R}_t$ for a sample of weekly clinical COVID-19 reports in the province of Quebec:
 
-```{r load-data}
+```{r load clinical data}
 dat <- (ern::cl.data 
     |> dplyr::filter(
       pt == "qc",
@@ -321,7 +321,7 @@ Note that the above `dist.x` lists define _families_ of distributions (there is 
 
 All of these parameters have defaults, but they can also be adjusted by the user. These settings are further described in the example below, but you may also want to consult the documentation of `estimate_R_cl()` for more details.
 
-```{r init-prms}
+```{r init-prms for clinical data}
 # settings for daily report inference
 prm.daily = list(
   method            = "smooth",
@@ -354,7 +354,7 @@ prm.R = list(
 
 Once the above inputs and parameters are defined, we estimate $\mathcal{R}_t$ as follows:
 
-```{r est-rt}
+```{r Rt clinical estimation, warning=FALSE}
 r.estim = estimate_R_cl(
   cl.data      = dat,
   dist.repdelay = dist.repdelay,
