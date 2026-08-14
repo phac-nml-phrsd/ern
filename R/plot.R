@@ -120,10 +120,14 @@ plot_diagnostic_ww <- function(r.estim, r.param = "R",
 #' @param wrap.plots Logical. Wrap the plots together into a single ggplot object?
 #' If \code{wrap.plots = TRUE} (the default) will return wrapped plots in a single object,
 #' else will return a list of separate ggplot objects.
-#'
+#' @param log.scale Logical. Plot data figures on the logarithmic scale? 
+#' @param dates.breaks String. Breaks for the horizontal axis. 
+#' For weekly breaks \code{dates.breaks = '1 week'}, for monthly 
+#' \code{dates.breaks = '1 month'}, 
+#' for every two months \code{dates.breaks = '1 month'}, etc.
 #' @return Plots of the clinical data used, the inferred daily incidence and
 #' Rt estimates. If \code{wrap.plots = TRUE} (the default) will return
-#' wrapped plots (with x-axis aligned to facilitate the comaprison)
+#' wrapped plots (with x-axis aligned to facilitate the comparison)
 #'  in a single object,
 #' else will return a list of separate ggplot objects.
 #' 
@@ -232,7 +236,11 @@ plot_diagnostic_ww <- function(r.estim, r.param = "R",
 #' }
 #' 
 plot_diagnostic_cl <- function(
-    r.estim, caption = NULL, wrap.plots = TRUE
+    r.estim, 
+    caption       = NULL, 
+    wrap.plots    = TRUE,
+    log.scale     = TRUE,
+    dates.breaks  = '1 month'
 ){
   
   # ==== plot setup ====
@@ -248,6 +256,7 @@ plot_diagnostic_cl <- function(
     legend.text = ggplot2::element_text(size = 8),
     legend.margin = ggplot2::margin(t = -5, r = 5, b = 0, l = 0),
     legend.spacing = ggplot2::unit(0, units = "pt"),
+    panel.grid.minor.y = element_blank(),
     panel.spacing = ggplot2::unit(5, units = "pt"),
     plot.margin = ggplot2::margin(t=5, r=0, b=5, l=0, unit="pt")
   )
@@ -255,96 +264,151 @@ plot_diagnostic_cl <- function(
   # to maintain consistent x-axis between panels
   date.range <- range(r.estim$R$date)
   
+  # x-axis scales
+  xsc = ggplot2::scale_x_date(
+    limits      = date.range,
+    date_breaks = dates.breaks,
+    date_labels = ifelse(grepl('week',dates.breaks),
+                         '%y-%b-%d', 
+                         '%b\'%y'))
+  
   # ==== Observed data (optionally vs inferred aggregates) ====
-  p1 <- (r.estim$cl.data
-         |> ggplot2::ggplot(ggplot2::aes(x=date, y=value)) 
-         + ggplot2::geom_col() 
-         + ggplot2::labs(
-           title = 'Observed case reports',
-           x = 'report date',
-           y = 'cases'
-         )
-         + ggplot2::coord_cartesian(xlim = date.range)
-         + th
+  
+  p.data <- (r.estim$cl.data
+             |> ggplot2::ggplot(ggplot2::aes(x=date, y=value)) 
+             + ggplot2::geom_step() 
+             + ggplot2::geom_point() 
+             + ggplot2::labs(
+               title = 'Observed case reports',
+               x = 'report date',
+               y = 'cases'
+             )
+             + ggplot2::coord_cartesian(xlim = date.range)
+             + th +
+               xsc
   )
+  
+  if(log.scale)  p.data = p.data+ scale_y_log10()
+  p.data
   
   # ==== Modified input (smoothed daily cases, optionally inferred) ====
   
-  p2 <- (r.estim$cl.daily 
-         |> summarise_by_date_iters()
-         |> ggplot2::ggplot(ggplot2::aes(x = date)) 
-         + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
-                                alpha = alpha) 
-         + ggplot2::geom_line(ggplot2::aes(y = mean)) 
-         + ggplot2::coord_cartesian(xlim = date.range)
-         + th
+  p.dailyinc <- (r.estim$cl.daily 
+                 |> summarise_by_date_iters()
+                 |> ggplot2::ggplot(ggplot2::aes(x = date)) 
+                 + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
+                                        alpha = alpha) 
+                 + ggplot2::geom_line(ggplot2::aes(y = mean)) 
+                 + ggplot2::coord_cartesian(xlim = date.range)
+                 + ggplot2::labs(
+                   title = "Daily case reports (smoothed)",
+                   x = "report date",
+                   y = "cases")
+                 + th 
+                 + xsc
   )
   
-  if(!is.null(r.estim$inferred.agg)){
+  if(log.scale) p.dailyinc = p.dailyinc + scale_y_log10()
+  p.dailyinc
+  
+  # add diagnostic plot if 
+  # disaggregation took place
+  do.aggr = !is.null(r.estim$inferred.agg)
+  
+  if(do.aggr){
     
-    # add diagnostic plot
-    p3 <- (r.estim$inferred.agg 
-           |> ggplot2::ggplot(ggplot2::aes(x=date)) 
-           + ggplot2::geom_point(ggplot2::aes(y=obs), size=2) 
-           + ggplot2::geom_line(ggplot2::aes(y=obs))
-           + ggplot2::geom_line(ggplot2::aes(y=mean.agg), color= 'red2', alpha=0.3)
-           + ggplot2::geom_pointrange(
-             ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
-             color= 'red2', alpha=0.6)
-           + ggplot2::coord_cartesian(xlim = date.range)
-           + ggplot2::labs(
-             title = 'Aggregated case reports: observed (black) vs. inferred (red)',
-             x = 'report date',
-             y = 'cases'
-           ) 
-           + th
+    p.aggr <- (r.estim$inferred.agg 
+               |> ggplot2::ggplot(ggplot2::aes(x=date)) 
+               + ggplot2::geom_point(ggplot2::aes(y=obs), size=2) 
+               + ggplot2::geom_line(ggplot2::aes(y=obs))
+               + ggplot2::geom_line(ggplot2::aes(y=mean.agg), 
+                                    color= 'red2', alpha=0.3)
+               + ggplot2::geom_pointrange(
+                 ggplot2::aes(y=mean.agg, ymin=lwr.agg, ymax=upr.agg),
+                 color= 'red2', alpha=0.6)
+               + ggplot2::coord_cartesian(xlim = date.range)
+               + ggplot2::labs(
+                 title = 'Aggregated case reports: observed (black) vs. inferred (red)',
+                 x = 'report date',
+                 y = 'cases'
+               ) 
+               + th
+               + xsc
     )
-    
-    p2 <- ((p2 
-            + ggplot2::labs(
-              title = "Daily case reports (smoothed and inferred)",
-              x = 'report date',
-              y = "cases"
-            )
-    ) / p3)
+    if(log.scale) p.aggr = p.aggr + scale_y_log10()
+    p.aggr
     
     # panel heights for final plot
-    heights <- c(1,2.5,1)
-  } else {
-    p2 <- (p2 
-           + ggplot2::labs(
-             title = "Daily case reports (smoothed)",
-             x = 'report date',
-             y = "cases"
-           )
+    heights <- c(1, 1, 1, 1)
+  } 
+  
+  if(! do.aggr) {
+    p.aggr = NULL
+    p.dailyinc <- (p.dailyinc 
+                   + ggplot2::labs(
+                     title = "Daily case reports (smoothed)",
+                     x = 'report date',
+                     y = "cases"
+                   )
     )
     
     # panel heights for final plot
-    heights <- rep(1,3)
+    heights <- rep(1, 3)
   }
   
   # ==== Rt plot ====
   
-  p3 <- (r.estim$R 
+  col.rt = 'steelblue'
+  
+  # Do not display estimates not "used"
+  rt.plot = r.estim$R 
+  rt.plot$mean[!rt.plot$use] = NA
+  rt.plot$upr[!rt.plot$use]  = NA
+  rt.plot$lwr[!rt.plot$use]  = NA
+  
+  p.rt <- (rt.plot 
          |> tidyr::drop_na(date)
          |> ggplot2::ggplot(ggplot2::aes(x = date))
          + ggplot2::geom_hline(yintercept = 1, linetype = "dashed", na.rm = TRUE)
          + ggplot2::geom_ribbon(ggplot2::aes(ymin = lwr, ymax = upr),
+                                fill = col.rt, 
                                 alpha = alpha,
                                 na.rm = TRUE)
-         + ggplot2::geom_line(ggplot2::aes(y = mean), na.rm = TRUE)
+         + ggplot2::geom_line(ggplot2::aes(y = mean), 
+                              color = col.rt, 
+                              linewidth = 1,
+                              na.rm = TRUE)
          + ggplot2::labs(
            title = "Effective Reproduction Number",
            x = 'date',
            y = "mean"
          )
          + th
+         +xsc
   )
+  p.rt
   
   # ==== Return plots
   
   if(wrap.plots){
-    g = patchwork::wrap_plots(p1, p2, p3, ncol = 1, heights = heights)
+    if(do.aggr){
+      g = patchwork::wrap_plots(
+        p.data, 
+        p.dailyinc, 
+        p.aggr, 
+        p.rt,
+        ncol = 1, 
+        heights = heights)
+    }
+    if(!do.aggr){
+      g = patchwork::wrap_plots(
+        p.data, 
+        p.dailyinc, # p.aggr removed in this case
+        p.rt,
+        ncol = 1, 
+        heights = heights)
+    }
+    g
     
     if(!is.null(caption)) 
       g = g + ggplot2::labs(caption=caption)
@@ -352,9 +416,10 @@ plot_diagnostic_cl <- function(
   
   if(!wrap.plots){
     g = list(
-      clinical_data      = p1, 
-      inferred_incidence = p2, 
-      Rt                 = p3)
+      clinical_data      = p.data, 
+      inferred_incidence = p.dailyinc, 
+      aggregated_incidence = p.aggr,
+      Rt                 = p.rt)
     
     if(!is.null(caption)) 
       g[['Rt']] = g[['Rt']] + ggplot2::labs(caption=caption)

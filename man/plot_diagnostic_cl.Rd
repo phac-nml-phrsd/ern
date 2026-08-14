@@ -4,7 +4,13 @@
 \alias{plot_diagnostic_cl}
 \title{Diagnostic plot for R estimation from clinical report data}
 \usage{
-plot_diagnostic_cl(r.estim, caption = NULL, wrap.plots = TRUE)
+plot_diagnostic_cl(
+  r.estim,
+  caption = NULL,
+  wrap.plots = TRUE,
+  log.scale = TRUE,
+  dates.breaks = "1 month"
+)
 }
 \arguments{
 \item{r.estim}{List. Output of \code{\link[=estimate_R_cl]{estimate_R_cl()}}.}
@@ -15,11 +21,18 @@ Default is \code{caption = NULL} which disables the caption.}
 \item{wrap.plots}{Logical. Wrap the plots together into a single ggplot object?
 If \code{wrap.plots = TRUE} (the default) will return wrapped plots in a single object,
 else will return a list of separate ggplot objects.}
+
+\item{log.scale}{Logical. Plot data figures on the logarithmic scale?}
+
+\item{dates.breaks}{String. Breaks for the horizontal axis.
+For weekly breaks \code{dates.breaks = '1 week'}, for monthly
+\code{dates.breaks = '1 month'},
+for every two months \code{dates.breaks = '1 month'}, etc.}
 }
 \value{
 Plots of the clinical data used, the inferred daily incidence and
 Rt estimates. If \code{wrap.plots = TRUE} (the default) will return
-wrapped plots (with x-axis aligned to facilitate the comaprison)
+wrapped plots (with x-axis aligned to facilitate the comparison)
 in a single object,
 else will return a list of separate ggplot objects.
 
