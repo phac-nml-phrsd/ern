@@ -256,7 +256,7 @@ plot_diagnostic_cl <- function(
     legend.text = ggplot2::element_text(size = 8),
     legend.margin = ggplot2::margin(t = -5, r = 5, b = 0, l = 0),
     legend.spacing = ggplot2::unit(0, units = "pt"),
-    panel.grid.minor.y = element_blank(),
+    panel.grid.minor.y = ggplot2::element_blank(),
     panel.spacing = ggplot2::unit(5, units = "pt"),
     plot.margin = ggplot2::margin(t=5, r=0, b=5, l=0, unit="pt")
   )
@@ -288,7 +288,7 @@ plot_diagnostic_cl <- function(
                xsc
   )
   
-  if(log.scale)  p.data = p.data+ scale_y_log10()
+  if(log.scale)  p.data = p.data + ggplot2::scale_y_log10()
   p.data
   
   # ==== Modified input (smoothed daily cases, optionally inferred) ====
@@ -308,7 +308,7 @@ plot_diagnostic_cl <- function(
                  + xsc
   )
   
-  if(log.scale) p.dailyinc = p.dailyinc + scale_y_log10()
+  if(log.scale) p.dailyinc = p.dailyinc + ggplot2::scale_y_log10()
   p.dailyinc
   
   # add diagnostic plot if 
@@ -335,7 +335,7 @@ plot_diagnostic_cl <- function(
                + th
                + xsc
     )
-    if(log.scale) p.aggr = p.aggr + scale_y_log10()
+    if(log.scale) p.aggr = p.aggr + ggplot2::scale_y_log10()
     p.aggr
     
     # panel heights for final plot
