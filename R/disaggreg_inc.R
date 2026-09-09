@@ -84,6 +84,18 @@ solve_temporal_disagg <- function(z, obs_times, N, window) {
   }
   
   out = as.numeric(CVXR::value(y))
+  
+  # The optimization may sometimes return
+  # very small values (e.g. 1e-16) caused by 
+  # numerical instability. This artificially
+  # make the inferred daily incidence too steep
+  # that translates into very high Rt values. 
+  # To address this numerical instability, 
+  # we floor these extremelly small values to 
+  # more reasonable one (in fact daily 
+  # incidence should be integer)
+  out[out < 1e-1] = 1e-1
+  
   return(out)
 }
 

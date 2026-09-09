@@ -11,6 +11,8 @@ export(plot_diagnostic_cl)
 export(plot_diagnostic_ww)
 export(plot_dist)
 importFrom(patchwork,plot_layout)
-importFrom(stats,time)
-importFrom(stats,var)
+importFrom(stats,
+  time,
+  var
+)
 importFrom(utils,capture.output)
